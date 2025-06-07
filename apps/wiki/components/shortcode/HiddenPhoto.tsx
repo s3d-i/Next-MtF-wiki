@@ -1,49 +1,13 @@
-"use client";
-
+import HiddenPhotoClient from "./HiddenPhotoClient";
 import type { ShortCodeCompProps } from "./types";
-import { useState } from "react";
 import { getLocalImagePathFromMdContext } from "./utils";
 
 /**
  * HiddenPhoto组件用于显示可点击显示的隐藏图片
  * 使用示例: {{< hiddenphoto "/path/to/image.jpg" "图片描述" >}}
  */
-export default function HiddenPhoto({ attrs, mdContext }: ShortCodeCompProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const src = attrs[0] || "";
+export default function hiddenPhoto({ attrs, mdContext }: ShortCodeCompProps) {
+  const src = getLocalImagePathFromMdContext(attrs[0] || "", mdContext);
   const alt = attrs[1] || "Hidden image";
-
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggleVisibility();
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      className={`relative overflow-hidden transition-all duration-300 not-prose w-full ${isVisible ? "show" : ""}`}
-      onClick={toggleVisibility}
-      onKeyDown={handleKeyDown}
-      aria-label={isVisible ? "隐藏图片" : "显示图片"}
-    >
-      <img
-        src={getLocalImagePathFromMdContext(src, mdContext)}
-        alt={alt}
-        className={`w-full transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-30 blur-sm"}`}
-      />
-      {!isVisible && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black cursor-pointer bg-opacity-30">
-          <div className="px-4 py-2 text-white bg-black bg-opacity-50 rounded">
-            点击显示图片
-          </div>
-        </div>
-      )}
-    </button>
-  );
+  return <HiddenPhotoClient src={src} alt={alt} />;
 }
