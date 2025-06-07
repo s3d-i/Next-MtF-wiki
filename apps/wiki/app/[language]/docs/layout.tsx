@@ -23,7 +23,7 @@ export default async function DocsLayout({
         {/* 桌面端侧边栏 */}
         <aside className="hidden lg:block lg:w-64 lg:shrink-0">
           <div className="sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto">
-            <div className="p-4 rounded-xl bg-base-100/50 backdrop-blur-sm border border-base-300/50 shadow-lg">
+            <div className="p-4 rounded-xl bg-base-100/50 backdrop-blur-sm border border-base-300/50 shadow-sm">
               <Sidebar 
                 items={navigationItems} 
                 language={language} 
@@ -35,15 +35,12 @@ export default async function DocsLayout({
 
         {/* 主要内容区域 */}
         <main className="flex-1 min-w-0">
-          {/* 文档内容 */}
-          <div className="p-6 rounded-xl bg-base-100/30 backdrop-blur-sm border border-base-300/30 shadow-sm min-h-[calc(100vh-12rem)]">
-            {children}
-          </div>
+          {children}
         </main>
 
         {/* 桌面端右侧目录区域 */}
         <aside className="hidden xl:block xl:w-48 xl:shrink-0">
-          <div className="sticky top-24">
+          <div className="sticky top-24 border border-base-300/50 shadow-sm rounded-xl">
             <TableOfContents language={language} />
           </div>
         </aside>

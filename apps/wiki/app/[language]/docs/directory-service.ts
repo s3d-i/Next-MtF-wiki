@@ -18,6 +18,7 @@ export interface DocItem {
   children?: DocItem[];
   isIndex?: boolean;
   metadata: DocMetadata;
+  parentDisplayPath?: string;
 }
 
 // 语言信息接口
@@ -121,7 +122,7 @@ async function getDirectoryStructure(
     for (const entry of entries) {
       const entryPath = path.join(dirPath, entry.name);
       const relativePath = path.join(basePath, entry.name);
-      const currentFullPath = parentPath
+      const currentDisplayPath = parentPath
         ? `${parentPath}/${entry.name}`
         : entry.name;
 
@@ -130,7 +131,7 @@ async function getDirectoryStructure(
         const subDirItem = await getDirectoryStructure(
           entryPath,
           relativePath,
-          currentFullPath,
+          currentDisplayPath,
           contentDir,
         );
 
@@ -138,12 +139,15 @@ async function getDirectoryStructure(
           // 如果有 _index.md 文件，创建目录项，包含子项
           subDirItem.slug = subDirItem.metadata.preferredSlug || entry.name;
           subDirItem.originalSlug = entry.name;
+          subDirItem.parentDisplayPath = parentPath;
+          // console.log("parentPath: ", parentPath, "currentDisplayPath: ", currentDisplayPath);
           children.push(subDirItem);
         } else {
           // 只有文件，没有子目录，跳过当前目录，将文件提升到上一级
           for (const child of subDirItem.children ?? []) {
             children.push({
               ...child,
+              parentDisplayPath: currentDisplayPath,
               // fullPath 保持不变，因为实际文件路径包含这个目录
             });
           }
@@ -172,6 +176,7 @@ async function getDirectoryStructure(
           originalSlug: slug,
           displayPath: fileFullPath,
           realPath: fileRealPath,
+          parentDisplayPath: parentPath,
         };
 
         children.push(toPush);

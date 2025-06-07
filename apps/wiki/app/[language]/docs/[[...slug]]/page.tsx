@@ -55,7 +55,8 @@ export default async function DocPage({
   const slugArray = slug || [];
   const slugPath = slugArray.join("/");
 
-  const {root: navigationItemRoot, map: navigationItemMap} = await getDocsNavigationMap(language);
+  const { root: navigationItemRoot, map: navigationItemMap } =
+    await getDocsNavigationMap(language);
 
   const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
 
@@ -152,30 +153,141 @@ export default async function DocPage({
     );
   };
 
-  return (
-    <>
-      <article className="prose prose-lg max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-strong:text-base-content prose-code:text-primary prose-pre:bg-base-200 prose-pre:border prose-pre:border-base-300">
-        <header>
-          <h1>{pageTitle}</h1>
-          {/* 你可以在这里添加其他 frontmatter 信息的渲染, e.g., date, author */}
-        </header>
+  // 获取父级导航项以确定兄弟页面
+  const parentItem = navItem.parentDisplayPath
+    ? getDocItemByNavigationMap(navigationItemMap, navItem.parentDisplayPath)
+    : navigationItemRoot;
 
-        <MDXRemote
-          source={mdxRawContent}
-          components={components}
-          onError={ErrorContent}
-          options={{
-            mdxOptions: {
-              remarkPlugins: remarkPlugins,
-              remarkRehypeOptions: {
-                footnoteLabel: t("footnoteLabel", language),
-                footnoteLabelProperties: {},
+  // 获取兄弟页面列表
+  const siblings = parentItem?.children || [];
+  const currentIndex = siblings.findIndex(
+    (item) => item.displayPath === navItem.displayPath
+  );
+
+  // 获取上一页和下一页
+  const previousPage = currentIndex > 0 ? siblings[currentIndex - 1] : null;
+  const nextPage =
+    currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
+
+  return (
+    <div className="min-h-[calc(100vh-12rem)] flex flex-col">
+      {/* 文档内容 */}
+      <div className="p-6 rounded-xl bg-base-100/30 backdrop-blur-sm border border-base-300/30 shadow-sm flex-1">
+        <article
+          id="markdown-content"
+          className="prose max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-strong:text-base-content prose-code:text-primary prose-pre:bg-base-200 prose-pre:border prose-pre:border-base-300"
+        >
+          <header>
+            <h1>{pageTitle}</h1>
+            {/* 你可以在这里添加其他 frontmatter 信息的渲染, e.g., date, author */}
+          </header>
+
+          <MDXRemote
+            source={mdxRawContent}
+            components={components}
+            onError={ErrorContent}
+            options={{
+              mdxOptions: {
+                remarkPlugins: remarkPlugins,
+                remarkRehypeOptions: {
+                  footnoteLabel: t("footnoteLabel", language),
+                  footnoteLabelProperties: {},
+                },
+                format: "md",
               },
-              format: "md",
-            },
-          }}
-        />
-      </article>
-    </>
+            }}
+          />
+        </article>
+      </div>
+
+      {/* 子页面列表 */}
+      {navItem.children && navItem.children.length > 0 && (
+        <section className="mt-8 p-6 bg-base-100/30 rounded-lg border border-base-300/30 shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-base-content">
+            {t("childPages", language)}
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {navItem.children.map((child) => (
+              <Link
+                key={child.displayPath}
+                href={`/${language}/docs/${child.displayPath}`}
+                className="block p-4 bg-base-200 hover:bg-base-300 rounded-lg transition-colors border border-base-300 hover:border-primary/30"
+              >
+                <h3 className="font-medium text-base-content">
+                  {child.metadata.title}
+                </h3>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 上一页/下一页导航 */}
+      {(previousPage || nextPage) && (
+        <nav className="mt-8 flex justify-between items-center p-4 bg-base-100/30 rounded-lg border border-base-300/30 shadow-sm">
+          <div className="flex-1">
+            {previousPage && (
+              <Link
+                href={`/${language}/docs/${previousPage.displayPath}`}
+                className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
+              >
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                <div>
+                  <div className="text-xs text-base-content/50">
+                    {t("previousPage", language)}
+                  </div>
+                  <div className="font-medium">
+                    {previousPage.metadata.title}
+                  </div>
+                </div>
+              </Link>
+            )}
+          </div>
+
+          <div className="flex-1 text-right">
+            {nextPage && (
+              <Link
+                href={`/${language}/docs/${nextPage.displayPath}`}
+                className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
+              >
+                <div>
+                  <div className="text-xs text-base-content/50">
+                    {t("nextPage", language)}
+                  </div>
+                  <div className="font-medium">{nextPage.metadata.title}</div>
+                </div>
+                <svg
+                  className="w-4 h-4 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            )}
+          </div>
+        </nav>
+      )}
+    </div>
   );
 }

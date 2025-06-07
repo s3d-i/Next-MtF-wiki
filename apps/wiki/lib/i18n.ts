@@ -109,6 +109,27 @@ export const translations = {
     ja: "ナビゲーション",
     es: "Navegación",
     en: "Navigation",
+  },
+  previousPage: {
+    "zh-cn": "上一页",
+    "zh-hant": "上一頁",
+    ja: "前のページ",
+    es: "Página anterior",
+    en: "Previous Page",
+  },
+  nextPage: {
+    "zh-cn": "下一页",
+    "zh-hant": "下一頁", 
+    ja: "次のページ",
+    es: "Página siguiente",
+    en: "Next Page",
+  },
+  childPages: {
+    "zh-cn": "子页面",
+    "zh-hant": "子頁面",
+    ja: "子ページ",
+    es: "Páginas secundarias",
+    en: "Child Pages",
   }
 } as const;
 

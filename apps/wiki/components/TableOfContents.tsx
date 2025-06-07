@@ -20,7 +20,7 @@ export default function TableOfContents({ language }: TableOfContentsProps) {
   useEffect(() => {
     // 提取页面中main元素内的标题
     const extractHeadings = () => {
-      const mainElement = document.querySelector("main");
+      const mainElement = document.getElementById("markdown-content");
       if (!mainElement) {
         setTocItems([]);
         return;
