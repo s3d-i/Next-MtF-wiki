@@ -1,12 +1,13 @@
 @import "tailwindcss";
+
 @plugin "@tailwindcss/typography";
-@plugin "daisyui"{
-  themes: cupcake, sunset --prefersdark;
+@plugin "daisyui" {
+  themes: cupcake --default, sunset --prefersdark;
 };
 
 :root {
   --background: var(--color-base-100);
-  --foreground: var(----color-base-content);
+  --foreground: var(--color-base-content);
 }
 
 html {
