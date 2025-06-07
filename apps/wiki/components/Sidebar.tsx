@@ -27,8 +27,16 @@ const NavItem = ({
   level?: number;
   currentPath: string;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+
   const hasChildren = item.children && item.children.length > 0;
+
+  function getIsShouldOpen(isActive: boolean, hasChildren: boolean | undefined, item: DocItem, currentPath?: string, language?: string, basePath?: string) {
+    return isActive || (hasChildren && item.children?.some((child) => currentPath?.startsWith(`/${language}/${basePath}/${child.fullPath}`)));
+  }
+
+  const isShouldOpen = getIsShouldOpen(false, hasChildren, item, currentPath, language, basePath);
+
+  const [isOpen, setIsOpen] = useState(isShouldOpen);
 
   // 构建完整的链接路径，使用 fullPath
   const fullPath = `/${language}/${basePath}/${item.fullPath}`;
@@ -38,16 +46,10 @@ const NavItem = ({
 
   // 如果当前项或其子项是活动的，则自动展开
   useEffect(() => {
-    if (
-      isActive ||
-      (hasChildren &&
-        item.children?.some((child) =>
-          currentPath.startsWith(`/${language}/${basePath}/${child.fullPath}`)
-        ))
-    ) {
+    if (isShouldOpen) {
       setIsOpen(true);
     }
-  }, [currentPath, hasChildren, isActive, item.children, language, basePath]);
+  }, [isShouldOpen]);
 
   return (
     <li className={"my-0 py-0.5"}>
