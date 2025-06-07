@@ -22,7 +22,10 @@ import type {
   HugoShortcodeElement,
 } from "mdast-util-md-hugo-marker";
 import { getNonSelfClosingElements } from "./utils";
-import { type DocItem, getNavigationForOriginalSlug } from "../directory-service";
+import {
+  type DocItem,
+  getNavigationForOriginalSlug,
+} from "../directory-service";
 import { compact } from "mdast-util-compact";
 import { getLocalImagePath } from "../path-utils";
 
@@ -135,7 +138,9 @@ function convertHugoShortcodeToMdxJsx(
     };
   }
 
-  const isFlow = (node as unknown as HugoShortcodeElement).type === "hugoShortcodeFlowElement";
+  const isFlow =
+    (node as unknown as HugoShortcodeElement).type ===
+    "hugoShortcodeFlowElement";
   const targetType = isFlow ? "mdxJsxFlowElement" : "mdxJsxTextElement";
 
   // 为位置参数和命名参数创建attrs表达式属性
@@ -394,12 +399,16 @@ export function transformHugoShortcodeLinks(tree: Root): void {
       const prevSibling = siblings[index - 1] as unknown as Text;
       const nextSibling = siblings[index + 1] as unknown as Text;
 
+      const originalNextSiblingValue = nextSibling.value;
+      const endBrackIndex = nextSibling.value?.indexOf(")") ?? -1;
+
       // 检查前后邻居是否为text节点且符合特定模式
       if (
         prevSibling?.type === "text" &&
         nextSibling?.type === "text" &&
         prevSibling.value?.endsWith("](") &&
-        nextSibling.value?.startsWith(")")
+        (endBrackIndex === 0 ||
+          (nextSibling.value?.startsWith("#") && endBrackIndex > 0))
       ) {
         // 向前查找最近的包含"["的text节点
         let linkStartIndex = -1;
@@ -453,7 +462,7 @@ export function transformHugoShortcodeLinks(tree: Root): void {
             }
           }
 
-          nextSibling.value = nextSibling.value?.substring(1);
+          nextSibling.value = nextSibling.value?.substring(endBrackIndex + 1);
 
           // 创建新的link节点
           const linkNode: MdxJsxTextElement = {
@@ -463,7 +472,7 @@ export function transformHugoShortcodeLinks(tree: Root): void {
               {
                 type: "mdxJsxAttribute",
                 name: "href",
-                value: hugoNode.value || "",
+                value: (hugoNode.value || "") + originalNextSiblingValue.substring(0, endBrackIndex),
               },
             ],
             children: [],
@@ -499,7 +508,6 @@ export function transformHugoShortcodeLinks(tree: Root): void {
       }
     }
   });
-
 }
 
 export function transformHugoShortcode(
@@ -540,7 +548,13 @@ export function transformHugoShortcode(
   //2. 处理图片路径重定向
   if (redirectImages) {
     visit(tree, "image", (node: Image) => {
-      node.url = getLocalImagePath(currentLanguage, options.currentSlug, node.url as string, isCurrentSlugIndex) || node.url;
+      node.url =
+        getLocalImagePath(
+          currentLanguage,
+          options.currentSlug,
+          node.url as string,
+          isCurrentSlugIndex
+        ) || node.url;
     });
   }
 
@@ -599,28 +613,42 @@ export function transformHugoShortcode(
   });
 }
 
-export function getRemarkHugoShortcodeOptions(options: RemarkHugoShortcodeOptions = {}) {
+export function getRemarkHugoShortcodeOptions(
+  options: RemarkHugoShortcodeOptions = {}
+) {
   const options1 = {
     noSelfClosingElements: getNonSelfClosingElements(),
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    hugoShortcodeElementOnEnterTransform: options.currentLanguage && options.navigationItems ? (node: any) => {
-      //console.log("node: ", JSON.stringify(node, null, 2));
-      if (
-        node.type === "hugoShortcodeTextElement" ||
-        node.type === "hugoShortcodeFlowElement"
-      ) {
-        const element = node as HugoShortcodeElement;
-        if (element.name === "ref") {
-          const href = element.arguments[0].value as string;
-          //console.log("href: ", href);
-          return {
-            type: "hugoShortcode-Link-Href",
-            value: (`/${options.currentLanguage}/docs/${getNavigationForOriginalSlug(options.currentLanguage!, href, options.navigationItems!)?.displayPath}`) || "",
-          } as unknown as Nodes;
-        }
-      }
-      return node;
-    } : undefined,
+    hugoShortcodeElementOnEnterTransform:
+      options.currentLanguage && options.navigationItems
+        ? (node: any) => {
+            //console.log("node: ", JSON.stringify(node, null, 2));
+            if (
+              node.type === "hugoShortcodeTextElement" ||
+              node.type === "hugoShortcodeFlowElement"
+            ) {
+              const element = node as HugoShortcodeElement;
+              if (element.name === "ref") {
+                const href =
+                  (element.arguments[0].value as string) ||
+                  element.arguments[0].name;
+                // console.log("href: ", href, JSON.stringify(element.arguments));
+                return {
+                  type: "hugoShortcode-Link-Href",
+                  value:
+                    `/${options.currentLanguage}/docs/${
+                      getNavigationForOriginalSlug(
+                        options.currentLanguage!,
+                        href,
+                        options.navigationItems!
+                      )?.displayPath
+                    }` || "",
+                } as unknown as Nodes;
+              }
+            }
+            return node;
+          }
+        : undefined,
   };
   return options1;
 }
@@ -633,9 +661,6 @@ export function remarkHugoShortcode(
   this: unknown,
   options: RemarkHugoShortcodeOptions = {}
 ) {
-
-
-
   const self: unknown = this as unknown;
   const settings = options || {};
   const data = (
@@ -659,7 +684,9 @@ export function remarkHugoShortcode(
     data.toMarkdownExtensions || (data.toMarkdownExtensions = []);
 
   micromarkExtensions.push(hugoShortcode());
-  fromMarkdownExtensions.push(hugoShortcodeFromMarkdown(getRemarkHugoShortcodeOptions(options)));
+  fromMarkdownExtensions.push(
+    hugoShortcodeFromMarkdown(getRemarkHugoShortcodeOptions(options))
+  );
   toMarkdownExtensions.push(hugoShortcodeToMarkdown());
 
   return (tree: Root) => {
