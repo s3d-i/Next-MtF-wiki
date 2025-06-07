@@ -1,0 +1,29 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build:pages": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", ".vercel/**"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "preview": {
+      "dependsOn": ["build:pages"],
+      "outputs": [".vercel/**"]
+    },
+    "deploy": {
+      "dependsOn": ["build:pages"],
+      "outputs": [".vercel/**"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "persistent": true,
+      "cache": false
+    }
+  }
+}

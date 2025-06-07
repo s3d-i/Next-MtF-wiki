@@ -1,0 +1,132 @@
+.baiduHrt {
+  font-size: 13px;
+  border-collapse: collapse;
+  border-radius: 12px;
+  border: 0;
+  margin: 0 16px;
+  padding: 12px 16px;
+  width: auto;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.searchBd {
+  font-size: 18px;
+  color: #2440b3;
+  display: inline-block;
+  text-decoration: underline;
+}
+
+.searchBd em {
+  font-style: normal;
+  color: #f73131;
+  text-decoration: underline;
+}
+
+.opDictContent {
+  margin-bottom: 1px;
+}
+
+.opDict3MarginRight {
+  margin-right: 15px;
+}
+
+.opDict3Font24 {
+  font-size: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
+.opDict3Font20 {
+  font-size: 20px;
+}
+
+.symbols {
+  margin-right: 13px;
+}
+
+.opDict3Font14 {
+  font-size: 14px;
+  position: relative;
+}
+
+.opDict3Font16 {
+  font-size: 16px;
+  position: relative;
+}
+
+.opDict3Highlight {
+  color: #c00;
+}
+
+.opDict3Gray {
+  color: #999;
+}
+
+.opGuideCont {
+  margin-top: 8.5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.opGuide {
+  color: #626675;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.opGuide a {
+  color: #626675;
+  text-decoration: none;
+}
+
+.opGuide:hover .opQr {
+  display: block;
+}
+
+.opGuide:hover a {
+  color: #215efb;
+}
+
+.opQrMini {
+  width: 14px;
+  height: 14px;
+  background: url("/images/meme/baidu-hrt.png") no-repeat center;
+  background-size: cover;
+  margin-right: 4px;
+  position: relative;
+}
+
+.opQr {
+  display: none;
+  width: 92px;
+  height: 92px;
+  border-radius: 6px;
+  background: url("/hugo-static/images/meme/baidu-hrt.png") no-repeat center;
+  background-size: 80px;
+  background-color: #fff;
+  position: absolute;
+  top: calc(100% + 9px);
+  left: -46px;
+  z-index: 2;
+  box-shadow: 0 0 5px #d8d8d8;
+}
+
+.opDictResult {
+  margin-left: 40px;
+}
+
+.opDictText1 {
+  float: left;
+  min-width: 40px;
+  white-space: nowrap;
+}
+
+.baiduSay {
+  text-align: center;
+  text-decoration: line-through;
+}
+
+.opDict3Exectrans {
+  /* 添加样式以匹配原始设计 */
+} 

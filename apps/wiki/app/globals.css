@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui"{
+  themes: cupcake, sunset --prefersdark;
+};
+
+:root {
+  --background: var(--color-base-100);
+  --foreground: var(----color-base-content);
+}
+
+html {
+  /* 平滑的主题切换过渡 */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

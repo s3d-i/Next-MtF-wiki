@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "customConditions": ["development"],
+    "declarationMap": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "exactOptionalPropertyTypes": true,
+    "lib": ["es2022"],
+    "module": "node16",
+    "strict": true,
+    "target": "es2022"
+  },
+  "include": [
+    "**/*.js",
+    "dev/index.d.ts",
+    "dev/lib/html.ts",
+    "dev/lib/factory-shortcode.ts",
+    "dev/lib/shortcode-text.ts",
+    "dev/lib/shortcode-flow.ts",
+    "dev/lib/factory-shortcode.d.ts",
+    "dev/lib/html.d.ts",
+    "dev/lib/shortcode-flow.d.ts",
+    "dev/lib/shortcode-text.d.ts",
+    "dev/lib/syntax.d.ts"
+  ],
+  "exclude": ["coverage/", "lib/", "node_modules/", "index.js"]
+}

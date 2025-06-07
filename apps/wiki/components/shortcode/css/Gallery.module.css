@@ -1,0 +1,18 @@
+.gallery {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 1rem;
+  gap: 1rem;
+}
+
+.gallery img {
+  border-radius: 1rem;
+}
+
+.galleryPlaceholder {
+  padding: 1rem;
+  border: 2px dashed #ccc;
+  border-radius: 0.5rem;
+  text-align: center;
+  color: #666;
+} 

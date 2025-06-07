@@ -1,0 +1,19 @@
+.userTag {
+  font-weight: 700;
+  line-height: 1;
+  display: inline-block;
+  padding: 0.25em 0.6em 0.4em;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: 10em;
+}
+
+.positive {
+  color: #fff;
+  background-color: #28a745;
+}
+
+.negative {
+  color: #212529;
+  background-color: #ffc107;
+} 
