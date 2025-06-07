@@ -21,7 +21,7 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
   useEffect(() => {
     // 提取页面中main元素内的标题
     const extractHeadings = () => {
-      const mainElement = document.querySelector("main");
+      const mainElement = document.getElementById("markdown-content");
       if (!mainElement) {
         setTocItems([]);
         return;
@@ -57,7 +57,7 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
     });
 
     // 开始观察main元素变化
-    const mainElement = document.getElementById("markdown-content");
+    const mainElement = document.querySelector("main");
     if (mainElement) {
       observer.observe(mainElement, {
         childList: true,
