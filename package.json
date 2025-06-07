@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "npm run copy-assets",
     "build": "turbo run build:pages",
     "dev": "turbo run dev",
     "preview": "turbo run preview",
-    "deploy": "turbo run deploy",
+    "deploy": "npm run build && pnpm --filter=@next-mtf-wiki/wiki run deploy",
     "copy-assets": "node scripts/copy-non-md-files.js"
   },
   "packageManager": "pnpm@10.10.0",

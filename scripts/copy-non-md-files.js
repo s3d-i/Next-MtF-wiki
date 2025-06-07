@@ -25,7 +25,7 @@ function copyFile(src, dest) {
     ensureDirectoryExists(destDir);
     
     fs.copyFileSync(src, dest);
-    console.log(`复制文件: ${src} -> ${dest}`);
+    // console.log(`复制文件: ${src} -> ${dest}`);
   } catch (error) {
     console.error(`复制文件失败: ${src}`, error.message);
   }
@@ -51,7 +51,7 @@ function traverseDirectory(currentDir, relativePath = '') {
           const targetPath = path.join(targetDir, newRelativePath);
           copyFile(fullPath, targetPath);
         } else {
-          console.log(`跳过 Markdown 文件: ${fullPath}`);
+          // console.log(`跳过 Markdown 文件: ${fullPath}`);
         }
       }
     }

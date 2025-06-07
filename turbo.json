@@ -14,10 +14,6 @@
       "dependsOn": ["build:pages"],
       "outputs": [".vercel/**"]
     },
-    "deploy": {
-      "dependsOn": ["build:pages"],
-      "outputs": [".vercel/**"]
-    },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
