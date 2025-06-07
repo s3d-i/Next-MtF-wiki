@@ -130,7 +130,21 @@ export const translations = {
     ja: "子ページ",
     es: "Páginas secundarias",
     en: "Child Pages",
-  }
+  },
+  mtfwiki: {
+    "zh-cn": "MtF wiki",
+    "zh-hant": "MtF wiki",
+    ja: "MtF wiki",
+    es: "MtF wiki",
+    en: "MtF wiki",
+  },
+  notFound: {
+    "zh-cn": "404 - 页面未找到",
+    "zh-hant": "404 - 頁面未找到",
+    ja: "404 - ページが見つかりません",
+    es: "404 - Página no encontrada",
+    en: "404 - Page not found",
+  },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

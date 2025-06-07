@@ -12,10 +12,11 @@ import { getContentDir, getNavigationPath } from "./utils";
 import remarkHeadingId from "remark-heading-id";
 import remarkCsvToTable from "./remarkCsvToTable";
 import {
+  generateAllStaticParams,
   getDocItemByNavigationInfo,
   getDocItemByNavigationMap,
   getDocsNavigationMap,
-  getDocsNavigationRoot as getDocsNavigationRoot,
+  getDocsNavigationRoot,
 } from "../directory-service";
 import Link from "next/link";
 import type { DetailedHTMLProps, ImgHTMLAttributes } from "react";
@@ -28,7 +29,6 @@ interface DocParams {
 
 // 1. 用 generateStaticParams 在构建时生成所有路由
 export async function generateStaticParams() {
-  const { generateAllStaticParams } = await import("../directory-service");
   const allParams = await generateAllStaticParams();
 
   // 过滤出只有文档路由的参数
@@ -41,6 +41,33 @@ export async function generateStaticParams() {
 
   // console.log("docParams: ", docParams);
   return docParams;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<DocParams>;
+}) {
+  const { language, slug } = await params;
+
+  const slugArray = slug || [];
+  const slugPath = slugArray.join("/");
+
+  const { root: navigationItemRoot, map: navigationItemMap } =
+    await getDocsNavigationMap(language);
+
+  const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
+
+  if (!navItem) {
+    return {
+      title: t("notFound", language) + " - " + t("mtfwiki", language),
+      description: t("notFound", language),
+    };
+  }
+
+  return {
+    title: navItem.metadata.title + " - " + t("mtfwiki", language),
+  };
 }
 
 // 2. 在 page 组件里，根据 language 和 slug 去读取并渲染对应的 md(x) 内容
