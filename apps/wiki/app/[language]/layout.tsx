@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "../../components/progress";
 import Image from "next/image";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -33,7 +33,7 @@ export default async function LanguageLayout({
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-base-100 to-base-200">
       {/* 顶部导航栏 */}
-      <header className="lg:sticky lg:top-0 z-50 border-b bg-base-100/80 backdrop-blur-xl border-base-300/50 shadow-sm">
+      <header className="lg:sticky lg:top-0 z-49 border-b bg-base-100/80 backdrop-blur-xl border-base-300/50 shadow-sm">
         <div className="container flex items-center justify-between px-6 py-4 mx-auto">
           <div className="flex items-center space-x-8">
             <Link href={`/${language}`} className="flex items-center group">

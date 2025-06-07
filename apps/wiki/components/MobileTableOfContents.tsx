@@ -57,7 +57,7 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
     });
 
     // 开始观察main元素变化
-    const mainElement = document.querySelector("main");
+    const mainElement = document.getElementById("markdown-content");
     if (mainElement) {
       observer.observe(mainElement, {
         childList: true,

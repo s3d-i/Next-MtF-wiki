@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
+import {
+  ProgressProvider,
+  ProgressBar,
+  SkeletonProvider,
+} from "../components/progress";
 
 export const metadata: Metadata = {
   title: "MtF.wiki",
@@ -35,9 +40,14 @@ export default function RootLayout({
   return (
     <html lang="zh" suppressHydrationWarning>
       <body className={`antialiased`}>
-        <ThemeProvider value={{ dark: "sunset", light: "cupcake" }}>
-          {children}
-        </ThemeProvider>
+        <ProgressProvider>
+          <SkeletonProvider>
+            <ThemeProvider value={{ dark: "sunset", light: "cupcake" }}>
+              <ProgressBar className="fixed h-1 shadow-lg shadow-sky-500/20 bg-sky-500 top-0 z-50" />
+              {children}
+            </ThemeProvider>
+          </SkeletonProvider>
+        </ProgressProvider>
       </body>
     </html>
   );

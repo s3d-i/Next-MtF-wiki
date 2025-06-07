@@ -1,5 +1,5 @@
 import type { ShortCodeCompProps } from "./types";
-import Link from "next/link";
+import { Link } from "../progress";
 
 /**
  * Ref组件用于内部链接引用

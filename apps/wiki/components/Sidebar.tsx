@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { Link } from "./progress";
 import { useState, useEffect } from "react";
 
 import type { DocItem } from "../app/[language]/docs/directory-service";

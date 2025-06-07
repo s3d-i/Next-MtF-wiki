@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { Link } from "./progress";
 import { t } from "@/lib/i18n";
 import type { DocItem } from "../app/[language]/docs/directory-service";
 

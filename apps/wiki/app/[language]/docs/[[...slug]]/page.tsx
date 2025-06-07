@@ -18,9 +18,14 @@ import {
   getDocsNavigationMap,
   getDocsNavigationRoot,
 } from "../directory-service";
-import Link from "next/link";
+import { Link } from "../../../../components/progress";
 import type { DetailedHTMLProps, ImgHTMLAttributes } from "react";
 import { t } from "@/lib/i18n";
+import {
+  DocContent,
+  ChildPagesContent,
+  NavigationContent,
+} from "./doc-content";
 
 interface DocParams {
   language: string;
@@ -199,33 +204,35 @@ export default async function DocPage({
   return (
     <div className="min-h-[calc(100vh-12rem)] flex flex-col">
       {/* 文档内容 */}
-      <div className="p-6 rounded-xl bg-base-100/30 backdrop-blur-sm border border-base-300/30 shadow-sm flex-1">
-        <article
-          id="markdown-content"
-          className="prose max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-strong:text-base-content prose-code:text-primary prose-pre:bg-base-200 prose-pre:border prose-pre:border-base-300"
-        >
-          <header>
-            <h1>{pageTitle}</h1>
-            {/* 你可以在这里添加其他 frontmatter 信息的渲染, e.g., date, author */}
-          </header>
+      <DocContent>
+        <div className="p-6 rounded-xl bg-base-100/30 backdrop-blur-sm border border-base-300/30 shadow-sm flex-1">
+          <article
+            id="markdown-content"
+            className="prose max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-strong:text-base-content prose-code:text-primary prose-pre:bg-base-200 prose-pre:border prose-pre:border-base-300"
+          >
+            <header>
+              <h1>{pageTitle}</h1>
+              {/* 你可以在这里添加其他 frontmatter 信息的渲染, e.g., date, author */}
+            </header>
 
-          <MDXRemote
-            source={mdxRawContent}
-            components={components}
-            onError={ErrorContent}
-            options={{
-              mdxOptions: {
-                remarkPlugins: remarkPlugins,
-                remarkRehypeOptions: {
-                  footnoteLabel: t("footnoteLabel", language),
-                  footnoteLabelProperties: {},
+            <MDXRemote
+              source={mdxRawContent}
+              components={components}
+              onError={ErrorContent}
+              options={{
+                mdxOptions: {
+                  remarkPlugins: remarkPlugins,
+                  remarkRehypeOptions: {
+                    footnoteLabel: t("footnoteLabel", language),
+                    footnoteLabelProperties: {},
+                  },
+                  format: "md",
                 },
-                format: "md",
-              },
-            }}
-          />
-        </article>
-      </div>
+              }}
+            />
+          </article>
+        </div>
+      </DocContent>
 
       {/* 子页面列表 */}
       {navItem.children && navItem.children.length > 0 && (
@@ -248,7 +255,6 @@ export default async function DocPage({
           </div>
         </section>
       )}
-
       {/* 上一页/下一页导航 */}
       {(previousPage || nextPage) && (
         <nav className="mt-8 flex justify-between items-center p-4 bg-base-100/30 rounded-lg border border-base-300/30 shadow-sm">
