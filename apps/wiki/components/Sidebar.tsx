@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 import type { DocItem } from "../app/[language]/docs/directory-service";
+import styles from "./css/sidebar.module.css";
 
 interface SidebarProps {
   items: DocItem[];
@@ -51,16 +52,28 @@ const NavItem = ({
   return (
     <li className={"my-0 py-0.5"}>
       {hasChildren ? (
-        <details open={isOpen}>
-          <summary>
+        <details
+          {...(isOpen ? { open: true } : {})}
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <summary className={`rounded-md py-0 ${isActive ? styles.menu_active : ""}`} onClick={(e) => {
+              setIsOpen(!isOpen);
+              e.preventDefault();
+          }}>
             {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-            <div className="flex items-center p-0" onClick={() => setIsOpen(true)}>
+            <div
+              className="flex items-center p-0"
+              onClick={(e) => {
+                setIsOpen(true);
+                e.preventDefault();
+              }}
+            >
               <Link
                 href={fullPath}
-                className={`
-            block py-1 rounded-md text-sm transition-colors
+                className={`block py-1 rounded-md text-sm transition-colors
             ${level === 0 ? "font-medium" : ""}
-            ${isActive ? "menu-active" : ""}
           `}
               >
                 {item.metadata.title}
@@ -145,7 +158,7 @@ export default function Sidebar({ items, language, basePath }: SidebarProps) {
       `}
       >
         <nav>
-          <ul className="space-y-2 menu">
+          <ul className="space-y-2 menu w-full">
             {items.map((item, idx) => (
               <NavItem
                 key={`${item.slug}-${idx}`}

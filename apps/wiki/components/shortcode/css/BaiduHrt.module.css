@@ -91,7 +91,7 @@
 .opQrMini {
   width: 14px;
   height: 14px;
-  background: url("/images/meme/baidu-hrt.png") no-repeat center;
+  background: url("/hugo-static/images/meme/baidu-hrt.png") no-repeat center;
   background-size: cover;
   margin-right: 4px;
   position: relative;
