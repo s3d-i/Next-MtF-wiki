@@ -9,6 +9,8 @@ export default function Matrix({ attrs }: ShortCodeCompProps) {
   return (
     <a className="inline-flex items-center no-underline not-prose" href={href} target="_blank" rel="noopener noreferrer">
       <img
+        loading="lazy"
+        decoding="async"
         alt={`Matrix #${name}:${fqdn}`}
         src={imgSrc}
         className="h-5"

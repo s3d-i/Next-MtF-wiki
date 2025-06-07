@@ -3,7 +3,7 @@ import styles from '../css/OnimaiZh.module.css';
 export default function OnimaiZh() {
   return (
     <div>
-      <img src="/hugo-static/images/meme/onimai.png" className={styles.doctorStory} alt="onimai meme" />
+      <img loading="lazy" decoding="async" src="/hugo-static/images/meme/onimai.png" className={styles.doctorStory} alt="onimai meme" />
       {" "}
       <b><i>再次申明：激素可不是魔法噢！</i></b>
       <br />

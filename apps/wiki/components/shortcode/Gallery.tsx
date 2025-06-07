@@ -34,6 +34,7 @@ export default function Gallery({ attrs, mdContext }: GalleryProps) {
           width={image.width}
           height={image.height}
           loading="lazy"
+          decoding="async"
         />
       ))}
     </section>

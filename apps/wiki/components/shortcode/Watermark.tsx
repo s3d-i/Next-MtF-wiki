@@ -10,7 +10,7 @@ export default function Watermark({ attrs, mdContext }: ShortCodeCompProps) {
 
   return (
     <div className={styles.watermark}>
-      <img src={imagePath} alt={alt} />
+      <img loading="lazy" decoding="async" src={imagePath} alt={alt} />
     </div>
   );
 } 

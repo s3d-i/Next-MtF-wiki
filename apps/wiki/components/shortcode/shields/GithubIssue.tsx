@@ -12,7 +12,7 @@ export default function GithubIssue({ attrs }: ShortCodeCompProps) {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <img alt={`${repo} issues`} src={imgSrc} className="h-5" />
+      <img loading="lazy" decoding="async" alt={`${repo} issues`} src={imgSrc} className="h-5" />
     </a>
   );
 }

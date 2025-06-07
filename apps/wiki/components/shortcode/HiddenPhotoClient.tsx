@@ -31,6 +31,8 @@ export default function HiddenPhotoClient({ src, alt }: { src: string, alt:strin
       <img
         src={src}
         alt={alt}
+        loading="lazy"
+        decoding="async"
         className={`w-full transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-30 blur-sm"}`}
       />
       {!isVisible && (
