@@ -287,9 +287,7 @@ export function SkeletonWrapper({
                     }}
                     transition={{ duration: 0.1 }}
                 >
-                    <div className="min-h-full">
-                        {skeleton || defaultSkeleton}
-                    </div>
+                    {skeleton || defaultSkeleton}
                 </m.div>
             </div>
         </LazyMotion>

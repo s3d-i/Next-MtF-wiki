@@ -23,8 +23,6 @@ import type { DetailedHTMLProps, ImgHTMLAttributes } from "react";
 import { t } from "@/lib/i18n";
 import {
   DocContent,
-  ChildPagesContent,
-  NavigationContent,
 } from "./doc-content";
 
 interface DocParams {
