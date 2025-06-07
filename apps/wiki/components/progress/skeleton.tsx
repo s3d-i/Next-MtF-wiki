@@ -265,9 +265,21 @@ export function SkeletonWrapper({
     return (
         <LazyMotion features={domAnimation}>
             <div className={`relative ${className}`}>
-                {/* 骨架屏层 - 绝对定位覆盖在内容上方 */}
+                {/* 内容层 - 始终渲染，作为布局基础 */}
                 <m.div
-                    className="absolute inset-0 z-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ 
+                        opacity: (skeletonState.loading && skeletonState.visible) ? 0 : 1,
+                        visibility: (skeletonState.loading && skeletonState.visible) ? "hidden" : "visible"
+                    }}
+                    transition={{ duration: 0.1 }}
+                >
+                    {children}
+                </m.div>
+                
+                {/* 骨架屏层 - 绝对定位，但确保能撑起最小高度 */}
+                <m.div
+                    className="absolute inset-0 overflow-hidden"
                     initial={{ opacity: 0 }}
                     animate={{ 
                         opacity: (skeletonState.loading && skeletonState.visible && !skeletonState.hiding) ? 1 : 0,
@@ -275,18 +287,9 @@ export function SkeletonWrapper({
                     }}
                     transition={{ duration: 0.1 }}
                 >
-                    {skeleton || defaultSkeleton}
-                </m.div>
-                
-                {/* 内容层 - 始终在 DOM 中 */}
-                <m.div
-                    initial={{ opacity: 0 }}
-                    animate={{ 
-                        opacity: (skeletonState.loading && skeletonState.visible) ? 0 : 1 
-                    }}
-                    transition={{ duration: 0.1 }}
-                >
-                    {children}
+                    <div className="min-h-full">
+                        {skeleton || defaultSkeleton}
+                    </div>
                 </m.div>
             </div>
         </LazyMotion>

@@ -202,9 +202,10 @@ export default async function DocPage({
     currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
 
   return (
-    <div className="min-h-[calc(100vh-12rem)] flex flex-col">
-      {/* 文档内容 */}
-      <DocContent>
+    <DocContent>
+      <div className="min-h-[calc(100vh-12rem)] flex flex-col">
+        {/* 文档内容 */}
+
         <div className="p-6 rounded-xl bg-base-100/30 backdrop-blur-sm border border-base-300/30 shadow-sm flex-1">
           <article
             id="markdown-content"
@@ -232,95 +233,95 @@ export default async function DocPage({
             />
           </article>
         </div>
-      </DocContent>
 
-      {/* 子页面列表 */}
-      {navItem.children && navItem.children.length > 0 && (
-        <section className="mt-8 p-6 bg-base-100/30 rounded-lg border border-base-300/30 shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-base-content">
-            {t("childPages", language)}
-          </h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {navItem.children.map((child) => (
-              <Link
-                key={child.displayPath}
-                href={`/${language}/docs/${child.displayPath}`}
-                className="block p-4 bg-base-200 hover:bg-base-300 rounded-lg transition-colors border border-base-300 hover:border-primary/30"
-              >
-                <h3 className="font-medium text-base-content">
-                  {child.metadata.title}
-                </h3>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-      {/* 上一页/下一页导航 */}
-      {(previousPage || nextPage) && (
-        <nav className="mt-8 flex justify-between items-center p-4 bg-base-100/30 rounded-lg border border-base-300/30 shadow-sm">
-          <div className="flex-1">
-            {previousPage && (
-              <Link
-                href={`/${language}/docs/${previousPage.displayPath}`}
-                className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
-              >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
+        {/* 子页面列表 */}
+        {navItem.children && navItem.children.length > 0 && (
+          <section className="mt-8 p-6 bg-base-100/30 rounded-lg border border-base-300/30 shadow-sm">
+            <h2 className="text-xl font-semibold mb-4 text-base-content">
+              {t("childPages", language)}
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {navItem.children.map((child) => (
+                <Link
+                  key={child.displayPath}
+                  href={`/${language}/docs/${child.displayPath}`}
+                  className="block p-4 bg-base-200 hover:bg-base-300 rounded-lg transition-colors border border-base-300 hover:border-primary/30"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                <div>
-                  <div className="text-xs text-base-content/50">
-                    {t("previousPage", language)}
+                  <h3 className="font-medium text-base-content">
+                    {child.metadata.title}
+                  </h3>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+        {/* 上一页/下一页导航 */}
+        {(previousPage || nextPage) && (
+          <nav className="mt-8 flex justify-between items-center p-4 bg-base-100/30 rounded-lg border border-base-300/30 shadow-sm">
+            <div className="flex-1">
+              {previousPage && (
+                <Link
+                  href={`/${language}/docs/${previousPage.displayPath}`}
+                  className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
+                >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                  <div>
+                    <div className="text-xs text-base-content/50">
+                      {t("previousPage", language)}
+                    </div>
+                    <div className="font-medium">
+                      {previousPage.metadata.title}
+                    </div>
                   </div>
-                  <div className="font-medium">
-                    {previousPage.metadata.title}
-                  </div>
-                </div>
-              </Link>
-            )}
-          </div>
+                </Link>
+              )}
+            </div>
 
-          <div className="flex-1 text-right">
-            {nextPage && (
-              <Link
-                href={`/${language}/docs/${nextPage.displayPath}`}
-                className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
-              >
-                <div>
-                  <div className="text-xs text-base-content/50">
-                    {t("nextPage", language)}
-                  </div>
-                  <div className="font-medium">{nextPage.metadata.title}</div>
-                </div>
-                <svg
-                  className="w-4 h-4 ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
+            <div className="flex-1 text-right">
+              {nextPage && (
+                <Link
+                  href={`/${language}/docs/${nextPage.displayPath}`}
+                  className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </Link>
-            )}
-          </div>
-        </nav>
-      )}
-    </div>
+                  <div>
+                    <div className="text-xs text-base-content/50">
+                      {t("nextPage", language)}
+                    </div>
+                    <div className="font-medium">{nextPage.metadata.title}</div>
+                  </div>
+                  <svg
+                    className="w-4 h-4 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+              )}
+            </div>
+          </nav>
+        )}
+      </div>
+    </DocContent>
   );
 }
