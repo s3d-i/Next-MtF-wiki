@@ -8,12 +8,14 @@ import remarkMath from "remark-math";
 import { ShortCodeComp } from "@/components/shortcode";
 import { remarkHugoShortcode } from "./remarkHugoShortcode";
 import type { Frontmatter } from "./types";
-import { getContentDir, getIndexPageSlugs } from "./utils";
+import { getContentDir, getNavigationPath } from "./utils";
 import remarkHeadingId from "remark-heading-id";
 import remarkCsvToTable from "./remarkCsvToTable";
 import {
-  getDocFullPath,
-  getDocsNavigation,
+  getDocItemByNavigationInfo,
+  getDocItemByNavigationMap,
+  getDocsNavigationMap,
+  getDocsNavigationRoot as getDocsNavigationRoot,
 } from "../directory-service";
 import Link from "next/link";
 import type { DetailedHTMLProps, ImgHTMLAttributes } from "react";
@@ -53,28 +55,26 @@ export default async function DocPage({
   const slugArray = slug || [];
   const slugPath = slugArray.join("/");
 
-  const contentRootDir = getContentDir();
+  const {root: navigationItemRoot, map: navigationItemMap} = await getDocsNavigationMap(language);
 
-  const fullPath = await getDocFullPath(language, slugPath, contentRootDir);
+  const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
 
-  if (!fullPath) {
+  if (!navItem) {
     return notFound();
   }
 
-  const isIndexPage = getIndexPageSlugs().some(slug=>fullPath.endsWith(slug));
+  const isIndexPage = navItem.isIndex;
 
-  const fileContents = await fs.readFile(fullPath, "utf-8");
+  const fileContents = await fs.readFile(navItem.realPath, "utf-8");
 
   const { frontmatter, strippedSource } =
     getFrontmatter<Frontmatter>(fileContents);
   const pageTitle =
     frontmatter?.title || slugArray[slugArray.length - 1] || "文档";
 
-  const navigationItems = await getDocsNavigation(language);
-
   const hugoRemarkOptions = {
     currentLanguage: language,
-    navigationItems: navigationItems,
+    navigationItems: navigationItemRoot.children ?? [],
     currentSlug: slugPath,
     isCurrentSlugIndex: isIndexPage,
   };
@@ -130,11 +130,14 @@ export default async function DocPage({
   };
 
   const ErrorContent = ({ error }: { error: Error }) => {
-    console.log("⚠️ Compile Error: ", { fullPath, error });
+    console.log("⚠️ Compile Error: ", {
+      displayPath: navItem.displayPath,
+      error,
+    });
     return (
       <article>
         <h1>处理内容时发生错误</h1>
-        <p>无法加载或解析文件：{fullPath}</p>
+        <p>无法加载或解析文件：{navItem.displayPath}</p>
         <pre>{String(error)}</pre>
         <MDXRemote
           source={`\`\`\`\`mdx\n${mdxRawContent}\n\`\`\`\``}
@@ -150,27 +153,29 @@ export default async function DocPage({
   };
 
   return (
-    <article className="prose dark:prose-invert max-w-none">
-      <header>
-        <h1>{pageTitle}</h1>
-        {/* 你可以在这里添加其他 frontmatter 信息的渲染, e.g., date, author */}
-      </header>
+    <>
+      <article className="prose prose-lg max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-strong:text-base-content prose-code:text-primary prose-pre:bg-base-200 prose-pre:border prose-pre:border-base-300">
+        <header>
+          <h1>{pageTitle}</h1>
+          {/* 你可以在这里添加其他 frontmatter 信息的渲染, e.g., date, author */}
+        </header>
 
-      <MDXRemote
-        source={mdxRawContent}
-        components={components}
-        onError={ErrorContent}
-        options={{
-          mdxOptions: {
-            remarkPlugins: remarkPlugins,
-            remarkRehypeOptions: {
-              footnoteLabel: t("footnoteLabel", language),
-              footnoteLabelProperties: {},
+        <MDXRemote
+          source={mdxRawContent}
+          components={components}
+          onError={ErrorContent}
+          options={{
+            mdxOptions: {
+              remarkPlugins: remarkPlugins,
+              remarkRehypeOptions: {
+                footnoteLabel: t("footnoteLabel", language),
+                footnoteLabelProperties: {},
+              },
+              format: "md",
             },
-            format: "md",
-          },
-        }}
-      />
-    </article>
+          }}
+        />
+      </article>
+    </>
   );
 }

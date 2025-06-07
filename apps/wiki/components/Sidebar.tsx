@@ -31,7 +31,7 @@ const NavItem = ({
   const hasChildren = item.children && item.children.length > 0;
 
   function getIsShouldOpen(isActive: boolean, hasChildren: boolean | undefined, item: DocItem, currentPath?: string, language?: string, basePath?: string) {
-    return isActive || (hasChildren && item.children?.some((child) => currentPath?.startsWith(`/${language}/${basePath}/${child.fullPath}`)));
+    return isActive || (hasChildren && item.children?.some((child) => currentPath?.startsWith(`/${language}/${basePath}/${child.displayPath}`)));
   }
 
   const isShouldOpen = getIsShouldOpen(false, hasChildren, item, currentPath, language, basePath);
@@ -39,7 +39,7 @@ const NavItem = ({
   const [isOpen, setIsOpen] = useState(isShouldOpen);
 
   // 构建完整的链接路径，使用 fullPath
-  const fullPath = `/${language}/${basePath}/${item.fullPath}`;
+  const fullPath = `/${language}/${basePath}/${item.displayPath}`;
 
   // 检查当前路径是否匹配
   const isActive = currentPath === fullPath;

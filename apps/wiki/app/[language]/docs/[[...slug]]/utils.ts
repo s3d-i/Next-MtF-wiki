@@ -44,3 +44,7 @@ export function getNonSelfClosingElements() {
     "meme/onimai-ja",
   ];
 }
+
+export function getNavigationPath(slug: string, language: string, basePath: string = "docs"): string {
+  return `/${language}/${basePath}/${slug}`;
+}

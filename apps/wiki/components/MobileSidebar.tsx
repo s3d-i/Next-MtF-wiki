@@ -31,7 +31,7 @@ const MobileNavItem = ({
   const hasChildren = item.children && item.children.length > 0;
 
   // 构建完整的链接路径
-  const fullPath = `/${language}/${basePath}/${item.fullPath}`;
+  const fullPath = `/${language}/${basePath}/${item.displayPath}`;
 
   // 检查当前路径是否匹配
   const isActive = currentPath === fullPath;
@@ -42,7 +42,7 @@ const MobileNavItem = ({
       isActive ||
       (hasChildren &&
         item.children?.some((child) =>
-          currentPath.startsWith(`/${language}/${basePath}/${child.fullPath}`)
+          currentPath.startsWith(`/${language}/${basePath}/${child.displayPath}`)
         ))
     ) {
       setIsOpen(true);

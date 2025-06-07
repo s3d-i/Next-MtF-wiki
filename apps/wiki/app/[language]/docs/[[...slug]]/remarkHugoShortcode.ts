@@ -22,7 +22,7 @@ import type {
   HugoShortcodeElement,
 } from "mdast-util-md-hugo-marker";
 import { getNonSelfClosingElements } from "./utils";
-import { type DocItem, getNavigationForSlug } from "../directory-service";
+import { type DocItem, getNavigationForOriginalSlug } from "../directory-service";
 import { compact } from "mdast-util-compact";
 import { getLocalImagePath } from "../path-utils";
 
@@ -123,11 +123,11 @@ function convertHugoShortcodeToMdxJsx(
     node.arguments[0].value
   ) {
     const slug =
-      getNavigationForSlug(
+      getNavigationForOriginalSlug(
         currentLanguage,
         node.arguments[0].value,
         navigationItems
-      )?.fullPath || "";
+      )?.displayPath || "";
     // console.log("node.arguments[0].value: ", node.arguments[0].value, currentLanguage, slug);
     return {
       type: "text",
@@ -615,7 +615,7 @@ export function getRemarkHugoShortcodeOptions(options: RemarkHugoShortcodeOption
           //console.log("href: ", href);
           return {
             type: "hugoShortcode-Link-Href",
-            value: (`/${options.currentLanguage}/docs/${getNavigationForSlug(options.currentLanguage!, href, options.navigationItems!)?.fullPath}`) || "",
+            value: (`/${options.currentLanguage}/docs/${getNavigationForOriginalSlug(options.currentLanguage!, href, options.navigationItems!)?.displayPath}`) || "",
           } as unknown as Nodes;
         }
       }

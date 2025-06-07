@@ -12,19 +12,11 @@ import { Frontmatter } from "./[[...slug]]/types";
 // 文档项接口
 export interface DocItem {
   slug: string;
-  fullPath: string;
-  realPath: string; // 相对于contentDir的真实路径
+  originalSlug: string;
+  displayPath: string;
+  realPath: string; // 真实文件系统路径
   children?: DocItem[];
   isIndex?: boolean;
-  metadata: DocMetadata;
-}
-
-// 目录映射接口
-export interface DirectoryMapping {
-  displayPath: string; // 展示路径
-  realPath: string; // 真实文件系统路径
-  isDirectory: boolean;
-  hasIndex: boolean;
   metadata: DocMetadata;
 }
 
@@ -88,16 +80,19 @@ interface DocMetadata {
   title: string;
   draft?: boolean;
   order?: number | null;
+  preferredSlug?: string | null;
 }
 
 async function getDocMetadata(
   filePath: string,
   frontmatter: Frontmatter | null
 ): Promise<DocMetadata> {
+  const preferredSlug = frontmatter?.slug;
   return {
     title: await getDocTitleFromFrontmatter(filePath, frontmatter),
     draft: Boolean(frontmatter?.draft),
     order: Number(frontmatter?.weight) || null,
+    preferredSlug: preferredSlug?.toString() || null,
   };
 }
 
@@ -109,212 +104,135 @@ async function getDocTitle(filePath: string): Promise<string> {
   );
 }
 
-// 递归获取目录下的所有文件路径
-async function getFilesRecursive(dir: string): Promise<string[]> {
-  try {
-    const dirents = await fs.readdir(dir, { withFileTypes: true });
-    const files = await Promise.all(
-      dirents.map((dirent) => {
-        const res = path.resolve(dir, dirent.name);
-        return dirent.isDirectory() ? getFilesRecursive(res) : [res];
-      })
-    );
-    const result = Array.prototype.concat(...files);
+// 递归获取目录结构
+async function getDirectoryStructure(
+  dirPath: string,
+  basePath = "",
+  parentPath = "",
+  contentDirPath = "",
+): Promise<DocItem> {
+  const contentDir = contentDirPath || getContentDir();
+  const children: DocItem[] = [];
 
-    return result;
-  } catch (error) {
-    // 如果目录不存在，返回空数组
-    if (
-      error instanceof Error &&
-      (error as NodeJS.ErrnoException).code === "ENOENT"
-    ) {
-      const emptyResult: string[] = [];
+  {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
 
-      return emptyResult;
-    }
-    throw error;
-  }
-}
+    // 处理文件和目录
+    for (const entry of entries) {
+      const entryPath = path.join(dirPath, entry.name);
+      const relativePath = path.join(basePath, entry.name);
+      const currentFullPath = parentPath
+        ? `${parentPath}/${entry.name}`
+        : entry.name;
 
-// 递归获取目录结构，同时构建展示路径和真实路径的映射
-const getDirectoryStructure = cache(
-  async (
-    dirPath: string,
-    basePath = "",
-    parentPath = "",
-    contentDirPath = ""
-  ): Promise<{ items: DocItem[]; mappings: DirectoryMapping[] }> => {
-    const items: DocItem[] = [];
-    const mappings: DirectoryMapping[] = [];
-
-    try {
-      const entries = await fs.readdir(dirPath, { withFileTypes: true });
-
-      // 处理文件和目录
-      for (const entry of entries) {
-        const entryPath = path.join(dirPath, entry.name);
-        const relativePath = path.join(basePath, entry.name);
-        const currentFullPath = parentPath
-          ? `${parentPath}/${entry.name}`
-          : entry.name;
-        const realPath = path.relative(
-          contentDirPath || getContentDir(),
-          entryPath
+      if (entry.isDirectory()) {
+        // 递归处理子目录
+        const subDirItem = await getDirectoryStructure(
+          entryPath,
+          relativePath,
+          currentFullPath,
+          contentDir,
         );
 
-        if (entry.isDirectory()) {
-          // 递归处理子目录
-          const { items: children, mappings: childMappings } =
-            await getDirectoryStructure(
-              entryPath,
-              relativePath,
-              currentFullPath,
-              contentDirPath || getContentDir()
-            );
-
-          mappings.push(...childMappings);
-
-          {
-            let dirHasIndex = false;
-            let dirIndexPath = "";
-
-            // 检查当前目录是否有 _index.md 文件
-            for (const indexPageSlug of getIndexPageSlugs()) {
-              dirIndexPath = path.join(entryPath, indexPageSlug);
-              try {
-                await fs.access(dirIndexPath);
-                dirHasIndex = true;
-                break;
-              } catch (error) {
-                dirHasIndex = false;
-              }
-            }
-
-            // 添加目录映射
-            mappings.push({
-              displayPath: currentFullPath,
-              realPath: path.relative(
-                contentDirPath || getContentDir(),
-                entryPath
-              ),
-              metadata: await getDocMetadata(
-                dirIndexPath,
-                await getDocFrontmatter(dirIndexPath)
-              ),
-              isDirectory: true,
-              hasIndex: dirHasIndex,
+        if (subDirItem.isIndex) {
+          // 如果有 _index.md 文件，创建目录项，包含子项
+          subDirItem.slug = subDirItem.metadata.preferredSlug || entry.name;
+          subDirItem.originalSlug = entry.name;
+          children.push(subDirItem);
+        } else {
+          // 只有文件，没有子目录，跳过当前目录，将文件提升到上一级
+          for (const child of subDirItem.children ?? []) {
+            children.push({
+              ...child,
+              // fullPath 保持不变，因为实际文件路径包含这个目录
             });
-
-            if (dirHasIndex) {
-              // 如果有 _index.md 文件，创建目录项，包含子项
-              const metadata = await getDocMetadata(
-                dirIndexPath,
-                await getDocFrontmatter(dirIndexPath)
-              );
-              items.push({
-                metadata,
-                slug: entry.name,
-                fullPath: currentFullPath,
-                realPath: path.relative(
-                  contentDirPath || getContentDir(),
-                  dirIndexPath
-                ),
-                children,
-                isIndex: true,
-              });
-            } else {
-              // 如果没有 _index.md 文件，检查是否应该跳过这个目录
-              const hasSubDirectories = children.some(
-                (child) => child.children && child.children.length > 0
-              );
-
-              if (
-                !hasSubDirectories &&
-                children.every((child) => !child.children)
-              ) {
-                // 只有文件，没有子目录，跳过当前目录，将文件提升到上一级
-                for (const child of children) {
-                  items.push({
-                    ...child,
-                    // fullPath 保持不变，因为实际文件路径包含这个目录
-                  });
-                }
-              } else {
-                // 有子目录或其他复杂结构，保留目录层级
-                const dirTitle = entry.name;
-                items.push({
-                  metadata: { title: dirTitle },
-                  slug: entry.name,
-                  fullPath: currentFullPath,
-                  realPath: path.relative(
-                    contentDirPath || getContentDir(),
-                    entryPath
-                  ),
-                  children,
-                });
-              }
-            }
           }
-        } else if (
-          entry.name.endsWith(".md") &&
-          !getIndexPageSlugs().includes(entry.name)
-        ) {
-          // 处理 Markdown 文件
-          const metadata = await getDocMetadata(
-            entryPath,
-            await getDocFrontmatter(entryPath)
-          );
-          const slug = entry.name.replace(/\.md$/, "");
-          const fileFullPath = parentPath ? `${parentPath}/${slug}` : slug;
-          const fileRealPath = path.relative(
-            contentDirPath || getContentDir(),
-            entryPath
-          );
-
-          // 添加文件映射
-          mappings.push({
-            displayPath: fileFullPath,
-            realPath: fileRealPath,
-            metadata,
-            isDirectory: false,
-            hasIndex: false,
-          });
-
-          items.push({
-            metadata,
-            slug,
-            fullPath: fileFullPath,
-            realPath: fileRealPath,
-          });
         }
+      } else if (
+        entry.name.endsWith(".md") &&
+        !getIndexPageSlugs().includes(entry.name)
+      ) {
+        // 处理 Markdown 文件
+        const metadata = await getDocMetadata(
+          entryPath,
+          await getDocFrontmatter(entryPath)
+        );
+        const slug = entry.name.replace(/\.md$/, "");
+
+        const preferredSlug = metadata.preferredSlug || slug;
+
+        const fileFullPath = parentPath
+          ? `${parentPath}/${preferredSlug}`
+          : preferredSlug;
+        const fileRealPath = entryPath;
+
+        const toPush = {
+          metadata,
+          slug: preferredSlug,
+          originalSlug: slug,
+          displayPath: fileFullPath,
+          realPath: fileRealPath,
+        };
+
+        children.push(toPush);
+
       }
-
-      // 按标题排序
-      const sortedItems = items
-        .filter((item) => {
-          // console.log("item.metadata.draft: ", item.metadata.draft, item.metadata.title);
-          return !item.metadata.draft;
-        })
-        .sort((a, b) => {
-          const orderA = a.metadata?.order || Number.MAX_SAFE_INTEGER;
-          const orderB = b.metadata?.order || Number.MAX_SAFE_INTEGER;
-          if (orderA !== orderB) {
-            return orderA - orderB;
-          }
-          return a.metadata.title.localeCompare(b.metadata.title);
-        });
-
-      const result = { items: sortedItems, mappings };
-
-      return result;
-    } catch (error) {
-      console.error(`Error reading directory ${dirPath}:`, error);
-      const emptyResult = { items: [], mappings: [] };
-
-      return emptyResult;
     }
   }
-);
+
+  // 确定当前目录的元数据
+  let dirHasIndex = false;
+  let dirIndexPath = "";
+  for (const indexPageSlug of getIndexPageSlugs()) {
+    const p = path.join(dirPath, indexPageSlug);
+    try {
+      await fs.access(p);
+      dirIndexPath = p;
+      dirHasIndex = true;
+      break;
+    } catch (error) {
+      // 未找到，继续
+    }
+  }
+
+  let dirMetadata: DocMetadata;
+  if (dirHasIndex) {
+    dirMetadata = await getDocMetadata(
+      dirIndexPath,
+      await getDocFrontmatter(dirIndexPath)
+    );
+  } else {
+    dirMetadata = { title: path.basename(parentPath || dirPath) };
+  }
+
+  // 按顺序和标题排序
+  const sortedChildren = children
+    .filter((item) => {
+      return !item.metadata.draft;
+    })
+    .sort((a, b) => {
+      const orderA = a.metadata?.order || Number.MAX_SAFE_INTEGER;
+      const orderB = b.metadata?.order || Number.MAX_SAFE_INTEGER;
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      return a.metadata.title.localeCompare(b.metadata.title);
+    });
+
+  const realP = dirHasIndex ? dirIndexPath : dirPath;
+
+  const result: DocItem = {
+    metadata: dirMetadata,
+    slug: "",
+    originalSlug: "",
+    displayPath: parentPath,
+    realPath: realP,
+    children: sortedChildren,
+    isIndex: dirHasIndex,
+  };
+
+  return result;
+}
 
 // 获取所有可用的语言信息
 export const getLanguagesInfo = cache(async (): Promise<LanguageInfo[]> => {
@@ -341,10 +259,26 @@ export const getLanguagesInfo = cache(async (): Promise<LanguageInfo[]> => {
         // 获取该语言下的所有文档路径
         let docsPaths: string[] = [];
         if (hasDocsDir) {
-          const allFiles = await getFilesRecursive(docsDir);
-          docsPaths = allFiles
-            .filter((filePath) => filePath.endsWith(".md"))
-            .map((filePath) => path.relative(docsDir, filePath));
+          const allFiles = await getDocsNavigationRoot(entry.name);
+
+          docsPaths =
+            allFiles.children?.reduce((acc: string[], child) => {
+              const collectPaths = (item: DocItem): string[] => {
+                const paths = [];
+                if (item.slug) {
+                  paths.push(item.displayPath);
+                }
+                if (item.children) {
+                  item.children.forEach((c) => paths.push(...collectPaths(c)));
+                }
+                return paths;
+              };
+              return [...acc, ...collectPaths(child)];
+            }, []) || [];
+
+          // for (const docPath of docsPaths) {
+          //   console.log("docPath: ", docPath);
+          // }
         }
 
         languagesInfo.push({
@@ -377,19 +311,56 @@ export async function getAvailableLanguages(): Promise<string[]> {
   return languagesInfo.map((info) => info.code);
 }
 
-// 获取特定语言的文档导航
-export async function getDocsNavigation(language: string): Promise<DocItem[]> {
+const getDocsNavigationRootInner = cache(
+  async (language: string): Promise<DocItem> => {
   const contentDir = path.join(getContentDir(), language, "docs");
 
-  try {
-    const { items } = await getDirectoryStructure(
-      contentDir,
-      "",
-      "",
-      getContentDir()
-    );
+  const rootItem = await getDirectoryStructure(
+    contentDir,
+    "",
+    "",
+    getContentDir(),
+  );
 
-    return items;
+  return rootItem;
+});
+
+export async function getDocsNavigationRoot(
+  language: string
+): Promise<DocItem> {
+  return await getDocsNavigationRootInner(language);
+}
+
+const getDocsNavigationRootWithMapInner = cache(
+  async (language: string): Promise<{root: DocItem, map: Map<string, DocItem>}> => {
+    const rootItem = await getDocsNavigationRootInner(language);
+    const map = new Map<string, DocItem>();
+    map.set(rootItem.displayPath, rootItem);
+    function collectPaths(item: DocItem): void {
+      if (item.slug) {
+        map.set(item.displayPath, item);
+      }
+      if (item.children) {
+        item.children.forEach((c) => collectPaths(c));
+      }
+    }
+    collectPaths(rootItem);
+    return {root: rootItem, map: map};
+  }
+);
+
+export async function getDocsNavigationMap(
+  language: string
+): Promise<{root: DocItem, map: Map<string, DocItem>}> {
+  const {root, map} = await getDocsNavigationRootWithMapInner(language);
+  return {root, map};
+}
+
+// 获取特定语言的文档导航
+export async function getDocsNavigation(language: string): Promise<DocItem[]> {
+  try {
+    const rootItem = await getDocsNavigationRoot(language);
+    return rootItem.children ?? [];
   } catch (error) {
     console.error(`Error getting docs navigation for ${language}:`, error);
     const emptyResult: DocItem[] = [];
@@ -397,30 +368,7 @@ export async function getDocsNavigation(language: string): Promise<DocItem[]> {
   }
 }
 
-// 获取特定语言的目录映射
-export const getDirectoryMappings = cache(
-  async (language: string): Promise<DirectoryMapping[]> => {
-    const contentDir = path.join(getContentDir(), language, "docs");
-
-    try {
-      const { mappings } = await getDirectoryStructure(
-        contentDir,
-        "",
-        "",
-        getContentDir()
-      );
-
-      return mappings;
-    } catch (error) {
-      console.error(`Error getting directory mappings for ${language}:`, error);
-      const emptyResult: DirectoryMapping[] = [];
-
-      return emptyResult;
-    }
-  }
-);
-
-export async function getDocFullPath(
+export async function getDocFullPathByTrying(
   language: string,
   slugPath: string,
   contentRootDir: string
@@ -473,6 +421,40 @@ export async function getDocFullPath(
   return null;
 }
 
+export function getDocItemByNavigationMap(
+  navigationItemMap: Map<string, DocItem>,
+  displayPath: string
+): DocItem | null {
+  return navigationItemMap.get(displayPath) || null;
+}
+
+export function getDocItemByNavigationInfo(
+  slugs: string[],
+  navigationItemRoot: DocItem,
+): DocItem | null {
+  if (slugs.length === 0) {
+    return navigationItemRoot;
+  }
+
+  let currentItems = navigationItemRoot.children;
+  for (let i = 0; i < slugs.length; i++) {
+    const foundItem = currentItems?.find((item) => item.slug === slugs[i]);
+
+    if (foundItem) {
+      if (i === slugs.length - 1) {
+        return foundItem;
+      } else if (foundItem.children) {
+        currentItems = foundItem.children;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+  return null;
+}
+
 // 检查特定路径在各语言中是否存在
 export async function getAvailablePaths(
   languages: string[],
@@ -506,14 +488,14 @@ export async function getAvailablePaths(
   return result;
 }
 
-export function getNavigationForSlug(
+export function getNavigationForOriginalSlug(
   languageCode: string,
   slug: string,
   navigationItems: DocItem[]
 ): DocItem | null {
   function findItem(items: DocItem[], slug: string): DocItem | null {
     for (const item of items) {
-      if (item.slug === slug) {
+      if (item.originalSlug === slug) {
         return item;
       }
       if (item.children) {
@@ -548,29 +530,10 @@ export async function generateAllStaticParams(): Promise<
 
       // 添加所有文档页面路径
       for (const docPath of langInfo.docsPaths) {
-        const slugParts = docPath
-          .replace(/\.md$/, "") // 移除 .md 后缀
-          .split(path.sep); // 按路径分隔符拆分
-
-        // 如果是 _index.md 文件，跳过，因为它已经通过空 slug 处理了
-        if (slugParts.length === 1 && slugParts[0] === "_index") {
-          // console.log("slugParts: ", slugParts);
-          // console.log("langInfo.code: ", langInfo.code);
-          continue;
-        }
-
-        // 如果是目录中的 _index.md 文件，使用目录路径作为 slug
-        if (
-          getIndexPageSlugsWithOutExtensionName().includes(
-            slugParts[slugParts.length - 1]
-          )
-        ) {
-          // console.log("slugParts2: ", slugParts);
-
-          slugParts.pop(); // 移除 _index 部分
-        }
-
-        allParams.push({ language: langInfo.code, slug: slugParts });
+        const slugParts = docPath.split("/"); // 按路径分隔符拆分
+        const toPush = { language: langInfo.code, slug: slugParts };
+        allParams.push(toPush);
+        //console.log("toPush: ", JSON.stringify(toPush));
       }
     }
   }

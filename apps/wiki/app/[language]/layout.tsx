@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
-import { getAvailableLanguages, getAvailablePaths } from "./docs/navigation";
+import { getAvailableLanguages, getAvailablePaths } from "./docs/directory-service";
 import { t, getLanguageName } from "@/lib/i18n";
 
 export default async function LanguageLayout({
