@@ -22,9 +22,9 @@ import type {
   HugoShortcodeElement,
 } from "mdast-util-md-hugo-marker";
 import { getNonSelfClosingElements } from "./utils";
-import { type DocItem, getLocalImagePath, getNavigationForSlug } from "../directory-service";
+import { type DocItem, getNavigationForSlug } from "../directory-service";
 import { compact } from "mdast-util-compact";
-import path from "node:path";
+import { getLocalImagePath } from "../path-utils";
 
 // 定义MDX JSX节点类型
 interface MdxJsxFlowElement extends Node {

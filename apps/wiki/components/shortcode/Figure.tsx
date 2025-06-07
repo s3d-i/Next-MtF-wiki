@@ -1,5 +1,6 @@
 import type { ShortCodeCompProps } from "./types";
-import styles from './css/Figure.module.css';
+import styles from "./css/Figure.module.css";
+import { getLocalImagePathFromMdContext } from "./utils";
 
 interface FigureProps {
   src?: string;
@@ -17,26 +18,26 @@ interface FigureProps {
   attrlink?: string;
 }
 
-export default function Figure({ attrs }: ShortCodeCompProps) {
+export default function Figure({ attrs, mdContext }: ShortCodeCompProps) {
   // 解析命名参数
   const parseAttrs = (attrs: unknown[]): FigureProps => {
     const props: FigureProps = {};
-    
+
     if (!attrs) return props;
-    
+
     // 如果是位置参数，第一个参数通常是src
     if (typeof attrs[0] === "string" && !attrs[0].includes("=")) {
       props.src = attrs[0];
       return props;
     }
-    
+
     // 解析命名参数
     for (const attr of attrs) {
       if (typeof attr === "string" && attr.includes("=")) {
         const [key, value] = attr.split("=", 2);
         const cleanKey = key.trim();
         const cleanValue = value.replace(/['"]/g, "").trim();
-        
+
         switch (cleanKey) {
           case "src":
             props.src = cleanValue;
@@ -80,7 +81,7 @@ export default function Figure({ attrs }: ShortCodeCompProps) {
         }
       }
     }
-    
+
     return props;
   };
 
@@ -88,7 +89,9 @@ export default function Figure({ attrs }: ShortCodeCompProps) {
 
   const imageElement = (
     <img
-      src={figureProps.src}
+      src={
+        getLocalImagePathFromMdContext(figureProps.src, mdContext)
+      }
       alt={figureProps.alt || figureProps.caption}
       width={figureProps.width}
       height={figureProps.height}
@@ -97,10 +100,10 @@ export default function Figure({ attrs }: ShortCodeCompProps) {
   );
 
   return (
-    <figure className={`${styles.figure} ${figureProps.class || ''}`}>
+    <figure className={`${styles.figure} ${figureProps.class || ""}`}>
       {figureProps.link ? (
-        <a 
-          href={figureProps.link} 
+        <a
+          href={figureProps.link}
           target={figureProps.target}
           rel={figureProps.rel}
         >
@@ -119,7 +122,11 @@ export default function Figure({ attrs }: ShortCodeCompProps) {
                 <>
                   {figureProps.caption && " "}
                   {figureProps.attrlink ? (
-                    <a href={figureProps.attrlink} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={figureProps.attrlink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {figureProps.attr}
                     </a>
                   ) : (
@@ -133,4 +140,4 @@ export default function Figure({ attrs }: ShortCodeCompProps) {
       )}
     </figure>
   );
-} 
+}

@@ -2,12 +2,13 @@
 
 import type { ShortCodeCompProps } from "./types";
 import { useState } from "react";
+import { getLocalImagePathFromMdContext } from "./utils";
 
 /**
  * HiddenPhoto组件用于显示可点击显示的隐藏图片
  * 使用示例: {{< hiddenphoto "/path/to/image.jpg" "图片描述" >}}
  */
-export default function HiddenPhoto({ attrs }: ShortCodeCompProps) {
+export default function HiddenPhoto({ attrs, mdContext }: ShortCodeCompProps) {
   const [isVisible, setIsVisible] = useState(false);
   const src = attrs[0] || "";
   const alt = attrs[1] || "Hidden image";
@@ -32,7 +33,7 @@ export default function HiddenPhoto({ attrs }: ShortCodeCompProps) {
       aria-label={isVisible ? "隐藏图片" : "显示图片"}
     >
       <img
-        src={src}
+        src={getLocalImagePathFromMdContext(src, mdContext)}
         alt={alt}
         className={`w-full transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-30 blur-sm"}`}
       />

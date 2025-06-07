@@ -1,14 +1,13 @@
-import { getFrontmatter } from "next-mdx-remote-client/utils";
-import fs from "node:fs/promises";
 import path from "node:path";
-import type { Frontmatter } from "./[[...slug]]/types";
+import fs from "node:fs/promises";
+import { getFrontmatter } from "next-mdx-remote-client/utils";
 import {
   getContentDir,
   getIndexPageSlugs,
   getIndexPageSlugsWithOutExtensionName,
 } from "./[[...slug]]/utils";
 import { cache } from "react";
-import { Milestone } from "lucide-react";
+import { Frontmatter } from "./[[...slug]]/types";
 
 // 文档项接口
 export interface DocItem {
@@ -37,7 +36,7 @@ export interface LanguageInfo {
 }
 
 export function getLocalImagePath(
-  language: string,
+  language: string | null,
   slug: string | undefined | null,
   imagePath: string,
   isCurrentSlugIndex: boolean
@@ -55,7 +54,7 @@ export function getLocalImagePath(
   if (imagePath?.startsWith("/")) {
     return `/hugo-files${imagePath}`;
   }
-  if (slug) {
+  if (slug && language) {
     const pathname = isCurrentSlugIndex ? slug : path.dirname(slug);
     return `/hugo-files/${language}/docs/${pathname}/${imagePath}`;
   }

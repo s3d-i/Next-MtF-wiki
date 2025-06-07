@@ -24,6 +24,7 @@ const compsMap: ShortCodeCompRecord = {
   "current-year": dynamic(() => import("./CurrentYear")),
   figure: dynamic(() => import("./Figure")),
   expand: dynamic(() => import("./Expand")),
+  lang: dynamic(() => import("./Lang")),
   shields: {
     qq: dynamic(() => import("./shields/QQ")),
     telegram: dynamic(() => import("./shields/Telegram")),

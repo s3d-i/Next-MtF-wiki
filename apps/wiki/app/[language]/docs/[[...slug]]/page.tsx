@@ -14,7 +14,6 @@ import remarkCsvToTable from "./remarkCsvToTable";
 import {
   getDocFullPath,
   getDocsNavigation,
-  getLocalImagePath,
 } from "../directory-service";
 import Link from "next/link";
 import type { DetailedHTMLProps, ImgHTMLAttributes } from "react";

@@ -1,3 +1,4 @@
+import path from "node:path";
 import { 
   getDirectoryMappings, 
   getDocsNavigation, 
@@ -6,6 +7,33 @@ import {
   type DocItem,
   type LanguageInfo 
 } from "./directory-service";
+
+
+export function getLocalImagePath(
+  language: string | null,
+  slug: string | undefined | null,
+  imagePath: string,
+  isCurrentSlugIndex: boolean
+): string | null {
+  if (imagePath.startsWith("/images/")) {
+    return imagePath.replace(/^\/images\//, "/hugo-static/images/");
+  }
+  if (
+    imagePath?.startsWith("http://") ||
+    imagePath?.startsWith("https://") ||
+    imagePath?.startsWith("//")
+  ) {
+    return imagePath;
+  }
+  if (imagePath?.startsWith("/")) {
+    return `/hugo-files${imagePath}`;
+  }
+  if (slug && language) {
+    const pathname = isCurrentSlugIndex ? slug : path.dirname(slug);
+    return `/hugo-files/${language}/docs/${pathname}/${imagePath}`;
+  }
+  return null;
+}
 
 /**
  * 根据展示路径查找真实文件路径
