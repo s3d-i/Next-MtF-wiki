@@ -2,20 +2,19 @@ import Sidebar from "@/components/Sidebar";
 import MobileSidebar from "@/components/MobileSidebar";
 import TableOfContents from "@/components/TableOfContents";
 import MobileTableOfContents from "@/components/MobileTableOfContents";
-import { getDocsNavigation } from "./directory-service";
-import { t } from "@/lib/i18n";
+import { getDocsNavigationForClient } from "./directory-service";
 
 export default async function DocsLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode;  
   params: Promise<{ language: string }>;
 }) {
   const { language } = await params;
 
   // 获取文档导航数据
-  const navigationItems = await getDocsNavigation(language);
+  const navigationItems = await getDocsNavigationForClient(language);
 
   return (
     <div className="container px-4 py-6 mx-auto">

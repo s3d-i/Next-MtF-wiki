@@ -19,14 +19,13 @@ const NavItem = ({
   language,
   basePath,
   level = 0,
-  currentPath,
 }: {
   item: DocItem;
   language: string;
   basePath: string;
   level?: number;
-  currentPath: string;
 }) => {
+  const currentPath = usePathname();
 
   const hasChildren = item.children && item.children.length > 0;
 
@@ -47,7 +46,7 @@ const NavItem = ({
   // 如果当前项或其子项是活动的，则自动展开
   useEffect(() => {
     if (isShouldOpen) {
-      setIsOpen(true);
+      setIsOpen(true);    
     }
   }, [isShouldOpen]);
 
@@ -94,7 +93,6 @@ const NavItem = ({
                 language={language}
                 basePath={basePath}
                 level={level + 1}
-                currentPath={currentPath}
               />
             ))}
           </ul>
@@ -114,7 +112,6 @@ const NavItem = ({
 };
 
 export default function Sidebar({ items, language, basePath }: SidebarProps) {
-  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -167,7 +164,6 @@ export default function Sidebar({ items, language, basePath }: SidebarProps) {
                 item={item}
                 language={language}
                 basePath={basePath}
-                currentPath={pathname}
               />
             ))}
           </ul>

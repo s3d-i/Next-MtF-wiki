@@ -361,6 +361,34 @@ export async function getDocsNavigationMap(
   return {root, map};
 }
 
+const getDocsNavigationForClientInner = cache(
+  async (language: string): Promise<DocItem[]> => {
+    const rootItems = await getDocsNavigation(language);
+    return rootItems.map(item => clearServerLocalInfo(item));
+  }
+);
+
+/**
+ * 递归清空DocItem及其子项的realPath字段
+ * @param item 要处理的DocItem对象
+ * @returns 新的DocItem对象，realPath字段为空字符串
+ */
+export function clearServerLocalInfo(item: DocItem): DocItem {
+  // 创建新的DocItem对象，realPath为空字符串
+  const newItem: DocItem = {
+    ...item,
+    realPath: "",
+    children: item.children ? item.children.map(child => clearServerLocalInfo(child)) : undefined
+  };
+
+  return newItem;
+}
+
+export async function getDocsNavigationForClient(language: string): Promise<DocItem[]> {
+  return await getDocsNavigationForClientInner(language);
+}
+
+
 // 获取特定语言的文档导航
 export async function getDocsNavigation(language: string): Promise<DocItem[]> {
   try {
