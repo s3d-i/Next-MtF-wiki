@@ -1,5 +1,3 @@
-"use client";
-
 import { SkeletonWrapper } from "@/components/progress";
 
 interface DocContentProps {
