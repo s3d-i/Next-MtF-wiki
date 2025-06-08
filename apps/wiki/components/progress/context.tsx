@@ -85,7 +85,7 @@ export function useProgressInternal() {
         restDelta: 0.1,
     });
 
-    // 只保留路径变化的监听
+    // 路径变化的监听
     useEffect(() => {
         // console.log("useEffect() 路径变化: ", prevPathname.current, pathname);
         if (prevPathname.current && pathname !== prevPathname.current) {

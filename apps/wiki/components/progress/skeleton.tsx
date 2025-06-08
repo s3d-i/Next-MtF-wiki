@@ -49,7 +49,7 @@ export function useSkeletonInternal() {
     const isLoadingRef = useRef(false);
     const isHidingRef = useRef(false);
 
-    // 只保留路径变化的监听
+    // 路径变化的监听
     useEffect(() => {
         // console.log("useEffect() 路径变化: ", prevPathname.current, pathname);
         if (prevPathname.current && pathname !== prevPathname.current) {
