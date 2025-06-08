@@ -9,8 +9,7 @@
     "preview": "wrangler pages dev",
     "deploy": "wrangler pages deploy",
     "lint": "next lint",
-    "format": "biome check --write",
-    "cleanup": "rm -rf .next"
+    "format": "biome check --write"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",

@@ -9,7 +9,8 @@
     "dev": "turbo run dev",
     "preview": "turbo run preview",
     "deploy": "npm run build && pnpm --filter=@next-mtf-wiki/wiki run deploy",
-    "copy-assets": "node scripts/copy-non-md-files.js"
+    "copy-assets": "node scripts/copy-non-md-files.js",
+    "cleanup": "rm -rf apps/wiki/.next && rm -rf .turbo"
   },
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
