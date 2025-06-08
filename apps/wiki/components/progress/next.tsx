@@ -1,7 +1,7 @@
 "use client";
-import React, { startTransition } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import NextLink from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useProgress } from "./context";
 import { useSkeleton } from "./skeleton";
 import { formatUrl } from "./format-url";
@@ -13,7 +13,7 @@ export const Link = React.forwardRef<
   Parameters<typeof NextLink>[0]
 >(function Link({ href, children, replace, scroll, ...rest }, ref) {
   const router = useRouter();
-  const { start, complete } = useProgress();
+  const { start } = useProgress();
   const { show: showSkeleton, hide: hideSkeleton } = useSkeleton();
 
   return (
@@ -22,6 +22,8 @@ export const Link = React.forwardRef<
       href={href}
       onNavigate={(e) => {
         const url = typeof href === "string" ? href : formatUrl(href as any);
+
+        e.preventDefault();
 
         // 启动进度条
         start();
@@ -34,26 +36,12 @@ export const Link = React.forwardRef<
           showSkeleton();
         }
 
-        // 然后在单独的 transition 中执行路由导航
-        startTransition(() => {
-          // console.log("准备导航到:", url);
-          if (replace) {
-            router.replace(url, { scroll });
-          } else {
-            router.push(url, { scroll });
-          }
-
-          // 确保路由完成后再隐藏
-          startTransition(() => {
-            // 同时完成进度条和隐藏骨架屏
-            complete();
-            if (isDocsPage) {
-              hideSkeleton();
-            }
-          });
-        });
-
-        e.preventDefault();
+        if (replace) {
+          router.replace(url, { scroll });
+        } else {
+          router.push(url, { scroll });
+        }
+        // console.log("complete", url);
       }}
       {...rest}
     >

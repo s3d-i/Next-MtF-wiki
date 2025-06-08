@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { startTransition } from 'react'
 import {
     useMotionTemplate,
     useSpring,
@@ -13,9 +13,9 @@ import {
     useContext,
     useEffect,
     useRef,
-    startTransition,
     useState,
 } from "react";
+import { usePathname } from 'next/navigation';
 
 /**
  * Internal context for the progress bar.
@@ -68,7 +68,15 @@ function getDiff(
  * @returns An object containing the current state, spring animation, and functions to start and complete the progress.
  */
 export function useProgressInternal() {
-    const [baseState, setBaseState] = useState({ loading: false, completing: false, visible: false })
+    const prevPathname = useRef<string | null>(null);
+    const pathname = usePathname();
+    const [visible, setVisible] = useState(false);
+    
+    // 使用 ref 来存储定时器和状态
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const startTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const completeTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const isLoadingRef = useRef(false);
 
     const spring = useSpring(0, {
         damping: 25,
@@ -77,65 +85,83 @@ export function useProgressInternal() {
         restDelta: 0.1,
     });
 
-    useInterval(
-        () => {
+    // 只保留路径变化的监听
+    useEffect(() => {
+        // console.log("useEffect() 路径变化: ", prevPathname.current, pathname);
+        if (prevPathname.current && pathname !== prevPathname.current) {
+            complete();
+        }
+        prevPathname.current = pathname;
+    }, [pathname]);
+
+    // 清理所有定时器的函数
+    const clearAllTimers = () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+        if (startTimerRef.current) {
+            clearTimeout(startTimerRef.current);
+            startTimerRef.current = null;
+        }
+        if (completeTimerRef.current) {
+            clearTimeout(completeTimerRef.current);
+            completeTimerRef.current = null;
+        }
+    };
+
+    // 开始进度动画的函数
+    const startProgressAnimation = () => {
+        // 清除已有的动画定时器
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+
+        intervalRef.current = setInterval(() => {
             // If we start progress but the bar is currently complete, reset it first.
-            if (spring.get() === 100) {
+            if (spring.get() === 1) {
                 spring.jump(0);
             }
 
             const current = spring.get();
-            spring.set(Math.min(current + getDiff(current), 99));
-        },
-        baseState.loading && !baseState.completing ? 750 : null
-    );
+            spring.set(Math.min(current + getDiff(current)*0.01, 0.99));
+        }, 750);
+    };
 
-    // Handle delayed visibility - only show if loading takes longer than 200ms
-    useEffect(() => {
-        let timer: NodeJS.Timeout;
-        
-        if (baseState.loading && !baseState.completing) {
-            timer = setTimeout(() => {
-                setBaseState(prev => ({ ...prev, visible: true }));
-            }, 700); // delay before showing
-        } else if (!baseState.loading) {
-            setBaseState(prev => ({ ...prev, visible: false }));
+    // 停止进度动画的函数
+    const stopProgressAnimation = () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
         }
-        
-        return () => {
-            if (timer) clearTimeout(timer);
-        };
-    }, [baseState.loading, baseState.completing]);
-
-    useEffect(() => {
-        if (!baseState.loading && !baseState.completing) {
-            spring.jump(0);
-        }
-    }, [spring, baseState.loading, baseState.completing]);
-
-    // Handle completion animation
-    useEffect(() => {
-        if (baseState.completing) {
-            // Quickly animate to 100%
-            spring.set(100);
-            
-            // After a short delay, hide the progress bar
-            const timer = setTimeout(() => {
-                setBaseState({ loading: false, completing: false, visible: false });
-            }, 300); // 300ms delay to show the completed state
-            
-            return () => clearTimeout(timer);
-        }
-    }, [baseState.completing, spring]);
+    };
 
     /**
      * Start the progress.
      */
     function start() {
-        // console.log("=== start() 被调用 ===");
-        // console.log("调用前状态:", baseState);
-        setBaseState({ loading: true, completing: false, visible: false });
-        // console.log("start() 设置新状态: { loading: true, completing: false, visible: false }");
+        // console.log("start() 开始进度条", prevPathname.current, pathname);
+        
+        // 清除所有现有定时器
+        clearAllTimers();
+        
+        // 重置spring到0
+        spring.jump(0);
+        
+        // 标记为加载中
+        isLoadingRef.current = true;
+        
+        // 等待700毫秒后显示进度条并开始动画
+        startTimerRef.current = setTimeout(() => {
+            if (isLoadingRef.current) { // 检查是否还在加载中
+                // console.log("700ms后显示进度条并开始动画");
+                setVisible(true);
+                startProgressAnimation();
+            }
+            startTimerRef.current = null;
+        }, 700);
+        
+        prevPathname.current = pathname;
     }
 
     /**
@@ -143,55 +169,49 @@ export function useProgressInternal() {
      */
     function complete() {
         // console.log("=== complete() 被调用 ===");
-        // console.log("当前状态:", baseState);
         
-        // 移除条件检查，直接设置completing为true
-        // 因为React状态更新是异步的，baseState.loading可能还没更新
-        startTransition(() => {
-            setBaseState(prev => {
-                // console.log("complete() 当前状态:", prev);
-                const newState = { ...prev, completing: true };
-                // console.log("complete() 设置新状态:", newState);
-                return newState;
-            });
-        });
+        // 停止加载状态
+        isLoadingRef.current = false;
+        
+        // 停止进度动画
+        stopProgressAnimation();
+        
+        // 清除启动定时器（如果还在等待中）
+        if (startTimerRef.current) {
+            clearTimeout(startTimerRef.current);
+            startTimerRef.current = null;
+        }
+        
+        // 如果进度条是可见的，执行完成动画
+        if (visible) {
+            // 快速动画到 100%
+            spring.set(1);
+            
+            // 短暂延迟后隐藏进度条并重置
+            completeTimerRef.current = setTimeout(() => {
+                setVisible(false);
+                spring.jump(0);
+                completeTimerRef.current = null;
+            }, 300);
+        } else {
+            // 如果进度条不可见，直接重置
+            spring.jump(0);
+        }
     }
 
+    // 组件卸载时清理定时器
+    useEffect(() => {
+        return () => {
+            clearAllTimers();
+        };
+    }, []);
+
     return { 
-        loading: baseState.loading, 
-        completing: baseState.completing,
-        visible: baseState.visible,
+        visible,
         spring, 
         start, 
         complete 
     };
-}
-
-/**
- * Custom hook that sets up an interval to call the provided callback function.
- *
- * @param callback - The function to be called at each interval.
- * @param delay - The delay (in milliseconds) between each interval. Pass `null` to stop the interval.
- */
-function useInterval(callback: () => void, delay: number | null) {
-    const savedCallback = useRef(callback);
-
-    useEffect(() => {
-        savedCallback.current = callback;
-    }, [callback]);
-
-    useEffect(() => {
-        function tick() {
-            savedCallback.current();
-        }
-
-        if (delay !== null) {
-            tick();
-
-            let id = setInterval(tick, delay);
-            return () => clearInterval(id);
-        }
-    }, [delay]);
 }
 
 /**
@@ -217,18 +237,22 @@ export function ProgressBar({
     className?: string;
 }) {
     const progress = useProgressBarContext();
-    const width = useMotionTemplate`${progress.spring}%`;
-
+    const transform = useMotionTemplate`scaleX(${progress.spring})`;
+  
     return (
-        <LazyMotion features={domAnimation}>
-            {progress.loading && progress.visible && (
-                <m.div
-                    style={{ width }}
-                    exit={{ opacity: 0 }}
-                    className={className}
-                />
-            )}
-        </LazyMotion>
+      <LazyMotion features={domAnimation}>
+        {progress.visible && (
+          <m.div
+            style={{
+              width: "100%",
+              transformOrigin: "left",
+              transition: "transform 100ms",
+              transform,
+            }}
+            className={className}
+          />
+        )}
+      </LazyMotion>
     );
 }
 
@@ -240,7 +264,7 @@ type CompleteProgress = () => void
  *
  * @returns An object with start and complete functions for the progress bar.
  */
-export function useProgress(): { start: StartProgress; complete: CompleteProgress; loading: boolean; completing: boolean; visible: boolean } {
+export function useProgress(): { start: StartProgress; complete: CompleteProgress; visible: boolean } {
     const progress = useProgressBarContext();
 
     const startProgress: StartProgress = () => {
@@ -251,5 +275,5 @@ export function useProgress(): { start: StartProgress; complete: CompleteProgres
         progress.complete();
     }
 
-    return { start: startProgress, complete: completeProgress, loading: progress.loading, completing: progress.completing, visible: progress.visible }
+    return { start: startProgress, complete: completeProgress, visible: progress.visible }
 }

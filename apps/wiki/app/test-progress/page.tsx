@@ -2,10 +2,10 @@
 
 import { Link } from "../../components/progress";
 import { useProgress, ProgressBar } from "../../components/progress";
-import { startTransition, useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function TestProgressPage() {
-  const { start, complete, loading, completing } = useProgress();
+  const { start, complete, visible } = useProgress();
   const [isLoading, setIsLoading] = useState(false);
   const [debugInfo, setDebugInfo] = useState("");
 
@@ -15,23 +15,23 @@ export default function TestProgressPage() {
     setDebugInfo("开始调用 start()...");
     
     console.log("=== 开始测试进度条 ===");
-    console.log("调用 start() 前的状态:", { loading, completing });
+    console.log("调用 start() 前的状态:", { visible });
     
     // 立即调用 start()，不在 transition 中
     start();
     
-    console.log("调用 start() 后的状态:", { loading, completing });
+    console.log("调用 start() 后的状态:", { visible });
     setDebugInfo("已调用 start()，进度条应该开始显示");
     
     // 模拟一个异步操作
     setTimeout(() => {
       console.log("=== 3秒后，准备完成 ===");
-      console.log("调用 complete() 前的状态:", { loading, completing });
+      console.log("调用 complete() 前的状态:", { visible });
       setDebugInfo("操作完成，准备调用 complete()");
       
       complete();
       
-      console.log("调用 complete() 后的状态:", { loading, completing });
+      console.log("调用 complete() 后的状态:", { visible });
       setDebugInfo("已调用 complete()，进度条应该完成并消失");
       setIsLoading(false);
     }, 3000);
@@ -46,8 +46,7 @@ export default function TestProgressPage() {
         <h3 className="font-semibold mb-2">调试信息：</h3>
         <p className="text-sm">{debugInfo || "等待操作..."}</p>
         <div className="mt-2 text-xs space-y-1">
-          <p>内部状态 - loading: <span className={loading ? "text-green-600 font-bold" : "text-gray-500"}>{loading.toString()}</span></p>
-          <p>内部状态 - completing: <span className={completing ? "text-orange-600 font-bold" : "text-gray-500"}>{completing.toString()}</span></p>
+          <p>内部状态 - visible: <span className={visible ? "text-orange-600 font-bold" : "text-gray-500"}>{visible.toString()}</span></p>
           <p>本地状态 - isLoading: <span className={isLoading ? "text-purple-600 font-bold" : "text-gray-500"}>{isLoading.toString()}</span></p>
         </div>
       </div>
@@ -62,18 +61,8 @@ export default function TestProgressPage() {
           状态: {isLoading ? "加载中..." : "空闲"}
         </p>
         <p className="text-xs mt-1 text-gray-500">
-          进度条显示条件: loading={loading.toString()} (只有为true时才显示)
+          进度条显示条件: visible={visible.toString()} (只有为true时才显示)
         </p>
-      </div>
-      
-      {/* 全局进度条测试区域 */}
-      <div className="bg-green-100 p-4 rounded-lg">
-        <h3 className="font-semibold mb-2">全局进度条测试：</h3>
-        <p className="text-sm mb-2">请仔细观察页面最顶部是否有蓝色细条出现</p>
-        <div className="bg-gray-200 h-1 rounded-full overflow-hidden">
-          <ProgressBar className="h-full bg-sky-500 shadow-lg shadow-sky-500/20" />
-        </div>
-        <p className="text-xs mt-1 text-gray-500">↑ 这是模拟的全局进度条样式</p>
       </div>
       
       <div className="space-y-4">

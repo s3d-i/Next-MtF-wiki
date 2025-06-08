@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { useRef } from 'react'
 import {
     m,
     LazyMotion,
@@ -11,8 +11,8 @@ import {
     useContext,
     useEffect,
     useState,
-    startTransition,
 } from "react";
+import { usePathname } from 'next/navigation';
 
 /**
  * Internal context for the skeleton wrapper.
@@ -39,64 +39,103 @@ function useSkeletonContext() {
  * @returns An object containing the current state and functions to show and hide the skeleton.
  */
 export function useSkeletonInternal() {
-    const [baseState, setBaseState] = useState({ 
-        loading: false, 
-        hiding: false,
-        visible: false
-    });
+    const prevPathname = useRef<string | null>(null);
+    const pathname = usePathname();
+    const [visible, setVisible] = useState(false);
+    
+    // 使用 ref 来存储定时器和状态
+    const showTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const isLoadingRef = useRef(false);
+    const isHidingRef = useRef(false);
 
-    // Handle delayed visibility - only show if loading takes longer than 200ms
+    // 只保留路径变化的监听
     useEffect(() => {
-        let timer: NodeJS.Timeout;
-        
-        if (baseState.loading && !baseState.hiding) {
-            timer = setTimeout(() => {
-                setBaseState(prev => ({ ...prev, visible: true }));
-            }, 700); // delay before showing
-        } else if (!baseState.loading) {
-            setBaseState(prev => ({ ...prev, visible: false }));
+        // console.log("useEffect() 路径变化: ", prevPathname.current, pathname);
+        if (prevPathname.current && pathname !== prevPathname.current) {
+            hide();
         }
-        
-        return () => {
-            if (timer) clearTimeout(timer);
-        };
-    }, [baseState.loading, baseState.hiding]);
+        prevPathname.current = pathname;
+    }, [pathname]);
 
-    // Handle hiding animation - similar to progress context
-    useEffect(() => {
-        if (baseState.hiding) {
-            // After animation completes, fully hide the skeleton
-            const timer = setTimeout(() => {
-                setBaseState({ loading: false, hiding: false, visible: false });
-            }, 100); // Match animation duration
-            
-            return () => clearTimeout(timer);
+    // 清理所有定时器的函数
+    const clearAllTimers = () => {
+        if (showTimerRef.current) {
+            clearTimeout(showTimerRef.current);
+            showTimerRef.current = null;
         }
-    }, [baseState.hiding]);
+        if (hideTimerRef.current) {
+            clearTimeout(hideTimerRef.current);
+            hideTimerRef.current = null;
+        }
+    };
 
     /**
      * Show the skeleton.
      */
     function show() {
-        setBaseState({ loading: true, hiding: false, visible: false });
+        // console.log("show() 开始显示骨架屏");
+        
+        // 清除所有现有定时器
+        clearAllTimers();
+        
+        // 重置隐藏状态
+        isHidingRef.current = false;
+        
+        // 标记为加载中
+        isLoadingRef.current = true;
+        
+        // 等待700毫秒后显示骨架屏
+        showTimerRef.current = setTimeout(() => {
+            if (isLoadingRef.current && !isHidingRef.current) { // 检查是否还在加载中且没有开始隐藏
+                // console.log("700ms后显示骨架屏");
+                setVisible(true);
+            }
+            showTimerRef.current = null;
+        }, 700);
     }
 
     /**
      * Hide the skeleton with animation.
      */
     function hide() {
-        startTransition(() => {
-            setBaseState(prev => ({
-                ...prev,
-                hiding: true
-            }));
-        });
+        // console.log("=== hide() 被调用 ===");
+        
+        // 停止加载状态，开始隐藏状态
+        isLoadingRef.current = false;
+        isHidingRef.current = true;
+        
+        // 清除显示定时器（如果还在等待中）
+        if (showTimerRef.current) {
+            clearTimeout(showTimerRef.current);
+            showTimerRef.current = null;
+        }
+        
+        // 如果骨架屏是可见的，执行隐藏动画
+        if (visible) {
+            // 短暂延迟后隐藏骨架屏
+            hideTimerRef.current = setTimeout(() => {
+                setVisible(false);
+                isHidingRef.current = false;
+                hideTimerRef.current = null;
+            }, 100); // 100ms延迟匹配动画时长
+        } else {
+            // 如果骨架屏不可见，直接重置状态
+            isHidingRef.current = false;
+        }
     }
 
+    // 组件卸载时清理定时器
+    useEffect(() => {
+        return () => {
+            clearAllTimers();
+        };
+    }, []);
+
     return { 
-        loading: baseState.loading,
-        hiding: baseState.hiding,
-        visible: baseState.visible,
+        loading: isLoadingRef.current,
+        hiding: isHidingRef.current,
+        visible,
         show, 
         hide 
     };
