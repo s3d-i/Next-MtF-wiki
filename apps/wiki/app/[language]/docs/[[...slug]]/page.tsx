@@ -1,4 +1,3 @@
-"use server";
 import { type MDXComponents, MDXRemote } from "next-mdx-remote-client/rsc";
 import { getFrontmatter } from "next-mdx-remote-client/utils";
 import { notFound } from "next/navigation";
