@@ -1,7 +1,6 @@
 import path from "node:path";
 
-// 重新导出目录服务中的功能，保持向后兼容
-export { getLanguagesInfo } from "../directory-service";
+export { getLanguagesInfo } from "@/service/directory-service";
 
 export function getContentDir() {
   return path.join(process.cwd(), "../../source", "content");
@@ -42,9 +41,7 @@ export function getNonSelfClosingElements() {
     "gallery",
     "meme/hybl",
     "meme/onimai-ja",
+    "project-trans",
+    "github/contributors",
   ];
-}
-
-export function getNavigationPath(slug: string, language: string, basePath: string = "docs"): string {
-  return `/${language}/${basePath}/${slug}`;
 }

@@ -1,12 +1,7 @@
-import { Link } from "../../components/progress";
-import { getLanguagesInfo } from "./docs/directory-service";
+import { Link } from "@/components/progress";
+import { getLanguagesInfo } from "@/service/directory-service";
 
-// 生成静态参数，用于构建时预生成所有语言页面
-export async function generateStaticParams() {
-  const languagesInfo = await getLanguagesInfo();
-  return languagesInfo.map(info => ({ language: info.code }));
-}
-
+// 首页组件
 export default async function HomePage({
   params,
 }: {
@@ -18,7 +13,7 @@ export default async function HomePage({
   const texts = {
     title: {
       "zh-cn": "测试站点",
-      "zh-hant": "測試站點", 
+      "zh-hant": "測試站點",
       ja: "テストサイト",
       es: "Sitio de prueba",
       en: "Test Site",
@@ -27,7 +22,7 @@ export default async function HomePage({
       "zh-cn": "仅供技术测试使用",
       "zh-hant": "僅供技術測試使用",
       ja: "技術テスト専用",
-      es: "Solo para pruebas técnicas", 
+      es: "Solo para pruebas técnicas",
       en: "For technical testing only",
     },
     getStarted: {
@@ -61,4 +56,9 @@ export default async function HomePage({
       </div>
     </div>
   );
+}
+
+export async function generateStaticParams() {
+  const languagesInfo = await getLanguagesInfo();
+  return languagesInfo.map(info => ({ language: info.code }));
 }

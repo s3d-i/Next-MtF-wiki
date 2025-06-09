@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getContentDir } from "@/app/[language]/docs/[[...slug]]/utils";
-import { getDirPath } from '@/app/[language]/docs/directory-service';
+import { getContentDir } from "@/app/[language]/(documents)/[...slug]/utils";
+import { getDirPath } from '@/service/directory-service';
 
 export interface GalleryImage {
   path: string;
@@ -19,7 +19,7 @@ export function getGalleryImages(
   try {
     // 构建当前文档的目录路径
     const contentDir = getContentDir();
-    const relativePathDir = getDirPath(path.join(language, 'docs', ...slug.split('/')));
+    const relativePathDir = getDirPath(path.join(language, ...slug.split('/')));
     const docDir = path.join(contentDir, relativePathDir)  ;
     
     // 如果目录不存在，返回空数组 

@@ -4,14 +4,13 @@ import { usePathname } from "next/navigation";
 import { Link } from "./progress";
 import { useState, useEffect, useRef } from "react";
 
-import type { DocItem } from "../app/[language]/docs/directory-service";
+import type { DocItem } from "@/service/directory-service";
 import styles from "./css/sidebar.module.css";
 import { isElementInScrollContainerView } from "@/lib/utils";
 
 interface SidebarProps {
   items: DocItem[];
   language: string;
-  basePath: string;
 }
 
 function scrollIntoContainerView(target: HTMLElement, container: HTMLElement) {
@@ -53,12 +52,10 @@ function scrollIntoContainerViewCenter(
 const NavItem = ({
   item,
   language,
-  basePath,
   level = 0,
 }: {
   item: DocItem;
   language: string;
-  basePath: string;
   level?: number;
 }) => {
   const currentPath = usePathname();
@@ -71,14 +68,13 @@ const NavItem = ({
     item: DocItem,
     currentPath?: string,
     language?: string,
-    basePath?: string
   ) {
     return (
       isActive ||
       (hasChildren &&
         item.children?.some((child) =>
           currentPath?.startsWith(
-            `/${language}/${basePath}/${child.displayPath}`
+            `/${language}/${child.displayPath}`
           )
         ))
     );
@@ -90,13 +86,12 @@ const NavItem = ({
     item,
     currentPath,
     language,
-    basePath
   );
 
   const [isOpen, setIsOpen] = useState(isShouldOpen);
 
   // 构建完整的链接路径，使用 fullPath
-  const fullPath = `/${language}/${basePath}/${item.displayPath}`;
+  const fullPath = `/${language}/${item.displayPath}`;
 
   // 检查当前路径是否匹配
   const isActive = currentPath === fullPath;
@@ -168,7 +163,6 @@ const NavItem = ({
                 key={`${child.slug}-${idx}`}
                 item={child}
                 language={language}
-                basePath={basePath}
                 level={level + 1}
               />
             ))}
@@ -189,7 +183,7 @@ const NavItem = ({
   );
 };
 
-export default function Sidebar({ items, language, basePath }: SidebarProps) {
+export default function Sidebar({ items, language }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -241,7 +235,6 @@ export default function Sidebar({ items, language, basePath }: SidebarProps) {
                 key={`${item.slug}-${idx}`}
                 item={item}
                 language={language}
-                basePath={basePath}
               />
             ))}
           </ul>

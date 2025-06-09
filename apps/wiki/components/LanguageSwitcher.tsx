@@ -12,13 +12,11 @@ interface LanguageOption {
 interface LanguageSwitcherProps {
   currentLanguage: string;
   availableLanguages: LanguageOption[];
-  availablePaths: Record<string, boolean>;
 }
 
 export default function LanguageSwitcher({
   currentLanguage,
   availableLanguages,
-  availablePaths,
 }: LanguageSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -42,16 +40,10 @@ export default function LanguageSwitcher({
     const currentPath = pathname;
     const pathWithoutLang = currentPath.replace(`/${currentLanguage}`, "");
 
-    // 检查目标语言是否有对应的路径
-    const targetPath = `/${langCode}${pathWithoutLang}`;
-    const pathExists = availablePaths[targetPath];
+    //todo: 检查目标语言是否有对应的路径
+    //todo: 如果路径存在，导航到该路径；否则导航到目标语言的首页
 
-    // 如果路径存在，导航到该路径；否则导航到目标语言的首页
-    if (pathExists) {
-      router.push(targetPath);
-    } else {
-      router.push(`/${langCode}`);
-    }
+    router.push(`/${langCode}`);
 
     setIsOpen(false);
   };

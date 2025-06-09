@@ -9,6 +9,7 @@ export default function DefaultShortcode({
   attrs,
   children,
 }: ShortCodeProps) {
+  // console.log("DefaultShortcode: ", compName, attrs, children);
   return (
     <div className="p-4 my-4 border-l-4 border-yellow-400 rounded-r bg-yellow-50">
       <div className="mb-2 font-bold text-yellow-800">

@@ -42,7 +42,13 @@ export default function RootLayout({
       <body className={`antialiased`}>
         <ProgressProvider>
           <SkeletonProvider>
-            <ThemeProvider value={{ dark: "sunset", light: "cupcake" }}>
+            <ThemeProvider
+              attribute="data-theme"
+              defaultTheme="system"
+              enableSystem={true}
+              themes={["system", "light", "dark"]}
+              value={{ dark: "sunset", light: "cupcake" }}
+            >
               <ProgressBar className="fixed h-1 shadow-lg shadow-sky-500/20 bg-sky-500 top-0 z-50" />
               {children}
             </ThemeProvider>

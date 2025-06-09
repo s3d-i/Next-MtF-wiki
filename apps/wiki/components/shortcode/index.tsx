@@ -25,6 +25,10 @@ const compsMap: ShortCodeCompRecord = {
   figure: dynamic(() => import("./Figure")),
   expand: dynamic(() => import("./Expand")),
   lang: dynamic(() => import("./Lang")),
+  "project-trans": dynamic(() => import("./ProjectTrans")),
+  github: {
+    contributors: dynamic(() => import("./GithubContributors")),
+  },
   shields: {
     qq: dynamic(() => import("./shields/QQ")),
     telegram: dynamic(() => import("./shields/Telegram")),

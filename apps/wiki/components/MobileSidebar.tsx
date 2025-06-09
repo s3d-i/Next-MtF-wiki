@@ -4,25 +4,22 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Link } from "./progress";
 import { t } from "@/lib/i18n";
-import type { DocItem } from "../app/[language]/docs/directory-service";
+import type { DocItem } from "@/service/directory-service";
 
 interface MobileSidebarProps {
   navigationItems: DocItem[];
   language: string;
-  basePath: string;
 }
 
 const MobileNavItem = ({
   item,
   language,
-  basePath,
   level = 0,
   currentPath,
   onItemClick,
 }: {
   item: DocItem;
   language: string;
-  basePath: string;
   level?: number;
   currentPath: string;
   onItemClick: () => void;
@@ -31,7 +28,7 @@ const MobileNavItem = ({
   const hasChildren = item.children && item.children.length > 0;
 
   // 构建完整的链接路径
-  const fullPath = `/${language}/${basePath}/${item.displayPath}`;
+  const fullPath = `/${language}/${item.displayPath}`;
 
   // 检查当前路径是否匹配
   const isActive = currentPath === fullPath;
@@ -42,12 +39,12 @@ const MobileNavItem = ({
       isActive ||
       (hasChildren &&
         item.children?.some((child) =>
-          currentPath.startsWith(`/${language}/${basePath}/${child.displayPath}`)
+          currentPath.startsWith(`/${language}/${child.displayPath}`)
         ))
     ) {
       setIsOpen(true);
     }
-  }, [currentPath, hasChildren, isActive, item.children, language, basePath]);
+  }, [currentPath, hasChildren, isActive, item.children, language]);
 
   return (
     <div className="mb-1">
@@ -97,7 +94,6 @@ const MobileNavItem = ({
                   key={`${child.slug}-${idx}`}
                   item={child}
                   language={language}
-                  basePath={basePath}
                   level={level + 1}
                   currentPath={currentPath}
                   onItemClick={onItemClick}
@@ -123,7 +119,7 @@ const MobileNavItem = ({
   );
 };
 
-export default function MobileSidebar({ navigationItems, language, basePath }: MobileSidebarProps) {
+export default function MobileSidebar({ navigationItems, language }: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -259,7 +255,6 @@ export default function MobileSidebar({ navigationItems, language, basePath }: M
                       key={`${item.slug}-${idx}`}
                       item={item}
                       language={language}
-                      basePath={basePath}
                       currentPath={pathname}
                       onItemClick={handleItemClick}
                     />

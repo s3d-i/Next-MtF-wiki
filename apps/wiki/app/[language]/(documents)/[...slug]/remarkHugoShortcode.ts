@@ -25,9 +25,9 @@ import { getNonSelfClosingElements } from "./utils";
 import {
   type DocItem,
   getNavigationForOriginalSlug,
-} from "../directory-service";
+  } from "@/service/directory-service";
 import { compact } from "mdast-util-compact";
-import { getLocalImagePath } from "../path-utils";
+import { getLocalImagePath } from "@/service/directory-service";
 
 // 定义MDX JSX节点类型
 interface MdxJsxFlowElement extends Node {

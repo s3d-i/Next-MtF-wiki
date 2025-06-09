@@ -20,7 +20,7 @@ export function getLocalImagePath(
   }
   if (slug && language) {
     const pathname = isCurrentSlugIndex ? slug : path.dirname(slug);
-    return `/hugo-files/${language}/docs/${pathname}/${imagePath}`;
+    return `/hugo-files/${language}/${pathname}/${imagePath}`;
   }
   return null;
 }

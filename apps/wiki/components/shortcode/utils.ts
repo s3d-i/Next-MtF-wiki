@@ -1,4 +1,4 @@
-import { getLocalImagePath } from "@/app/[language]/docs/path-utils";
+import { getLocalImagePath } from "@/service/path-utils";
 import { MdContextType } from "./types";
 
 

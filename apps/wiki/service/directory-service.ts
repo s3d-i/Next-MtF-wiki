@@ -4,22 +4,11 @@ import { getFrontmatter } from "next-mdx-remote-client/utils";
 import {
   getContentDir,
   getIndexPageSlugs,
-  getIndexPageSlugsWithOutExtensionName,
-} from "./[[...slug]]/utils";
+} from "../app/[language]/(documents)/[...slug]/utils";
 import { cache } from "react";
-import { Frontmatter } from "./[[...slug]]/types";
-
-// 文档项接口
-export interface DocItem {
-  slug: string;
-  originalSlug: string;
-  displayPath: string;
-  realPath: string; // 真实文件系统路径
-  children?: DocItem[];
-  isIndex?: boolean;
-  metadata: DocMetadata;
-  parentDisplayPath?: string;
-}
+import { Frontmatter } from "../app/[language]/(documents)/[...slug]/types";
+import { type DocItem, type DocMetadata } from "./directory-service-client";
+import { getLanguageConfig, getLanguageConfigs } from "@/lib/site-config";
 
 // 语言信息接口
 export interface LanguageInfo {
@@ -77,13 +66,6 @@ async function getDocTitleFromFrontmatter(
   return frontmatter?.title || path.basename(filePath, path.extname(filePath));
 }
 
-interface DocMetadata {
-  title: string;
-  draft?: boolean;
-  order?: number | null;
-  preferredSlug?: string | null;
-}
-
 async function getDocMetadata(
   filePath: string,
   frontmatter: Frontmatter | null
@@ -110,7 +92,7 @@ async function getDirectoryStructure(
   dirPath: string,
   basePath = "",
   parentPath = "",
-  contentDirPath = "",
+  contentDirPath = ""
 ): Promise<DocItem> {
   const contentDir = contentDirPath || getContentDir();
   const children: DocItem[] = [];
@@ -132,7 +114,7 @@ async function getDirectoryStructure(
           entryPath,
           relativePath,
           currentDisplayPath,
-          contentDir,
+          contentDir
         );
 
         if (subDirItem.isIndex) {
@@ -180,7 +162,6 @@ async function getDirectoryStructure(
         };
 
         children.push(toPush);
-
       }
     }
   }
@@ -264,7 +245,7 @@ export const getLanguagesInfo = cache(async (): Promise<LanguageInfo[]> => {
         // 获取该语言下的所有文档路径
         let docsPaths: string[] = [];
         if (hasDocsDir) {
-          const allFiles = await getDocsNavigationRoot(entry.name);
+          const allFiles = await getDocsNavigationRoot(entry.name, "docs");
 
           docsPaths =
             allFiles.children?.reduce((acc: string[], child) => {
@@ -317,28 +298,33 @@ export async function getAvailableLanguages(): Promise<string[]> {
 }
 
 const getDocsNavigationRootInner = cache(
-  async (language: string): Promise<DocItem> => {
-  const contentDir = path.join(getContentDir(), language, "docs");
+  async (language: string, subfolder: string): Promise<DocItem> => {
+    const contentDir = path.join(getContentDir(), language, subfolder);
 
-  const rootItem = await getDirectoryStructure(
-    contentDir,
-    "",
-    "",
-    getContentDir(),
-  );
+    const rootItem = await getDirectoryStructure(
+      contentDir,
+      "",
+      subfolder,
+      getContentDir()
+    );
 
-  return rootItem;
-});
+    return rootItem;
+  }
+);
 
 export async function getDocsNavigationRoot(
-  language: string
+  language: string,
+  subfolder: string
 ): Promise<DocItem> {
-  return await getDocsNavigationRootInner(language);
+  return await getDocsNavigationRootInner(language, subfolder);
 }
 
 const getDocsNavigationRootWithMapInner = cache(
-  async (language: string): Promise<{root: DocItem, map: Map<string, DocItem>}> => {
-    const rootItem = await getDocsNavigationRootInner(language);
+  async (
+    language: string,
+    subfolder: string
+  ): Promise<{ root: DocItem; map: Map<string, DocItem> }> => {
+    const rootItem = await getDocsNavigationRootInner(language, subfolder);
     const map = new Map<string, DocItem>();
     map.set(rootItem.displayPath, rootItem);
     function collectPaths(item: DocItem): void {
@@ -350,21 +336,25 @@ const getDocsNavigationRootWithMapInner = cache(
       }
     }
     collectPaths(rootItem);
-    return {root: rootItem, map: map};
+    return { root: rootItem, map: map };
   }
 );
 
 export async function getDocsNavigationMap(
-  language: string
-): Promise<{root: DocItem, map: Map<string, DocItem>}> {
-  const {root, map} = await getDocsNavigationRootWithMapInner(language);
-  return {root, map};
+  language: string,
+  subfolder: string,
+): Promise<{ root: DocItem; map: Map<string, DocItem> }> {
+  const { root, map } = await getDocsNavigationRootWithMapInner(
+    language,
+    subfolder
+  );
+  return { root, map };
 }
 
 const getDocsNavigationForClientInner = cache(
-  async (language: string): Promise<DocItem[]> => {
-    const rootItems = await getDocsNavigation(language);
-    return rootItems.map(item => clearServerLocalInfo(item));
+  async (language: string, subfolder: string): Promise<DocItem[]> => {
+    const rootItems = await getDocsNavigation(language, subfolder);
+    return rootItems.map((item) => clearServerLocalInfo(item));
   }
 );
 
@@ -378,21 +368,52 @@ export function clearServerLocalInfo(item: DocItem): DocItem {
   const newItem: DocItem = {
     ...item,
     realPath: "",
-    children: item.children ? item.children.map(child => clearServerLocalInfo(child)) : undefined
+    children: item.children
+      ? item.children.map((child) => clearServerLocalInfo(child))
+      : undefined,
   };
 
   return newItem;
 }
 
-export async function getDocsNavigationForClient(language: string): Promise<DocItem[]> {
-  return await getDocsNavigationForClientInner(language);
+const getDocsNavigationForClientForAllSubfoldersInner = cache(
+  async (language: string): Promise<Map<string, DocItem[]>> => {
+    const allSubfolders = getLanguageConfig(language)?.subfolders || [];
+
+    const allItems = await Promise.all(
+      allSubfolders.map(async (subfolder) => ({
+        subfolder,
+        items: await getDocsNavigationForClient(language, subfolder),
+      }))
+    );
+    const map = new Map<string, DocItem[]>();
+    for (const item of allItems) {
+      map.set(item.subfolder, item.items);
+    }
+    return map;
+  }
+);
+
+export async function getDocsNavigationForClientForAllSubfolders(
+  language: string
+): Promise<Map<string, DocItem[]>> {
+  return await getDocsNavigationForClientForAllSubfoldersInner(language);
 }
 
+export async function getDocsNavigationForClient(
+  language: string,
+  subfolder: string
+): Promise<DocItem[]> {
+  return await getDocsNavigationForClientInner(language, subfolder);
+}
 
 // 获取特定语言的文档导航
-export async function getDocsNavigation(language: string): Promise<DocItem[]> {
+export async function getDocsNavigation(
+  language: string,
+  subfolder: string
+): Promise<DocItem[]> {
   try {
-    const rootItem = await getDocsNavigationRoot(language);
+    const rootItem = await getDocsNavigationRoot(language, subfolder);
     return rootItem.children ?? [];
   } catch (error) {
     console.error(`Error getting docs navigation for ${language}:`, error);
@@ -404,14 +425,15 @@ export async function getDocsNavigation(language: string): Promise<DocItem[]> {
 export async function getDocFullPathByTrying(
   language: string,
   slugPath: string,
-  contentRootDir: string
+  contentRootDir: string,
+  subfolder: string
 ): Promise<string | null> {
   let fullPath = "";
   let fileExists = false;
 
   // 如果 slugPath 为空（访问 /docs/），直接查找 _index.md
   if (slugPath === "") {
-    fullPath = path.join(contentRootDir, language, "docs", "_index.md");
+    fullPath = path.join(contentRootDir, language, subfolder, "_index.md");
     fileExists = await fs
       .access(fullPath)
       .then(() => true)
@@ -421,7 +443,7 @@ export async function getDocFullPathByTrying(
     }
   } else {
     // 首先尝试 .md 后缀
-    fullPath = path.join(contentRootDir, language, "docs", `${slugPath}.md`);
+    fullPath = path.join(contentRootDir, language, subfolder, `${slugPath}.md`);
     fileExists = await fs
       .access(fullPath)
       .then(() => true)
@@ -435,7 +457,7 @@ export async function getDocFullPathByTrying(
       fullPath = path.join(
         contentRootDir,
         language,
-        "docs",
+        subfolder,
         slugPath,
         indexPageSlug
       );
@@ -463,7 +485,7 @@ export function getDocItemByNavigationMap(
 
 export function getDocItemByNavigationInfo(
   slugs: string[],
-  navigationItemRoot: DocItem,
+  navigationItemRoot: DocItem
 ): DocItem | null {
   if (slugs.length === 0) {
     return navigationItemRoot;
@@ -547,29 +569,37 @@ export function getNavigationForOriginalSlug(
 }
 
 // 生成静态参数（用于 generateStaticParams）
-export async function generateAllStaticParams(): Promise<
-  Array<{ language: string; slug?: string[] }>
-> {
-  const languagesInfo = await getLanguagesInfo();
+export async function generateAllStaticParams(
+  language: string,
+  subfolder: string
+): Promise<Array<{ language: string; slug?: string[] }>> {
   const allParams: Array<{ language: string; slug?: string[] }> = [];
 
-  for (const langInfo of languagesInfo) {
-    // 添加语言首页参数
-    allParams.push({ language: langInfo.code });
+  // 使用指定的subfolder获取导航根节点
+  const rootItem = await getDocsNavigationRoot(language, subfolder);
 
-    if (langInfo.hasDocsDir) {
-      // 添加文档根路径
-      allParams.push({ language: langInfo.code, slug: [] });
+  // 添加文档根路径
+  allParams.push({ language: language, slug: [subfolder] });
 
-      // 添加所有文档页面路径
-      for (const docPath of langInfo.docsPaths) {
-        const slugParts = docPath.split("/"); // 按路径分隔符拆分
-        const toPush = { language: langInfo.code, slug: slugParts };
-        allParams.push(toPush);
-        //console.log("toPush: ", JSON.stringify(toPush));
-      }
+  // 递归收集所有路径
+  function collectPaths(item: DocItem): void {
+    if (item.slug && item.displayPath) {
+      const slugParts = item.displayPath
+        .split("/")
+        .filter((part) => part !== "");
+      allParams.push({ language: language, slug: slugParts });
     }
+    if (item.children) {
+      item.children.forEach((child) => collectPaths(child));
+    }
+  }
+
+  // 收集根节点的所有子路径
+  if (rootItem.children) {
+    rootItem.children.forEach((child) => collectPaths(child));
   }
 
   return allParams;
 }
+
+export type { DocItem, DocMetadata };

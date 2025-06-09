@@ -1,6 +1,6 @@
 import { type MDXComponents, MDXRemote } from "next-mdx-remote-client/rsc";
 import { getFrontmatter } from "next-mdx-remote-client/utils";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import fs from "node:fs/promises";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -8,7 +8,6 @@ import remarkMath from "remark-math";
 import { ShortCodeComp } from "@/components/shortcode";
 import { remarkHugoShortcode } from "./remarkHugoShortcode";
 import type { Frontmatter } from "./types";
-import { getContentDir, getNavigationPath } from "./utils";
 import remarkHeadingId from "remark-heading-id";
 import remarkCsvToTable from "./remarkCsvToTable";
 import {
@@ -17,13 +16,14 @@ import {
   getDocItemByNavigationMap,
   getDocsNavigationMap,
   getDocsNavigationRoot,
-} from "../directory-service";
+} from "@/service/directory-service";
 import { Link } from "../../../../components/progress";
 import type { DetailedHTMLProps, ImgHTMLAttributes } from "react";
 import { t } from "@/lib/i18n";
 import {
   DocContent,
 } from "./doc-content";
+import { getLanguageConfigs } from "@/lib/site-config";
 
 interface DocParams {
   language: string;
@@ -32,18 +32,35 @@ interface DocParams {
 
 // 1. 用 generateStaticParams 在构建时生成所有路由
 export async function generateStaticParams() {
-  const allParams = await generateAllStaticParams();
+  const allParams: DocParams[] = [];
 
-  // 过滤出只有文档路由的参数
-  const docParams: DocParams[] = allParams
-    .filter((param) => "slug" in param)
-    .map((param) => ({
-      language: param.language,
-      slug: param.slug || [],
-    }));
+  // 获取语言配置
+  const languageConfigs = getLanguageConfigs();
 
-  // console.log("docParams: ", docParams);
-  return docParams;
+  // 为每种语言生成参数
+  for (const langConfig of languageConfigs) {
+    // 为每个子目录生成参数
+    for (const subfolder of langConfig.subfolders) {
+      const params = await generateAllStaticParams(langConfig.code, subfolder);
+
+      // 转换为所需格式
+      const convertedParams = params.map(param => ({
+        language: param.language,
+        slug: param.slug || [],
+      }));
+
+      allParams.push(...convertedParams);
+    }
+  }
+
+  // 去重
+  const uniqueParams = allParams.filter((param, index, self) => {
+    const key = `${param.language}-${param.slug.join('/')}`;
+    return index === self.findIndex(p => `${p.language}-${p.slug.join('/')}` === key);
+  });
+
+  // console.log("uniqueParams: ", uniqueParams);
+  return uniqueParams;
 }
 
 export async function generateMetadata({
@@ -57,7 +74,7 @@ export async function generateMetadata({
   const slugPath = slugArray.join("/");
 
   const { root: navigationItemRoot, map: navigationItemMap } =
-    await getDocsNavigationMap(language);
+    await getDocsNavigationMap(language, slugArray[0]);
 
   const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
 
@@ -83,10 +100,11 @@ export default async function DocPage({
 
   // 处理 slug 为 undefined 的情况
   const slugArray = slug || [];
+
   const slugPath = slugArray.join("/");
 
   const { root: navigationItemRoot, map: navigationItemMap } =
-    await getDocsNavigationMap(language);
+    await getDocsNavigationMap(language, slugArray[0]);
 
   const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
 
@@ -242,13 +260,13 @@ export default async function DocPage({
               {navItem.children.map((child) => (
                 <Link
                   key={child.displayPath}
-                  href={`/${language}/docs/${child.displayPath}`}
+                  href={`/${language}/${child.displayPath}`}
                   className="block p-4 bg-base-200 hover:bg-base-300 rounded-lg transition-colors border border-base-300 hover:border-primary/30"
                 >
                   <h3 className="font-medium text-base-content">
                     {child.metadata.title}
                   </h3>
-                </Link>
+                </Link> 
               ))}
             </div>
           </section>
@@ -259,7 +277,7 @@ export default async function DocPage({
             <div className="flex-1">
               {previousPage && (
                 <Link
-                  href={`/${language}/docs/${previousPage.displayPath}`}
+                  href={`/${language}/${previousPage.displayPath}`}
                   className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
                 >
                   <svg
@@ -291,7 +309,7 @@ export default async function DocPage({
             <div className="flex-1 text-right">
               {nextPage && (
                 <Link
-                  href={`/${language}/docs/${nextPage.displayPath}`}
+                  href={`/${language}/${nextPage.displayPath}`}
                   className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
                 >
                   <div>

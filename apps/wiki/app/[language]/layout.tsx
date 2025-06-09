@@ -2,8 +2,9 @@ import { Link } from "../../components/progress";
 import Image from "next/image";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
-import { getAvailableLanguages, getAvailablePaths } from "./docs/directory-service";
+import { getAvailableLanguages, getAvailablePaths } from "@/service/directory-service";
 import { t, getLanguageName } from "@/lib/i18n";
+import { getNavigationItems } from "@/lib/site-config";
 
 export default async function LanguageLayout({
   children,
@@ -23,12 +24,8 @@ export default async function LanguageLayout({
     name: getLanguageName(langCode),
   }));
 
-  // 获取当前路径在各语言中的可用性
-  const availablePaths = await getAvailablePaths(
-    availableLanguages,
-    "/[language]", // 这里会在客户端组件中被替换为实际路径
-    language,
-  );
+  // 获取导航项配置
+  const navigationItems = getNavigationItems(language);
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-base-100 to-base-200">
@@ -47,18 +44,15 @@ export default async function LanguageLayout({
             </Link>
 
             <nav className="hidden space-x-8 md:flex">
-              <Link
-                href={`/${language}/docs`}
-                className="relative px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg text-base-content hover:text-primary hover:bg-primary/10 before:absolute before:inset-x-0 before:bottom-0 before:h-0.5 before:bg-primary before:scale-x-0 before:transition-transform before:duration-200 hover:before:scale-x-100"
-              >
-                {t("docs", language)}
-              </Link>
-              <Link
-                href={`/${language}/about`}
-                className="relative px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg text-base-content hover:text-primary hover:bg-primary/10 before:absolute before:inset-x-0 before:bottom-0 before:h-0.5 before:bg-primary before:scale-x-0 before:transition-transform before:duration-200 hover:before:scale-x-100"
-              >
-                {t("about", language)}
-              </Link>
+              {navigationItems.map((item) => (
+                <Link
+                  key={item.key}
+                  href={`/${language}${item.href}`}
+                  className="relative px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg text-base-content hover:text-primary hover:bg-primary/10 before:absolute before:inset-x-0 before:bottom-0 before:h-0.5 before:bg-primary before:scale-x-0 before:transition-transform before:duration-200 hover:before:scale-x-100"
+                >
+                  {t(item.translationKey as any, language)}
+                </Link>
+              ))}
             </nav>
           </div>
 
@@ -68,7 +62,6 @@ export default async function LanguageLayout({
             <LanguageSwitcher
               currentLanguage={language}
               availableLanguages={languageOptions}
-              availablePaths={availablePaths}
             />
           </div>
         </div>
@@ -76,24 +69,23 @@ export default async function LanguageLayout({
         {/* 移动端导航菜单 */}
         <div className="border-t md:hidden border-base-300/50">
           <nav className="flex px-6 py-3 space-x-6">
-            <Link
-              href={`/${language}/docs`}
-              className="px-3 py-2 text-sm font-medium transition-colors rounded-lg text-base-content hover:text-primary hover:bg-primary/10"
-            >
-              {t("docs", language)}
-            </Link>
-            <Link
-              href={`/${language}/about`}
-              className="px-3 py-2 text-sm font-medium transition-colors rounded-lg text-base-content hover:text-primary hover:bg-primary/10"
-            >
-              {t("about", language)}
-            </Link>
+            {navigationItems.map((item) => (
+              <Link
+                key={item.key}
+                href={`/${language}${item.href}`}
+                className="px-3 py-2 text-sm font-medium transition-colors rounded-lg text-base-content hover:text-primary hover:bg-primary/10"
+              >
+                {t(item.translationKey as any, language)}
+              </Link>
+            ))}
           </nav>
         </div>
       </header>
 
-      {/* 主要内容 */}
-      <div className="flex-grow">{children}</div>
+      {/* 主要内容区域 */}
+      <main className="flex-1">
+          {children}
+      </main>
 
       {/* 页脚 */}
       <footer className="border-t bg-gradient-to-r from-base-200 to-base-300 border-base-300">
@@ -111,7 +103,7 @@ export default async function LanguageLayout({
                 {t("description", language)}
               </p>
             </div>
-            
+
             <div className="space-y-4">
               <h3 className="font-semibold text-base-content">
                 {t("quickLinks", language)}
@@ -139,7 +131,7 @@ export default async function LanguageLayout({
               </p>
             </div>
           </div>
-          
+
           <div className="pt-6 mt-8 text-center border-t border-base-300">
             <p className="text-sm text-base-content/60">
               © {new Date().getFullYear()} MtF Wiki.{t("copyright", language)}
@@ -150,3 +142,5 @@ export default async function LanguageLayout({
     </div>
   );
 }
+
+

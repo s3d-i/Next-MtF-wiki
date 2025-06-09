@@ -1,6 +1,6 @@
 import type { ShortCodeCompProps } from "./types";
 import styles from './css/Watermark.module.css';
-import { getLocalImagePath } from '@/app/[language]/docs/path-utils';
+import { getLocalImagePath } from '@/service/path-utils';
 
 export default function Watermark({ attrs, mdContext }: ShortCodeCompProps) {
   const src = attrs?.[0] || "";
