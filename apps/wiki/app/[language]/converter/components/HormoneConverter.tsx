@@ -2,7 +2,6 @@
 
 import { useAtom } from 'jotai';
 import { motion, AnimatePresence } from 'motion/react';
-import { useEffect } from 'react';
 import { selectedHormoneAtom, showHistoryAtom, historyAtom } from '../lib/atoms';
 import { HORMONES } from '../lib/constants';
 import { HormoneCard } from './HormoneCard';
@@ -16,23 +15,6 @@ export function HormoneConverter() {
   const [history] = useAtom(historyAtom);
 
   const selectedHormoneData = HORMONES.find(h => h.id === selectedHormone);
-
-  // 键盘快捷键支持
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // H 键打开历史记录
-      if (event.key.toLowerCase() === 'h' && !event.ctrlKey && !event.metaKey) {
-        const target = event.target as HTMLElement;
-        // 只有在不是输入框时才触发
-        if (target.tagName !== 'INPUT' && target.tagName !== 'SELECT') {
-          setShowHistory(true);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [setShowHistory]);
 
   return (
     <div className="space-y-8">
@@ -86,9 +68,9 @@ export function HormoneConverter() {
       </motion.div>
 
       {/* 主要内容区域 - 大屏设备水平布局，小屏设备垂直布局 */}
-      <div className="grid grid-cols-1 lg:grid-cols-7 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 md:gap-8">
         {/* 左侧：换算器界面和功能按钮 */}
-        <div className="lg:col-span-4 space-y-8">
+        <div className="lg:col-span-4 space-y-4 md:space-y-8">
           {/* 换算器界面 */}
           <AnimatePresence>
             {selectedHormoneData && (
@@ -101,7 +83,7 @@ export function HormoneConverter() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-col items-center gap-4"
+            className="flex flex-col items-center gap-3 md:gap-4"
           >
             <button
               onClick={() => setShowHistory(true)}
@@ -109,15 +91,10 @@ export function HormoneConverter() {
             >
               <Clock className="w-4 h-4" />
               查看历史
-              <kbd className="kbd kbd-xs">H</kbd>
               {history.length > 0 && (
                 <span className="badge badge-primary badge-sm">{history.length}</span>
               )}
             </button>
-
-            <div className="text-xs text-base-content/60 text-center">
-              <p>快捷键：H 键查看历史记录</p>
-            </div>
           </motion.div>
         </div>
 

@@ -14,9 +14,9 @@ export async function generateMetadata({
 }
 export default function ConverterPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6 md:py-8">
       <div className="max-w-6xl mx-auto">
-        <header className="text-center mb-8 relative">
+        <header className="text-center mb-6 md:mb-8 relative">
           <div className="flex items-center justify-center gap-4 mb-4">
             <h1 className="text-4xl font-bold text-base-content">
               激素换算器
@@ -27,7 +27,7 @@ export default function ConverterPage() {
 
         <HormoneConverter />
 
-        <footer className="mt-12 p-6 bg-base-200/50 rounded-xl">
+        <footer className="mt-8 md:mt-12 p-4 md:p-6 bg-base-200/50 rounded-xl">
           <div className="text-sm text-base-content/60 space-y-2">
             <p>
               <strong>注意：</strong>部分医院可能使用

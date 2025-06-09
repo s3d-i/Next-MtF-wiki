@@ -20,44 +20,63 @@ import {
 import { Link } from "../../../../components/progress";
 import type { DetailedHTMLProps, ImgHTMLAttributes } from "react";
 import { t } from "@/lib/i18n";
-import {
-  DocContent,
-} from "./doc-content";
-import { getLanguageConfigs } from "@/lib/site-config";
+import { DocContent } from "./doc-content";
+import { getLanguageConfig, getLanguageConfigs } from "@/lib/site-config";
 
 interface DocParams {
   language: string;
   slug: string[];
 }
 
-// 1. 用 generateStaticParams 在构建时生成所有路由
 export async function generateStaticParams() {
-  const allParams: DocParams[] = [];
-
   // 获取语言配置
   const languageConfigs = getLanguageConfigs();
-
-  // 为每种语言生成参数
+  
+  // 生成所有语言和子目录的参数
+  const paramPromises = languageConfigs.flatMap(langConfig =>
+    langConfig.subfolders.map(subfolder =>
+      generateAllStaticParams(langConfig.code, subfolder)
+    )
+  );
+  
+  const allParamsArrays = await Promise.all(paramPromises);
+  
+  // 去重
+  const uniqueParamsSet = new Set<string>();
+  const uniqueParams: DocParams[] = [];
+  
+  // 预先获取所有语言的 noMarkdown 配置，避免重复查询
+  const noMarkdownMap = new Map<string, Set<string>>();
   for (const langConfig of languageConfigs) {
-    // 为每个子目录生成参数
-    for (const subfolder of langConfig.subfolders) {
-      const params = await generateAllStaticParams(langConfig.code, subfolder);
-
-      // 转换为所需格式
-      const convertedParams = params.map(param => ({
+    noMarkdownMap.set(
+      langConfig.code, 
+      new Set(langConfig.noMarkdown || [])
+    );
+  }
+  
+  for (const paramsArray of allParamsArrays) {
+    for (const param of paramsArray) {
+      const slugPath = param.slug?.join("/") || "";
+      const key = `${param.language}\r${slugPath}`;
+      
+      // 跳过已存在的参数
+      if (uniqueParamsSet.has(key)) {
+        continue;
+      }
+      
+      // 跳过 noMarkdown 页面
+      const noMarkdownSet = noMarkdownMap.get(param.language);
+      if (noMarkdownSet?.has(slugPath)) {
+        continue;
+      }
+      
+      uniqueParamsSet.add(key);
+      uniqueParams.push({
         language: param.language,
         slug: param.slug || [],
-      }));
-
-      allParams.push(...convertedParams);
+      });
     }
   }
-
-  // 去重
-  const uniqueParams = allParams.filter((param, index, self) => {
-    const key = `${param.language}-${param.slug.join('/')}`;
-    return index === self.findIndex(p => `${p.language}-${p.slug.join('/')}` === key);
-  });
 
   // console.log("uniqueParams: ", uniqueParams);
   return uniqueParams;
@@ -90,7 +109,6 @@ export async function generateMetadata({
   };
 }
 
-// 2. 在 page 组件里，根据 language 和 slug 去读取并渲染对应的 md(x) 内容
 export default async function DocPage({
   params,
 }: {
@@ -266,7 +284,7 @@ export default async function DocPage({
                   <h3 className="font-medium text-base-content">
                     {child.metadata.title}
                   </h3>
-                </Link> 
+                </Link>
               ))}
             </div>
           </section>

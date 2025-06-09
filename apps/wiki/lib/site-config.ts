@@ -26,6 +26,7 @@ export interface ThemeConfig {
 export interface LanguageConfig {
   code: string;
   subfolders: string[]; // 该语言支持的子目录
+  noMarkdown?: string[] | null; // 该语言不使用markdown的页面，如果为null则使用所有页面
 }
 
 export interface SEOConfig {
@@ -38,6 +39,10 @@ export interface SiteConfig {
   navigation: NavigationItem[];
   theme: ThemeConfig;
   languages: LanguageConfig[]; // 新增语言配置
+}
+
+function getGlobalNoMarkdown(): string[] {
+  return ['converter', 'cup-calculator'];
 }
 
 // 站点配置
@@ -119,22 +124,27 @@ export const siteConfig: SiteConfig = {
     {
       code: 'zh-cn',
       subfolders: ['docs', 'converter', 'about'],
+      noMarkdown: getGlobalNoMarkdown(),
     },
     {
       code: 'zh-hant',
       subfolders: ['docs'],
+      noMarkdown: getGlobalNoMarkdown(),
     },
     {
       code: 'ja',
       subfolders: ['docs'],
+      noMarkdown: getGlobalNoMarkdown(),
     },
     {
       code: 'en',
       subfolders: ['docs'],
+      noMarkdown: getGlobalNoMarkdown(),
     },
     {
       code: 'es',
       subfolders: ['docs'],
+      noMarkdown: getGlobalNoMarkdown(),
     },
   ],
 };

@@ -109,9 +109,9 @@ export function CupCalculator() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-base-100 rounded-xl shadow-lg border border-base-300/30 p-6"
+        className="bg-base-100 rounded-xl shadow-lg border border-base-300/30 p-4 md:p-6"
       >
-        <ol className="space-y-4">
+        <ol className="space-y-3 md:space-y-4">
           <li className="flex items-center gap-4">
             <span className="text-lg font-semibold text-base-content/60">1.</span>
             <div className="flex-1">
@@ -222,7 +222,7 @@ export function CupCalculator() {
         </ol>
 
         {/* 计算按钮 */}
-        <div className="mt-6 flex justify-center">
+        <div className="mt-4 md:mt-6 flex justify-center">
           <button
             onClick={handleCalculate}
             className="btn btn-primary gap-2"
@@ -239,14 +239,14 @@ export function CupCalculator() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`rounded-xl p-6 border ${
+          className={`rounded-xl p-4 md:p-6 border ${
             result.isValid
               ? 'bg-green-50 dark:bg-green-950/20 border-green-200/30 dark:border-green-800/30'
               : 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200/30 dark:border-yellow-800/30'
           }`}
         >
           <div className="text-center">
-            <h3 className="text-xl font-semibold mb-4">计算结果</h3>
+            <h3 className="text-xl font-semibold mb-3 md:mb-4">计算结果</h3>
             <div className={`text-2xl font-bold ${
               result.isValid ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'
             }`}>
@@ -269,7 +269,7 @@ export function CupCalculator() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="flex flex-col sm:flex-row gap-4 justify-center"
+        className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center"
       >
         <button
           onClick={() => setShowHistory(true)}

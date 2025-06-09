@@ -134,17 +134,17 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="bg-base-100 rounded-xl shadow-lg border border-base-300/30 overflow-hidden hover:shadow-xl transition-shadow duration-300"
     >
-      <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-6 border-b border-base-300/30">
+      <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-4 md:p-6 border-b border-base-300/30">
         <h3 className="text-xl font-semibold text-base-content">{hormone.name}</h3>
         {/* <p className="text-sm text-base-content/60 mt-1">
           支持 {hormone.units.map(u => u.symbol).join('、')} 单位互转
         </p> */}
       </div>
 
-      <div className="p-6">
-        <div className="space-y-6">
+      <div className="p-4 md:p-6">
+        <div className="space-y-4 md:space-y-6">
           {/* 输入部分 */}
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <label className="block text-sm font-medium text-base-content">
               输入数值
             </label>

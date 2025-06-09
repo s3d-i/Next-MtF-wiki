@@ -14,10 +14,10 @@ export async function generateMetadata({
 
 export default function CupCalculatorPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6 md:py-8">
       <div className="max-w-4xl mx-auto">
         {/* 页面头部 */}
-        <header className="text-center mb-8">
+        <header className="text-center mb-6 md:mb-8">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-500 rounded-xl flex items-center justify-center">
               <Ruler className="w-6 h-6 text-white" />
@@ -63,7 +63,7 @@ export default function CupCalculatorPage() {
         <CupCalculator />
 
         {/* 页面底部信息 */}
-        <footer className="mt-12 p-6 bg-base-200/50 rounded-xl">
+        <footer className="mt-8 md:mt-12 p-4 md:p-6 bg-base-200/50 rounded-xl">
           <div className="text-sm text-base-content/60 space-y-3">
             <div className="flex items-start gap-3">
               <Shield className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
