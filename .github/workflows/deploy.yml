@@ -46,9 +46,9 @@ jobs:
       - name: Build project
         run: pnpm run build
         env:
-          SITE_URL: ${{ vars.SITE_URL || 'https://mtf.wiki' }}
-          ROBOTS_ALLOW: ${{ vars.ROBOTS_ALLOW || 'true' }}
-          INCLUDE_SITEMAP: ${{ vars.INCLUDE_SITEMAP || 'true' }}
+          SITE_URL: '/'
+          ROBOTS_ALLOW: 'false'
+          INCLUDE_SITEMAP: 'false'
         
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

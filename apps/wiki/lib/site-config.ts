@@ -168,8 +168,8 @@ export function getLanguageConfig(languageCode: string): LanguageConfig | undefi
 export function getSEOConfig(): SEOConfig {
   return {
     siteUrl: process.env.SITE_URL || 'https://mtf.wiki',
-    allowRobots: process.env.ROBOTS_ALLOW !== 'false',
-    includeSitemap: process.env.INCLUDE_SITEMAP !== 'false',
+    allowRobots: process.env.ROBOTS_ALLOW === 'true',
+    includeSitemap: process.env.INCLUDE_SITEMAP === 'true',
   };
 }
 
