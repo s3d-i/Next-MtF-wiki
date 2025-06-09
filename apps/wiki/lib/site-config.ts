@@ -28,6 +28,12 @@ export interface LanguageConfig {
   subfolders: string[]; // 该语言支持的子目录
 }
 
+export interface SEOConfig {
+  siteUrl: string;
+  allowRobots: boolean;
+  includeSitemap: boolean;
+}
+
 export interface SiteConfig {
   navigation: NavigationItem[];
   theme: ThemeConfig;
@@ -156,5 +162,14 @@ export function getLanguageConfigs(): LanguageConfig[] {
 // 获取特定语言的配置
 export function getLanguageConfig(languageCode: string): LanguageConfig | undefined {
   return siteConfig.languages.find(lang => lang.code === languageCode);
+}
+
+// 获取SEO配置
+export function getSEOConfig(): SEOConfig {
+  return {
+    siteUrl: process.env.SITE_URL || 'https://mtf.wiki',
+    allowRobots: process.env.ROBOTS_ALLOW !== 'false',
+    includeSitemap: process.env.INCLUDE_SITEMAP !== 'false',
+  };
 }
 
