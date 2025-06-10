@@ -1,7 +1,15 @@
-import { redirect } from "next/navigation";
+import { getLanguageConfigs } from "@/lib/site-config";
+import HomeRedirect from "../components/HomeRedirect";
+import { getAvailableLanguages } from "@/service/directory-service";
+import { getLanguageName } from "@/lib/i18n/client";
 
-// 根页面重定向到默认语言
-export default function Home() {
-  // 默认重定向到简体中文
-  redirect("/zh-cn");
+export default async function Home() {
+  // 获取所有可用语言
+  const availableLanguages = await getAvailableLanguages();
+  // 构建语言选项
+  const languageConfigs = availableLanguages.map((langCode) => ({
+      code: langCode,
+      name: getLanguageName(langCode),
+    }));
+  return <HomeRedirect languageConfigs={languageConfigs} />;
 }
