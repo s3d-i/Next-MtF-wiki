@@ -19,5 +19,33 @@
     "ja": "異なるキーワードを試してください",
     "es": "Intenta con diferentes palabras clave",
     "en": "Try different keywords"
+  },
+  "banner-text-disclaimer":{
+    "zh-cn": "MtF.wiki 的内容仅供参考，可能存在过时或不准确的信息，请谨慎甄别。",
+    "zh-hant": "MtF.wiki 的內容僅供參考，可能存在過時或不準確的信息，請謹慎甄別。",
+    "ja": "MtF.wiki の内容は参考になりますが、過去の情報や不正確な情報が含まれている可能性があります。ご注意ください。",
+    "es": "El contenido de MtF.wiki es solo para referencia y puede contener información obsoleta o incorrecta. Por favor, ten cuidado.",
+    "en": "The content of MtF.wiki is for reference only and may contain outdated or inaccurate information. Please be cautious."
+  },
+  "banner-button-text-disclaimer":{
+    "zh-cn": "免责声明",
+    "zh-hant": "免責聲明",
+    "ja": "免責聲明",
+    "es": "Aviso de免责",
+    "en": "Disclaimer"
+  },
+  "banner-button-link-disclaimer":{
+    "zh-cn": "/zh-cn/about/disclaimer",
+    "zh-hant": "/zh-hant/about/disclaimer",
+    "ja": null,
+    "es": null,
+    "en": null
+  },
+  "banner-button-text-close":{
+    "zh-cn": "关闭",
+    "zh-hant": "關閉",
+    "ja": "閉じる",
+    "es": "Cerrar",
+    "en": "Close"
   }
 }

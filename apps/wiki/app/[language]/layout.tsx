@@ -7,6 +7,7 @@ import { getAvailableLanguages } from "@/service/directory-service";
 import { t, getLanguageName } from "@/lib/i18n/client";
 import { sT } from "@/lib/i18n/server";
 import { getNavigationItems } from "@/lib/site-config";
+import BottomBanner from "@/components/BottomBanner";
 
 export default async function LanguageLayout({
   children,
@@ -157,6 +158,13 @@ export default async function LanguageLayout({
           </div>
         </div>
       </footer>
+
+      <BottomBanner 
+        text={sT(process.env.NEXT_PUBLIC_BANNER_TEXT as any || "banner-text-disclaimer", language)}
+        buttonText={sT(process.env.NEXT_PUBLIC_BANNER_BUTTON_TEXT as any || "banner-button-text-disclaimer", language)}
+        buttonLink={process.env.NEXT_PUBLIC_BANNER_BUTTON_LINK as string || null}
+        language={language}
+      />
     </div>
   );
 }

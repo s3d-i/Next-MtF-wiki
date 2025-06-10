@@ -1,5 +1,5 @@
 "use client";
-import React, { startTransition } from "react";
+import React, { startTransition, useCallback } from "react";
 import {
   useMotionTemplate,
   useSpring,
@@ -8,7 +8,7 @@ import {
   domAnimation,
 } from "motion/react";
 import {
-  ReactNode,
+  type ReactNode,
   createContext,
   useContext,
   useEffect,
@@ -54,7 +54,7 @@ function getDiff(
   /** The current number used to calculate the difference. */
   current: number
 ): number {
-  let diff;
+  let diff: number;
   if (current === 0) {
     diff = 15;
   } else if (current < 50) {
@@ -98,7 +98,7 @@ export function useProgressInternal() {
   }, [pathname]);
 
   // 清理所有定时器的函数
-  const clearAllTimers = () => {
+  const clearAllTimers = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -111,7 +111,7 @@ export function useProgressInternal() {
       clearTimeout(completeTimerRef.current);
       completeTimerRef.current = null;
     }
-  };
+  }, []);
 
   // 开始进度动画的函数
   const startProgressAnimation = () => {
@@ -208,7 +208,7 @@ export function useProgressInternal() {
     return () => {
       clearAllTimers();
     };
-  }, []);
+  }, [clearAllTimers]);
 
   return {
     visible,
