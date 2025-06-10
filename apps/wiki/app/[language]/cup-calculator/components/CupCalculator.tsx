@@ -117,7 +117,7 @@ export function CupCalculator() {
             <div className="flex-1">
               <span className="text-base-content">
                 请直立，放松，用软尺贴合乳房下缘
-                <span className="mx-1 text-pink-500 font-bold">⊙⊙</span>
+                <span className="mx-1 text-pink-500 font-bold underline">⊙⊙</span>
                 ，水平绕身体一圈：
               </span>
             </div>

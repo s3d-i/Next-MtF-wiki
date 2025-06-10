@@ -7,6 +7,9 @@ import {
   SkeletonProvider,
 } from "../components/progress";
 
+import { Provider as JotaiProvider } from "jotai";
+import ThemeColorMeta from "../components/ThemeColorMeta";
+
 export const metadata: Metadata = {
   title: "MtF.wiki",
   description: "MtF.wiki",
@@ -39,21 +42,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh" suppressHydrationWarning>
-      <body className={`antialiased`}>
-        <ProgressProvider>
-          <SkeletonProvider>
-            <ThemeProvider
-              attribute="data-theme"
-              defaultTheme="system"
-              enableSystem={true}
-              themes={["system", "light", "dark"]}
-              value={{ dark: "sunset", light: "cupcake" }}
-            >
-              <ProgressBar className="fixed h-1 shadow-lg shadow-sky-500/20 bg-sky-500 top-0 z-50" />
-              {children}
-            </ThemeProvider>
-          </SkeletonProvider>
-        </ProgressProvider>
+      <head>
+        <ThemeColorMeta />
+      </head>
+      <body className={"antialiased"}>
+        <JotaiProvider>
+          <ProgressProvider>
+            <SkeletonProvider>
+              <ThemeProvider
+                attribute="data-theme"
+                defaultTheme="system"
+                enableSystem={true}
+                themes={["system", "light", "dark"]}
+                value={{ dark: "sunset", light: "cupcake" }}
+              >
+                <ProgressBar className="fixed h-1 shadow-lg shadow-sky-500/20 bg-sky-500 top-0 z-50" />
+                {children}
+              </ThemeProvider>
+            </SkeletonProvider>
+          </ProgressProvider>
+        </JotaiProvider>
       </body>
     </html>
   );

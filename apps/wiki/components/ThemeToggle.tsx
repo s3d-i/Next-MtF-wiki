@@ -130,8 +130,8 @@ export default function ThemeToggle() {
   }, [isMenuOpen, setIsMenuOpen]);
 
   const handleThemeChange = (newTheme: string) => {
-    setTheme(newTheme);
     setThemePreference(newTheme);
+    setTheme(newTheme);
     setIsMenuOpen(false);
   };
 
