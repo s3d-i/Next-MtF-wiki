@@ -2,7 +2,7 @@
 import React, { useRef } from "react";
 import { m, LazyMotion, domAnimation } from "motion/react";
 import {
-  ReactNode,
+  type ReactNode,
   createContext,
   useContext,
   useEffect,
@@ -109,7 +109,7 @@ export function useSkeletonInternal() {
     return () => {
       clearAllTimers();
     };
-  }, []);
+  });
 
   return {
     visible,
@@ -165,33 +165,33 @@ export function MarkdownSkeleton() {
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* 标题骨架 */}
-      <div className="skeleton h-8 w-3/4"></div>
+      <div className="skeleton h-8 w-3/4" />
 
       {/* 段落骨架 */}
       <div className="flex flex-col gap-2">
-        <div className="skeleton h-4 w-full"></div>
-        <div className="skeleton h-4 w-full"></div>
-        <div className="skeleton h-4 w-2/3"></div>
+        <div className="skeleton h-4 w-full" />
+        <div className="skeleton h-4 w-full" />
+        <div className="skeleton h-4 w-2/3" />
       </div>
 
       {/* 子标题骨架 */}
-      <div className="skeleton h-6 w-1/2 mt-4"></div>
+      <div className="skeleton h-6 w-1/2 mt-4" />
 
       {/* 更多段落骨架 */}
       <div className="flex flex-col gap-2">
-        <div className="skeleton h-4 w-full"></div>
-        <div className="skeleton h-4 w-5/6"></div>
-        <div className="skeleton h-4 w-4/5"></div>
+        <div className="skeleton h-4 w-full" />
+        <div className="skeleton h-4 w-5/6" />
+        <div className="skeleton h-4 w-4/5" />
       </div>
 
       {/* 代码块骨架 */}
-      <div className="skeleton h-24 w-full mt-4"></div>
+      <div className="skeleton h-24 w-full mt-4" />
 
       {/* 列表骨架 */}
       <div className="flex flex-col gap-2 mt-4">
-        <div className="skeleton h-4 w-4/5"></div>
-        <div className="skeleton h-4 w-3/4"></div>
-        <div className="skeleton h-4 w-5/6"></div>
+        <div className="skeleton h-4 w-4/5" />
+        <div className="skeleton h-4 w-3/4" />
+        <div className="skeleton h-4 w-5/6" />
       </div>
     </div>
   );
@@ -204,42 +204,42 @@ export function ArticleSkeleton() {
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* 文章标题 */}
-      <div className="skeleton h-10 w-4/5"></div>
+      <div className="skeleton h-10 w-4/5" />
 
       {/* 元信息 */}
       <div className="flex items-center gap-4">
-        <div className="skeleton h-10 w-10 rounded-full shrink-0"></div>
+        <div className="skeleton h-10 w-10 rounded-full shrink-0" />
         <div className="flex flex-col gap-2">
-          <div className="skeleton h-4 w-20"></div>
-          <div className="skeleton h-3 w-16"></div>
+          <div className="skeleton h-4 w-20" />
+          <div className="skeleton h-3 w-16" />
         </div>
       </div>
 
       {/* 特色图片 */}
-      <div className="skeleton h-48 w-full"></div>
+      <div className="skeleton h-48 w-full" />
 
       {/* 文章内容 */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <div className="skeleton h-4 w-full"></div>
-          <div className="skeleton h-4 w-full"></div>
-          <div className="skeleton h-4 w-3/4"></div>
+          <div className="skeleton h-4 w-full" />
+          <div className="skeleton h-4 w-full" />
+          <div className="skeleton h-4 w-3/4" />
         </div>
 
-        <div className="skeleton h-6 w-1/2"></div>
+        <div className="skeleton h-6 w-1/2" />
 
         <div className="flex flex-col gap-2">
-          <div className="skeleton h-4 w-full"></div>
-          <div className="skeleton h-4 w-5/6"></div>
-          <div className="skeleton h-4 w-4/5"></div>
+          <div className="skeleton h-4 w-full" />
+          <div className="skeleton h-4 w-5/6" />
+          <div className="skeleton h-4 w-4/5" />
         </div>
 
-        <div className="skeleton h-32 w-full"></div>
+        <div className="skeleton h-32 w-full"/>
 
         <div className="flex flex-col gap-2">
-          <div className="skeleton h-4 w-full"></div>
-          <div className="skeleton h-4 w-full"></div>
-          <div className="skeleton h-4 w-2/3"></div>
+          <div className="skeleton h-4 w-full"/>
+          <div className="skeleton h-4 w-full"/>
+          <div className="skeleton h-4 w-2/3"/>
         </div>
       </div>
     </div>
@@ -252,10 +252,10 @@ export function ArticleSkeleton() {
 export function ContentSkeleton() {
   return (
     <div className="flex flex-col gap-3 w-full">
-      <div className="skeleton h-6 w-2/3"></div>
-      <div className="skeleton h-4 w-full"></div>
-      <div className="skeleton h-4 w-full"></div>
-      <div className="skeleton h-4 w-1/2"></div>
+      <div className="skeleton h-6 w-2/3" />
+      <div className="skeleton h-4 w-full" />
+      <div className="skeleton h-4 w-full" />
+      <div className="skeleton h-4 w-1/2" />
     </div>
   );
 }

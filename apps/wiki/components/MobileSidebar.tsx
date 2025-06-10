@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Link } from "./progress";
-import { t } from "@/lib/i18n";
+import { t } from "@/lib/i18n/client";
 import type { DocItem } from "@/service/directory-service";
 
 interface MobileSidebarProps {

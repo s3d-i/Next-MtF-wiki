@@ -86,6 +86,7 @@ export function HormoneConverter() {
             className="flex flex-col items-center gap-3 md:gap-4"
           >
             <button
+              type="button"
               onClick={() => setShowHistory(true)}
               className="btn btn-outline gap-2"
             >

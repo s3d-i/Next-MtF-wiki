@@ -6,8 +6,8 @@ import {
   getIndexPageSlugs,
 } from "../app/[language]/(documents)/[...slug]/utils";
 import { cache } from "react";
-import { Frontmatter } from "../app/[language]/(documents)/[...slug]/types";
-import { type DocItem, type DocMetadata } from "./directory-service-client";
+import type { Frontmatter } from "../app/[language]/(documents)/[...slug]/types";
+import type { DocItem, DocMetadata } from "./directory-service-client";
 import { getLanguageConfig, getLanguageConfigs } from "@/lib/site-config";
 
 // 语言信息接口
@@ -255,11 +255,14 @@ export const getLanguagesInfo = cache(async (): Promise<LanguageInfo[]> => {
                   paths.push(item.displayPath);
                 }
                 if (item.children) {
-                  item.children.forEach((c) => paths.push(...collectPaths(c)));
+                  for (const c of item.children) {
+                    paths.push(...collectPaths(c));
+                  }
                 }
                 return paths;
               };
-              return [...acc, ...collectPaths(child)];
+              acc.push(...collectPaths(child));
+              return acc;
             }, []) || [];
 
           // for (const docPath of docsPaths) {
@@ -332,7 +335,9 @@ const getDocsNavigationRootWithMapInner = cache(
         map.set(item.displayPath, item);
       }
       if (item.children) {
-        item.children.forEach((c) => collectPaths(c));
+        for (const c of item.children) {
+          collectPaths(c);
+        }
       }
     }
     collectPaths(rootItem);
@@ -590,13 +595,17 @@ export async function generateAllStaticParams(
       allParams.push({ language: language, slug: slugParts });
     }
     if (item.children) {
-      item.children.forEach((child) => collectPaths(child));
+      for (const child of item.children) {
+        collectPaths(child);
+      }
     }
   }
 
   // 收集根节点的所有子路径
   if (rootItem.children) {
-    rootItem.children.forEach((child) => collectPaths(child));
+    for (const child of rootItem.children) {
+      collectPaths(child);
+    }
   }
 
   return allParams;

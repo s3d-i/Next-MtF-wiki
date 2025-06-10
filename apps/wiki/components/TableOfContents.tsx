@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { t } from "@/lib/i18n";
+import { t } from "@/lib/i18n/client";
 
 interface TocItem {
   id: string;

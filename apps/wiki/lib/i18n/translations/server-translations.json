@@ -1,0 +1,23 @@
+{
+  "search-documents-placeholder": {
+    "zh-cn": "搜索文档...",
+    "zh-hant": "搜索文档...",
+    "ja": "ドキュメントを検索...",
+    "es": "Buscar documentos...",
+    "en": "Search documents..."
+  },
+  "search-documents-not-found": {
+    "zh-cn": "未找到相关文档",
+    "zh-hant": "未找到相關文檔",
+    "ja": "関連するドキュメントが見つかりません",
+    "es": "No se encontraron documentos relacionados",
+    "en": "No related documents found"
+  },
+  "search-documents-try-different-keywords": {
+    "zh-cn": "尝试使用不同的关键词",
+    "zh-hant": "嘗試使用不同的關鍵詞",
+    "ja": "異なるキーワードを試してください",
+    "es": "Intenta con diferentes palabras clave",
+    "en": "Try different keywords"
+  }
+}

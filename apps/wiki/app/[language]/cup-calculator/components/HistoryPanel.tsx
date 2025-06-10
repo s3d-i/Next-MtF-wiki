@@ -66,6 +66,7 @@ export function HistoryPanel() {
               <div className="flex items-center gap-2">
                 {history.length > 0 && (
                   <button
+                    type="button"
                     onClick={handleClearHistory}
                     className="btn btn-ghost btn-sm gap-2 text-error hover:bg-error/10"
                   >
@@ -74,6 +75,7 @@ export function HistoryPanel() {
                   </button>
                 )}
                 <button
+                  type="button"
                   onClick={() => setShowHistory(false)}
                   className="btn btn-ghost btn-sm btn-circle"
                 >
@@ -116,6 +118,7 @@ export function HistoryPanel() {
                       </div>
                       {record.result.fullSize && (
                         <button
+                          type="button"
                           onClick={() => handleCopy(record)}
                           className="btn btn-ghost btn-sm gap-2"
                         >

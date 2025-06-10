@@ -32,7 +32,7 @@ const getBackgroundStyle = (iconType?: string, color?: string) => {
         borderColor: '#f6a8b8',
         color: 'inherit'
       };
-    default:
+    default: {
       // 为其他类型提供浅色背景和深色边框
       const colorMap = {
         success: {
@@ -57,6 +57,7 @@ const getBackgroundStyle = (iconType?: string, color?: string) => {
         }
       };
       return colorMap[color as keyof typeof colorMap] || colorMap.info;
+    }
   }
 };
 

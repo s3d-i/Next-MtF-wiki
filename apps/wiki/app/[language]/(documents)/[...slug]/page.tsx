@@ -1,27 +1,24 @@
-import { type MDXComponents, MDXRemote } from "next-mdx-remote-client/rsc";
-import { getFrontmatter } from "next-mdx-remote-client/utils";
-import { notFound, redirect } from "next/navigation";
 import fs from "node:fs/promises";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
-
+import { Link } from "@/components/progress";
 import { ShortCodeComp } from "@/components/shortcode";
-import { remarkHugoShortcode } from "./remarkHugoShortcode";
-import type { Frontmatter } from "./types";
-import remarkHeadingId from "remark-heading-id";
-import remarkCsvToTable from "./remarkCsvToTable";
+import { t } from "@/lib/i18n/client";
+import { getLanguageConfigs } from "@/lib/site-config";
 import {
   generateAllStaticParams,
-  getDocItemByNavigationInfo,
   getDocItemByNavigationMap,
   getDocsNavigationMap,
-  getDocsNavigationRoot,
 } from "@/service/directory-service";
-import { Link } from "../../../../components/progress";
+import { type MDXComponents, MDXRemote } from "next-mdx-remote-client/rsc";
+import { getFrontmatter } from "next-mdx-remote-client/utils";
+import { notFound } from "next/navigation";
 import type { DetailedHTMLProps, ImgHTMLAttributes } from "react";
-import { t } from "@/lib/i18n";
+import remarkGfm from "remark-gfm";
+import remarkHeadingId from "remark-heading-id";
+import remarkMath from "remark-math";
 import { DocContent } from "./doc-content";
-import { getLanguageConfig, getLanguageConfigs } from "@/lib/site-config";
+import remarkCsvToTable from "./remarkCsvToTable";
+import { remarkHugoShortcode } from "./remarkHugoShortcode";
+import type { Frontmatter } from "./types";
 
 interface DocParams {
   language: string;
@@ -31,45 +28,42 @@ interface DocParams {
 export async function generateStaticParams() {
   // 获取语言配置
   const languageConfigs = getLanguageConfigs();
-  
+
   // 生成所有语言和子目录的参数
-  const paramPromises = languageConfigs.flatMap(langConfig =>
-    langConfig.subfolders.map(subfolder =>
-      generateAllStaticParams(langConfig.code, subfolder)
-    )
+  const paramPromises = languageConfigs.flatMap((langConfig) =>
+    langConfig.subfolders.map((subfolder) =>
+      generateAllStaticParams(langConfig.code, subfolder),
+    ),
   );
-  
+
   const allParamsArrays = await Promise.all(paramPromises);
-  
+
   // 去重
   const uniqueParamsSet = new Set<string>();
   const uniqueParams: DocParams[] = [];
-  
+
   // 预先获取所有语言的 noMarkdown 配置，避免重复查询
   const noMarkdownMap = new Map<string, Set<string>>();
   for (const langConfig of languageConfigs) {
-    noMarkdownMap.set(
-      langConfig.code, 
-      new Set(langConfig.noMarkdown || [])
-    );
+    noMarkdownMap.set(langConfig.code, new Set(langConfig.noMarkdown || []));
   }
-  
+
   for (const paramsArray of allParamsArrays) {
     for (const param of paramsArray) {
       const slugPath = param.slug?.join("/") || "";
       const key = `${param.language}\r${slugPath}`;
-      
+
       // 跳过已存在的参数
       if (uniqueParamsSet.has(key)) {
         continue;
       }
-      
+
       // 跳过 noMarkdown 页面
       const noMarkdownSet = noMarkdownMap.get(param.language);
       if (noMarkdownSet?.has(slugPath)) {
         continue;
       }
-      
+
       uniqueParamsSet.add(key);
       uniqueParams.push({
         language: param.language,
@@ -99,13 +93,13 @@ export async function generateMetadata({
 
   if (!navItem) {
     return {
-      title: t("notFound", language) + " - " + t("mtfwiki", language),
+      title: `${t("notFound", language)} - ${t("mtfwiki", language)}`,
       description: t("notFound", language),
     };
   }
 
   return {
-    title: navItem.metadata.title + " - " + t("mtfwiki", language),
+    title: `${navItem.metadata.title} - ${t("mtfwiki", language)}`,
   };
 }
 
@@ -167,7 +161,7 @@ export default async function DocPage({
     props: DetailedHTMLProps<
       ImgHTMLAttributes<HTMLImageElement>,
       HTMLImageElement
-    >
+    >,
   ) {
     const imagePath = props.src as string;
     return (
@@ -227,7 +221,7 @@ export default async function DocPage({
   // 获取兄弟页面列表
   const siblings = parentItem?.children || [];
   const currentIndex = siblings.findIndex(
-    (item) => item.displayPath === navItem.displayPath
+    (item) => item.displayPath === navItem.displayPath,
   );
 
   // 获取上一页和下一页
@@ -237,7 +231,7 @@ export default async function DocPage({
 
   return (
     <DocContent>
-      <div className="min-h-[calc(100vh-12rem)] flex flex-col">
+      <div className="flex flex-col">
         {/* 文档内容 */}
 
         <div className="p-6 rounded-xl bg-base-100/30 backdrop-blur-sm border border-base-300/30 shadow-sm flex-1">

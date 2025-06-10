@@ -2,8 +2,10 @@ import { Link } from "../../components/progress";
 import Image from "next/image";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
-import { getAvailableLanguages, getAvailablePaths } from "@/service/directory-service";
-import { t, getLanguageName } from "@/lib/i18n";
+import SearchBox from "@/components/searchbox/SearchBox";
+import { getAvailableLanguages } from "@/service/directory-service";
+import { t, getLanguageName } from "@/lib/i18n/client";
+import { sT } from "@/lib/i18n/server";
 import { getNavigationItems } from "@/lib/site-config";
 
 export default async function LanguageLayout({
@@ -56,7 +58,22 @@ export default async function LanguageLayout({
             </nav>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
+            {/* 搜索框 */}
+            <div className="hidden xl:block">
+              <SearchBox
+                language={language}
+                placeholder={sT("search-documents-placeholder", language)}
+              />
+            </div>
+            <div className="xl:hidden">
+              <SearchBox
+                language={language}
+                placeholder={sT("search-documents-placeholder", language)}
+                compact={true}
+              />
+            </div>
+
             <ThemeToggle />
             <div className="h-6 border-l border-base-300" />
             <LanguageSwitcher
@@ -68,12 +85,13 @@ export default async function LanguageLayout({
 
         {/* 移动端导航菜单 */}
         <div className="border-t md:hidden border-base-300/50">
-          <nav className="flex px-6 py-3 space-x-6">
+
+          <nav className="flex px-6 py-3 space-x-6 overflow-x-auto">
             {navigationItems.map((item) => (
               <Link
                 key={item.key}
                 href={`/${language}${item.href}`}
-                className="px-3 py-2 text-sm font-medium transition-colors rounded-lg text-base-content hover:text-primary hover:bg-primary/10"
+                className="px-3 py-2 text-sm font-medium transition-colors rounded-lg text-base-content hover:text-primary hover:bg-primary/10 whitespace-nowrap"
               >
                 {t(item.translationKey as any, language)}
               </Link>
@@ -84,7 +102,7 @@ export default async function LanguageLayout({
 
       {/* 主要内容区域 */}
       <main className="flex-1">
-          {children}
+        {children}
       </main>
 
       {/* 页脚 */}

@@ -38,6 +38,7 @@ export function HistoryPanel() {
             <div className="flex items-center gap-2">
               {history.length > 0 && (
                 <button
+                  type="button"
                   onClick={() => clearHistory()}
                   className="btn btn-ghost btn-sm text-error"
                 >
@@ -46,6 +47,7 @@ export function HistoryPanel() {
                 </button>
               )}
               <button
+                type="button"
                 onClick={() => setShowHistory(false)}
                 className="btn btn-ghost btn-sm"
               >

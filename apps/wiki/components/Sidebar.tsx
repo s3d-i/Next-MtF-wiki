@@ -134,6 +134,12 @@ const NavItem = ({
               setIsOpen(!isOpen);
               e.preventDefault();
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                setIsOpen(!isOpen);
+                e.preventDefault();
+              }
+            }}
           >
             {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <div

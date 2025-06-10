@@ -6,64 +6,23 @@ import { useAtom } from 'jotai';
 import { useParams } from 'next/navigation';
 import { themePreferenceAtom, themeMenuOpenAtom } from '../lib/theme-atoms';
 import { getThemeOptions } from '../lib/site-config';
-import { t } from '../lib/i18n';
+import { t } from '../lib/i18n/client';
+import { Computer, Moon, Sun } from 'lucide-react';
 
 // 图标组件
 const ThemeIcon = ({ icon, className = "w-5 h-5" }: { icon: string; className?: string }) => {
   switch (icon) {
     case 'sun':
       return (
-        <svg
-          className={className}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
+        <Sun className={className} />
       );
     case 'moon':
       return (
-        <svg
-          className={className}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-          />
-        </svg>
+        <Moon className={className} />
       );
     case 'computer':
       return (
-        <svg
-          className={className}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-          />
-        </svg>
+        <Computer className={className} />
       );
     // 未来可以在这里添加更多图标，例如：
     // case 'contrast':
@@ -154,16 +113,21 @@ export default function ThemeToggle() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <div
+      <button
+        type="button"
         tabIndex={0}
-        role="button"
         className="btn btn-ghost btn-circle"
         aria-label={t('themeSettings', currentLanguage)}
         title={`${t('currentTheme', currentLanguage)}: ${t(currentOption.labelKey as any, currentLanguage)}`}
         onClick={() => setIsMenuOpen(!isMenuOpen)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            setIsMenuOpen(!isMenuOpen);
+          }
+        }}
       >
         <ThemeIcon icon={currentOption.icon} />
-      </div>
+      </button>
 
       {isMenuOpen && (
         <div
@@ -194,6 +158,7 @@ export default function ThemeToggle() {
                         viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                       >
+                        <title>Check</title>
                         <path
                           fillRule="evenodd"
                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"

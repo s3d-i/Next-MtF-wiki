@@ -10,6 +10,7 @@ export function HelpTooltip() {
   return (
     <div className="relative">
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="btn btn-circle btn-ghost btn-sm"
         title="使用帮助"
@@ -28,6 +29,7 @@ export function HelpTooltip() {
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-base-content">使用帮助</h3>
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
                 className="btn btn-ghost btn-xs"
               >

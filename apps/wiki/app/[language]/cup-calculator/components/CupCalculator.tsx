@@ -224,6 +224,7 @@ export function CupCalculator() {
         {/* 计算按钮 */}
         <div className="mt-4 md:mt-6 flex justify-center">
           <button
+            type="button"
             onClick={handleCalculate}
             className="btn btn-primary gap-2"
             disabled={!isAllMeasurementsComplete(measurements)}
@@ -272,6 +273,7 @@ export function CupCalculator() {
         className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center"
       >
         <button
+          type="button"
           onClick={() => setShowHistory(true)}
           className="btn btn-outline gap-2"
         >
@@ -282,6 +284,7 @@ export function CupCalculator() {
           )}
         </button>
         <button
+          type="button"
           onClick={handleReset}
           className="btn btn-outline gap-2 text-warning hover:bg-warning/10"
         >

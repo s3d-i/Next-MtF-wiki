@@ -40,7 +40,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
 
   // 当激素类型、单位或输入值改变时重新计算结果
   useEffect(() => {
-    if (isSelected && state.inputValue.trim() && !isNaN(parseFloat(state.inputValue))) {
+    if (isSelected && state.inputValue.trim() && !Number.isNaN(Number.parseFloat(state.inputValue))) {
       setIsConverting(true);
       
       // 添加轻微延迟以显示动画效果
@@ -49,7 +49,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
         setState(prev => ({ ...prev, result }));
         setIsConverting(false);
       }, 300);
-    } else if (isSelected && (!state.inputValue.trim() || isNaN(parseFloat(state.inputValue)))) {
+    } else if (isSelected && (!state.inputValue.trim() || Number.isNaN(Number.parseFloat(state.inputValue)))) {
       setState(prev => ({ ...prev, result: null }));
     }
   }, [hormone.id, state.fromUnit, state.toUnit, state.inputValue, isSelected, setState]);
@@ -81,7 +81,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
     }));
 
     // 如果交换后有输入值，立即计算结果
-    if (newInputValue && !isNaN(parseFloat(newInputValue))) {
+    if (newInputValue && !Number.isNaN(Number.parseFloat(newInputValue))) {
       setIsConverting(true);
       setTimeout(() => {
         const result = performConversion(newInputValue, newFromUnit, newToUnit, hormone.id);
@@ -105,10 +105,10 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
   };
 
   const saveToHistory = () => {
-    if (state.result?.isValid && state.inputValue.trim() && parseFloat(state.inputValue) > 0) {
+    if (state.result?.isValid && state.inputValue.trim() && Number.parseFloat(state.inputValue) > 0) {
       addHistoryRecord({
         hormoneId: hormone.id,
-        fromValue: parseFloat(state.inputValue),
+        fromValue: Number.parseFloat(state.inputValue),
         fromUnit: state.fromUnit,
         toValue: state.result.value,
         toUnit: state.toUnit,
@@ -145,7 +145,8 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
         <div className="space-y-4 md:space-y-6">
           {/* 输入部分 */}
           <div className="space-y-3 md:space-y-4">
-            <label className="block text-sm font-medium text-base-content">
+            {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+<label className="block text-sm font-medium text-base-content">
               输入数值
             </label>
             <div className="flex gap-2">
@@ -201,7 +202,8 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
 
           {/* 输出部分 */}
           <div className="space-y-4">
-            <label className="block text-sm font-medium text-base-content">
+            {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+<label className="block text-sm font-medium text-base-content">
               转换结果
             </label>
             <div className="flex gap-2">
@@ -209,7 +211,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
                 {isConverting ? (
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                     className="loading loading-spinner loading-sm"
                   />
                 ) : (

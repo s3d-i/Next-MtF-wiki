@@ -30,7 +30,15 @@
     "rules": {
       "recommended": true,
       "style": {
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "noUselessElse": "off",
+        "noInferrableTypes": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "complexity": {
+        "noUselessSwitchCase": "off"
       }
     }
   },
