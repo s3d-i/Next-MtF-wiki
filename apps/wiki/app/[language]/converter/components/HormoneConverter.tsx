@@ -38,7 +38,7 @@ export function HormoneConverter() {
           >
             {HORMONES.map((hormone) => (
               <option key={hormone.id} value={hormone.id}>
-                {hormone.name} ({hormone.units.length} 种单位)
+                {hormone.name}
               </option>
             ))}
           </select>
