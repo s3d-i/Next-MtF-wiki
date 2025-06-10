@@ -14,7 +14,7 @@ function ensureDirectoryExists(dirPath) {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
     
-    console.log(`创建目录: ${dirPath}`);
+    // console.log(`创建目录: ${dirPath}`);
   }
 }
 

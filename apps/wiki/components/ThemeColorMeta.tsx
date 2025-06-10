@@ -13,7 +13,7 @@ const ThemeColorMeta = () => {
       setIsDarkMode(e.matches);
     };
 
-    setIsDarkMode(mediaQuery.matches); // 初始状态
+    setIsDarkMode(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleChange);
 
     return () => {
