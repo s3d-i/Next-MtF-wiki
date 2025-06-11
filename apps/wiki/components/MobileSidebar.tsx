@@ -7,6 +7,7 @@ import { t } from "@/lib/i18n/client";
 import type { DocItem } from "@/service/directory-service";
 import { useAtom } from "jotai";
 import { bannerHeightAtom } from "@/lib/banner-atoms";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 interface MobileSidebarProps {
   navigationItems: DocItem[];
@@ -55,6 +56,7 @@ const MobileNavItem = ({
           {/* 父级链接 */}
           <div className="flex items-center justify-between">
             <Link
+              showSkeletonImmediately={true}
               href={fullPath}
               onClick={onItemClick}
               className={`
@@ -72,20 +74,7 @@ const MobileNavItem = ({
               className="p-2 ml-1 rounded-lg hover:bg-base-200 transition-colors"
               aria-label={isOpen ? "收起" : "展开"}
             >
-              <svg
-                className={`w-4 h-4 transition-transform ${isOpen ? "rotate-90" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "" : "-rotate-90"}`} />
             </button>
           </div>
           {/* 子级内容 */}
@@ -106,6 +95,7 @@ const MobileNavItem = ({
         </div>
       ) : (
         <Link
+          showSkeletonImmediately={true}
           href={fullPath}
           onClick={onItemClick}
           className={`
@@ -173,20 +163,7 @@ export default function MobileSidebar({ navigationItems, language }: MobileSideb
         style={{ bottom: buttonBottomPosition }}
         aria-label={t("docs", language)}
       >
-        <svg 
-          className="w-5 h-5" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M4 6h16M4 12h16M4 18h16" 
-          />
-        </svg>
+        <Menu className="w-5 h-5"/>
         <span className="text-sm font-medium">
           {t("navigation", language)}
         </span>
@@ -236,20 +213,7 @@ export default function MobileSidebar({ navigationItems, language }: MobileSideb
                 className="p-2 rounded-lg hover:bg-base-300/50 transition-colors"
                 aria-label="关闭导航"
               >
-                <svg 
-                  className="w-5 h-5" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M6 18L18 6M6 6l12 12" 
-                  />
-                </svg>
+                <X className="w-5 h-5"/>
               </button>
             </div>
 

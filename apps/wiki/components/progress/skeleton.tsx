@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { usePathname } from "next/navigation";
+import { flushSync } from "react-dom";
 
 /**
  * Internal context for the skeleton wrapper.
@@ -65,7 +66,7 @@ export function useSkeletonInternal() {
   /**
    * Show the skeleton.
    */
-  function show() {
+  function show(wait: number = 700) {
     // console.log("show() 开始显示骨架屏");
 
     // 清除所有现有定时器
@@ -73,6 +74,11 @@ export function useSkeletonInternal() {
 
     // 标记为加载中
     isLoadingRef.current = true;
+
+    if (wait === 0) {
+      setVisible(true);
+      return;
+    }
 
     // 等待700毫秒后显示骨架屏
     showTimerRef.current = setTimeout(() => {
@@ -82,7 +88,11 @@ export function useSkeletonInternal() {
         setVisible(true);
       }
       showTimerRef.current = null;
-    }, 700);
+    }, wait);
+  }
+
+  function showImmediately() {
+    show(0);
   }
 
   /**
@@ -126,6 +136,7 @@ export function useSkeletonInternal() {
   return {
     visible,
     show,
+    showImmediately,
     hide,
   };
 }
@@ -325,20 +336,30 @@ export function useSkeleton(): {
   show: ShowSkeleton;
   hide: HideSkeleton;
   visible: boolean;
+  showImmediately: ShowSkeleton;
 } {
   const skeleton = useSkeletonContext();
 
   const showSkeleton: ShowSkeleton = () => {
-    skeleton.show();
+    flushSync(() => {
+      skeleton.show();
+    });
   };
 
   const hideSkeleton: HideSkeleton = () => {
     skeleton.hide();
   };
 
+  const showSkeletonImmediately: ShowSkeleton = () => {
+    flushSync(() => {
+      skeleton.showImmediately();
+    });
+  };
+
   return {
     show: showSkeleton,
     hide: hideSkeleton,
+    showImmediately: showSkeletonImmediately,
     visible: skeleton.visible,
   };
 }

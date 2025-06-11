@@ -6,6 +6,7 @@ import MobileTableOfContents from "@/components/MobileTableOfContents";
 import type { DocItem } from "@/service/directory-service-client";
 import { useParams, usePathname } from "next/navigation";
 import SuggestionBox from "@/components/SuggestionBox";
+import { DocContent } from "./doc-content";
 
 export default function LayoutComponent({
   navigationItems,
@@ -46,7 +47,7 @@ export default function LayoutComponent({
 
         {/* 主要内容区域 */}
         <main className="flex-1 min-w-0">
-          {children}
+          <DocContent>{children}</DocContent>
           <div className="mt-8">
             <SuggestionBox />
           </div>

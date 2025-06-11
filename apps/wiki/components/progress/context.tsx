@@ -16,6 +16,7 @@ import {
   useState,
 } from "react";
 import { usePathname } from "next/navigation";
+import { flushSync } from "react-dom";
 
 /**
  * Internal context for the progress bar.
@@ -120,14 +121,22 @@ export function useProgressInternal() {
       clearInterval(intervalRef.current);
     }
 
-    intervalRef.current = setInterval(() => {
-      // If we start progress but the bar is currently complete, reset it first.
-      if (spring.get() === 1) {
-        spring.jump(0);
-      }
+    const updateProgress = () => {
+      flushSync(() => {
+        // If we start progress but the bar is currently complete, reset it first.
+        if (spring.get() === 1) {
+          spring.jump(0);
+        }
+  
+        const current = spring.get();
+        spring.set(Math.min(current + getDiff(current * 100) * 0.01, 0.99));
+        });
+    }
 
-      const current = spring.get();
-      spring.set(Math.min(current + getDiff(current * 100) * 0.01, 0.99));
+    updateProgress();
+
+    intervalRef.current = setInterval(() => {
+      updateProgress();
     }, 750);
   };
 
@@ -159,8 +168,11 @@ export function useProgressInternal() {
       if (isLoadingRef.current) {
         // 检查是否还在加载中
         // console.log("700ms后显示进度条并开始动画");
-        setVisible(true);
-        startProgressAnimation();
+
+        flushSync(() => {
+          setVisible(true);
+          startProgressAnimation();
+        });
       }
       startTimerRef.current = null;
     }, 700);
@@ -206,6 +218,7 @@ export function useProgressInternal() {
   useEffect(() => {
     const callback = (pageShowEvent: PageTransitionEvent) => {
       if (pageShowEvent.persisted) {
+        console.log("pageshow callback");
         complete();
       }
     };
