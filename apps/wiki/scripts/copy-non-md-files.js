@@ -1,13 +1,13 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 源目录和目标目录
-const sourceDir = path.join(__dirname, '..', 'source', 'content');
-const targetDir = path.join(__dirname, '..', 'apps', 'wiki', 'public', 'hugo-files');
+const sourceDir = path.join(__dirname, '..', '..', '..', 'source', 'content');
+const targetDir = path.join(__dirname, '..', '..', '..', 'apps', 'wiki', 'public', 'hugo-files');
 
 // 创建目标目录（如果不存在）
 function ensureDirectoryExists(dirPath) {

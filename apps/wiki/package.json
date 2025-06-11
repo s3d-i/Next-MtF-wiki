@@ -2,11 +2,13 @@
   "name": "@next-mtf-wiki/wiki",
   "version": "alpha",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
+    "copy-assets": "node scripts/copy-non-md-files.js",
+    "prebuild": "npm run copy-assets",
     "build": "next build",
-    "build:pages": "sh scripts/build-cf-pages.sh",
-    "preview": "wrangler pages dev",
+    "start": "serve out",
     "deploy": "wrangler pages deploy",
     "lint": "next lint",
     "format": "biome check --write"
@@ -55,6 +57,7 @@
     "@types/react-dom": "^19",
     "@types/remark-heading-id": "^1.0.0",
     "daisyui": "^5.0.37",
+    "serve": "^14.2.4",
     "tailwindcss": "^4",
     "typescript": "^5",
     "wrangler": "^4.16.1"

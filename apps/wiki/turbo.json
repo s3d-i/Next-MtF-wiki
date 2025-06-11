@@ -2,7 +2,8 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "inputs": ["$TURBO_DEFAULT$", "./public/**", "../../source/**"]
+      "inputs": ["$TURBO_DEFAULT$", "./public/**", "../../source/**"],
+      "outputs": [".next/**", "!.next/cache/**", "out/**"]
     }
   }
 }

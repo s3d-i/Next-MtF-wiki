@@ -2,23 +2,21 @@
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
   "tasks": {
-    "build:pages": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", ".vercel/**"]
-    },
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "dependsOn": ["^build"]
     },
-    "preview": {
-      "dependsOn": ["build:pages"],
-      "outputs": [".vercel/**"]
+    "start": {
+      "dependsOn": ["build"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
     "dev": {
       "persistent": true,
+      "cache": false
+    },
+    "deploy": {
+      "dependsOn": ["build"],
       "cache": false
     }
   }
