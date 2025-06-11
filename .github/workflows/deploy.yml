@@ -52,6 +52,7 @@ jobs:
           INCLUDE_SITEMAP: 'false'
           NEXT_PUBLIC_DEPLOY_TIME: ${{ github.event.head_commit.timestamp }}
           NEXT_PUBLIC_SERVER_BUILD_INDEX: 'true'
+          NEXT_PUBLIC_BANNER_TEXT: 'banner-text-disclaimer-preview'
         
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

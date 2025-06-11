@@ -43,7 +43,7 @@ export default function BottomBanner({
         <div className="flex items-center justify-between gap-4">
           {/* 文字内容 */}
           <div className="flex-1 min-w-0">
-            <p className="text-sm md:text-base font-medium truncate">{text}</p>
+            <p className="text-sm md:text-base font-medium">{text}</p>
           </div>
 
           {/* 按钮组 */}
