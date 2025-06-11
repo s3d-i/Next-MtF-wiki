@@ -1,14 +1,13 @@
+import { ThemeProvider } from "@/components/ThemeProvider";
 import type { Metadata } from "next";
-import "./globals.css";
-import { ThemeProvider } from "next-themes";
 import {
-  ProgressProvider,
   ProgressBar,
+  ProgressProvider,
   SkeletonProvider,
-} from "../components/progress";
+} from "@/components/progress";
+import "./globals.css";
 
 import { Provider as JotaiProvider } from "jotai";
-import ThemeColorMeta from "../components/ThemeColorMeta";
 
 export const metadata: Metadata = {
   title: "MtF.wiki",
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
     icon: [
       {
         url: "/favicon/favicon-16x16.png",
-        sizes: "16x16",
+        sizes: "16x16",  
         type: "image/png",
       },
       {
@@ -42,25 +41,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh" suppressHydrationWarning>
-      <head>
-        <ThemeColorMeta />
-      </head>
       <body className={"antialiased"}>
         <JotaiProvider>
-          <ProgressProvider>
-            <SkeletonProvider>
-              <ThemeProvider
-                attribute="data-theme"
-                defaultTheme="system"
-                enableSystem={true}
-                themes={["system", "light", "dark"]}
-                value={{ dark: "sunset", light: "cupcake" }}
-              >
+          <ThemeProvider>
+            <ProgressProvider>
+              <SkeletonProvider>
                 <ProgressBar className="fixed h-1 shadow-lg shadow-sky-500/20 bg-sky-500 top-0 z-50" />
                 {children}
-              </ThemeProvider>
-            </SkeletonProvider>
-          </ProgressProvider>
+              </SkeletonProvider>
+            </ProgressProvider>
+          </ThemeProvider>
         </JotaiProvider>
       </body>
     </html>
