@@ -228,9 +228,7 @@ export async function GET(
       });
 
       // 设置缓存头
-      response.headers.set('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
-      const etag = `"search-index-${language}-${totalDocuments}"`;
-      response.headers.set('ETag', etag);
+      response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
       return response;
     } else {
@@ -257,9 +255,7 @@ export async function GET(
       });
 
       // 设置缓存头
-      response.headers.set('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
-      const etag = `"search-docs-${language}-${allDocuments.length}"`;
-      response.headers.set('ETag', etag);
+      response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
       return response;
     }
@@ -274,8 +270,7 @@ export async function GET(
       totalCount: 0
     }, { status: 500 });
 
-    // 错误响应不缓存
-    errorResponse.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    errorResponse.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
     return errorResponse;
   }
