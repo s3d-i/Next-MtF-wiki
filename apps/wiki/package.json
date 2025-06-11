@@ -38,6 +38,7 @@
     "remark-gfm": "^4.0.1",
     "remark-heading-id": "^1.0.1",
     "remark-math": "^6.0.0",
+    "simple-git": "^3.28.0",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0"
   },

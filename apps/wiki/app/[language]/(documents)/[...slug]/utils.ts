@@ -5,6 +5,9 @@ export { getLanguagesInfo } from "@/service/directory-service";
 export function getContentDir() {
   return path.join(process.cwd(), "../../source", "content");
 }
+export function getContentGitRootDir() {
+  return path.join(process.cwd(), "../../source");
+}
 
 export function getIndexPageSlugs(){
   return ["index.md","_index.md"];

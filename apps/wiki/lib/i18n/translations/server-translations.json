@@ -54,5 +54,12 @@
     "ja": "閉じる",
     "es": "Cerrar",
     "en": "Close"
+  },
+  "last-modified-time":{
+    "zh-cn": "最近更新于",
+    "zh-hant": "最近更新於",
+    "ja": "最近更新於",
+    "es": "Última modificación ",
+    "en": "Last Modified "
   }
 }

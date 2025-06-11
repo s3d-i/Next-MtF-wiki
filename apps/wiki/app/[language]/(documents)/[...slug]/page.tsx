@@ -8,6 +8,7 @@ import {
   getDocItemByNavigationMap,
   getDocsNavigationMap,
 } from "@/service/directory-service";
+import { getFileLastModifiedTime } from "@/service/path-utils";
 import { type MDXComponents, MDXRemote } from "next-mdx-remote-client/rsc";
 import { getFrontmatter } from "next-mdx-remote-client/utils";
 import { notFound } from "next/navigation";
@@ -19,6 +20,7 @@ import { DocContent } from "./doc-content";
 import remarkCsvToTable from "./remarkCsvToTable";
 import { remarkHugoShortcode } from "./remarkHugoShortcode";
 import type { Frontmatter } from "./types";
+import { sT } from "@/lib/i18n/server";
 
 interface DocParams {
   language: string;
@@ -229,6 +231,9 @@ export default async function DocPage({
   const nextPage =
     currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
 
+  // 获取文件的最近修改时间
+  const lastModifiedTime = await getFileLastModifiedTime(navItem.realPath);
+
   return (
     <DocContent>
       <div className="flex flex-col">
@@ -259,7 +264,18 @@ export default async function DocPage({
                 },
               }}
             />
+
+            {/* 最近更新时间 */}
+            {lastModifiedTime && (
+              <div className="mt-8 text-right">
+                <span className="text-xs text-base-content/40 font-mono">
+                  {sT("last-modified-time", language)}&nbsp;
+                  {lastModifiedTime.toLocaleDateString(language)}
+                </span>
+              </div>
+            )}
           </article>
+
         </div>
 
         {/* 子页面列表 */}
