@@ -13,6 +13,7 @@ import type {
   DocMetadata,
 } from "./directory-service-client";
 import { getLanguageConfig, getLanguageConfigs } from "@/lib/site-config";
+import { getLocalImagePath } from "./path-utils";
 
 // 语言信息接口
 export interface LanguageInfo {
@@ -21,31 +22,7 @@ export interface LanguageInfo {
   docsPaths: string[]; // 该语言下所有文档路径
 }
 
-export function getLocalImagePath(
-  language: string | null,
-  slug: string | undefined | null,
-  imagePath: string,
-  isCurrentSlugIndex: boolean
-): string | null {
-  if (imagePath.startsWith("/images/")) {
-    return imagePath.replace(/^\/images\//, "/hugo-static/images/");
-  }
-  if (
-    imagePath?.startsWith("http://") ||
-    imagePath?.startsWith("https://") ||
-    imagePath?.startsWith("//")
-  ) {
-    return imagePath;
-  }
-  if (imagePath?.startsWith("/")) {
-    return `/hugo-files${imagePath}`;
-  }
-  if (slug && language) {
-    const pathname = isCurrentSlugIndex ? slug : path.dirname(slug);
-    return `/hugo-files/${language}/docs/${pathname}/${imagePath}`;
-  }
-  return null;
-}
+export { getLocalImagePath };
 
 export function getDirPath(slug: string): string {
   return path.dirname(slug);
