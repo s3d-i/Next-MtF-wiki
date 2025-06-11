@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { m, LazyMotion, domAnimation } from "motion/react";
 import {
   type ReactNode,
@@ -88,7 +88,7 @@ export function useSkeletonInternal() {
   /**
    * Hide the skeleton with animation.
    */
-  function hide() {
+  const hide = useCallback(() => {
     // console.log("=== hide() 被调用 ===");
 
     // 停止加载状态，开始隐藏状态
@@ -102,7 +102,7 @@ export function useSkeletonInternal() {
 
     // 隐藏
     setVisible(false);
-  }
+  }, []);
 
   // 组件卸载时清理定时器
   useEffect(() => {
@@ -110,6 +110,18 @@ export function useSkeletonInternal() {
       clearAllTimers();
     };
   });
+
+  useEffect(() => {
+    const callback = (pageShowEvent: PageTransitionEvent) => {
+      if (pageShowEvent.persisted) {
+        hide();
+      }
+    };
+    window?.addEventListener("pageshow", callback);
+    return () => {
+      window?.removeEventListener("pageshow", callback);
+    };
+  }, [hide]);
 
   return {
     visible,

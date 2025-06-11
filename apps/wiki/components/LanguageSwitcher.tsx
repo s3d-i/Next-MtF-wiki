@@ -65,7 +65,6 @@ export default function LanguageSwitcher({
         aria-label="语言选择器"
       >
         <Languages className="w-5 h-5" />
-        <span>{currentLanguageName}</span>
         <ChevronDown
           className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
         />

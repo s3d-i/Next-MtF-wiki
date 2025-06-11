@@ -98,7 +98,7 @@ export function useProgressInternal() {
   }, [pathname]);
 
   // 清理所有定时器的函数
-  const clearAllTimers = useCallback(() => {
+  const clearAllTimers = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -111,7 +111,7 @@ export function useProgressInternal() {
       clearTimeout(completeTimerRef.current);
       completeTimerRef.current = null;
     }
-  }, []);
+  };
 
   // 开始进度动画的函数
   const startProgressAnimation = () => {
@@ -132,17 +132,17 @@ export function useProgressInternal() {
   };
 
   // 停止进度动画的函数
-  const stopProgressAnimation = () => {
+  const stopProgressAnimation = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  };
+  },[]);
 
   /**
    * Start the progress.
    */
-  function start() {
+  const start = () => {
     // console.log("start() 开始进度条", prevPathname.current, pathname);
 
     // 清除所有现有定时器
@@ -166,12 +166,12 @@ export function useProgressInternal() {
     }, 700);
 
     prevPathname.current = pathname;
-  }
+  };
 
   /**
    * Complete the progress by animating to 100% then hiding.
    */
-  function complete() {
+  const complete = useCallback(() => {
     // console.log("=== complete() 被调用 ===");
 
     // 停止加载状态
@@ -201,14 +201,26 @@ export function useProgressInternal() {
       // 如果进度条不可见，直接重置
       spring.jump(0);
     }
-  }
+  }, [visible, spring, stopProgressAnimation]);
+
+  useEffect(() => {
+    const callback = (pageShowEvent: PageTransitionEvent) => {
+      if (pageShowEvent.persisted) {
+        complete();
+      }
+    };
+    window?.addEventListener("pageshow", callback);
+    return () => {
+      window?.removeEventListener("pageshow", callback);
+    };
+  }, [complete]);
 
   // 组件卸载时清理定时器
   useEffect(() => {
     return () => {
       clearAllTimers();
     };
-  }, [clearAllTimers]);
+  });
 
   return {
     visible,

@@ -58,7 +58,7 @@ export default async function LanguageLayout({
               ))}
             </nav>
           </div>
-
+          <div className="h-6 border-l border-base-300" />
           <div className="flex items-center space-x-4">
             {/* 搜索框 */}
             <div className="hidden xl:block">
@@ -76,7 +76,6 @@ export default async function LanguageLayout({
             </div>
 
             <ThemeToggle />
-            <div className="h-6 border-l border-base-300" />
             <LanguageSwitcher
               currentLanguage={language}
               availableLanguages={languageOptions}
