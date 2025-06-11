@@ -193,118 +193,6 @@ function convertHugoShortcodeToMdxJsx(
 }
 
 /**
- * 处理 <URL> 格式的链接
- */
-function transformAngleBracketLinks(node: Node): void {
-  if (node.type === "html" && "value" in node) {
-    const htmlNode = node as Html;
-    if (htmlNode.value) {
-      htmlNode.value = htmlNode.value.replace(
-        /<(https?:\/\/)([^>]+)>/g,
-        (_, protocol: string, path: string) => {
-          return `[${path}](${protocol}${path})`;
-        }
-      );
-    }
-  }
-}
-
-/**
- * 处理 <email@example.com> 格式的邮件地址
- */
-function transformAngleBracketEmails(node: Node): void {
-  if (node.type === "html" && "value" in node) {
-    const htmlNode = node as Html;
-    if (htmlNode.value) {
-      htmlNode.value = htmlNode.value.replace(
-        /<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>/g,
-        (_, email: string) => {
-          return `[${email}](mailto:${email})`;
-        }
-      );
-    }
-  }
-}
-
-/**
- * 处理 Markdown 链接中的 shortcode
- */
-function transformMarkdownLinksWithShortcodes(node: Node): void {
-  if (node.type === "html" && "value" in node) {
-    const htmlNode = node as Html;
-    if (htmlNode.value) {
-      htmlNode.value = htmlNode.value.replace(
-        /\[([^\]]+)\]\(\{\{<\s*([^\s>]+)([^>]*)\s*>}}\)/g,
-        (_, linkText: string, refName: string) => {
-          return `[${linkText}](/${refName})`;
-        }
-      );
-    }
-  }
-}
-
-/**
- * 处理 {#id} 格式
- */
-function transformHashIds(node: Node): void {
-  if (node.type === "html" && "value" in node) {
-    const htmlNode = node as Html;
-    if (htmlNode.value) {
-      htmlNode.value = htmlNode.value.replace(
-        /\{(#[a-zA-Z0-9_-]+)\}/g,
-        (_, hashId: string) => {
-          const id = hashId.substring(1);
-          return `[${hashId}](#${id})`;
-        }
-      );
-    }
-  }
-}
-
-/**
- * 转换自闭合HTML标签为JSX格式
- */
-function transformSelfClosingTags(node: Node): void {
-  if (node.type === "html" && "value" in node) {
-    const htmlNode = node as Html;
-    if (htmlNode.value) {
-      htmlNode.value = htmlNode.value.replace(
-        /<(br|hr|img|input|meta|link|area|base|col|embed|source|track|wbr)(\s[^>]*)?(?<!\/)>/gi,
-        (match: string, tagName: string, attributes = "") => {
-          return `<${tagName}${attributes} />`;
-        }
-      );
-    }
-  }
-}
-
-/**
- * 转义普通文本中的花括号
- */
-function escapeRegularBraces(node: Node): void {
-  if (node.type === "text" && "value" in node) {
-    const textNode = node as { value: string };
-    textNode.value = textNode.value.replace(
-      /\{(?![<%])([^{}]*)\}/g,
-      (match: string, content: string) => {
-        return `\\{${content}\\}`;
-      }
-    );
-  }
-}
-
-/**
- * 转义普通文本中的小于号
- */
-function escapeRegularLessThan(node: Node): void {
-  if (node.type === "text" && "value" in node) {
-    const textNode = node as { value: string };
-    // 简单的小于号转义，避免与HTML标签冲突
-    textNode.value = textNode.value.replace(/<(?![a-zA-Z/])/g, "&lt;");
-  }
-}
-
-/**
  * 配置选项
  */
 export interface RemarkHugoShortcodeOptions {
@@ -312,26 +200,6 @@ export interface RemarkHugoShortcodeOptions {
    * 是否处理图片路径重定向
    */
   redirectImages?: boolean;
-  /**
-   * 是否移除HTML注释
-   */
-  removeComments?: boolean;
-  /**
-   * 是否转换class为className
-   */
-  transformClassNames?: boolean;
-  /**
-   * 是否处理角括号链接
-   */
-  handleAngleBracketLinks?: boolean;
-  /**
-   * 是否处理Hash ID
-   */
-  handleHashIds?: boolean;
-  /**
-   * 是否转义花括号
-   */
-  escapeBraces?: boolean;
 
   currentLanguage?: string;
 
@@ -475,10 +343,6 @@ export function transformHugoShortcode(
 ): void {
   const {
     redirectImages = true,
-    removeComments = false,
-    transformClassNames = false,
-    handleAngleBracketLinks = true,
-    handleHashIds = false,
     currentLanguage = "zh",
     navigationItems,
     isCurrentSlugIndex = false,
@@ -516,60 +380,6 @@ export function transformHugoShortcode(
         ) || node.url;
     });
   }
-
-  // 3. 移除HTML注释
-  if (removeComments) {
-    visit(tree, "html", (node: Html, index?: number, parent?: Parent) => {
-      if (node.value?.match(/^\s*<!--[\s\S]*?-->\s*$/)) {
-        if (parent && typeof index === "number") {
-          parent.children.splice(index, 1);
-          return index;
-        }
-      }
-    });
-  }
-
-  // 4. 处理各种文本转换
-  visit(tree, (node: Node) => {
-    // 转换class属性为className
-    if (transformClassNames && node.type === "html") {
-      const htmlNode = node as Html;
-      if (htmlNode.value) {
-        htmlNode.value = htmlNode.value.replace(
-          /<([^>]*?)\sclass=(['"][^'"]*['"]|[^\s>]+)([^>]*?)>/g,
-          (
-            match: string,
-            before: string,
-            classValue: string,
-            after: string
-          ) => {
-            return `<${before} className=${classValue}${after}>`;
-          }
-        );
-      }
-    }
-
-    // 处理角括号链接和邮箱
-    if (handleAngleBracketLinks) {
-      transformAngleBracketLinks(node);
-      transformAngleBracketEmails(node);
-      transformMarkdownLinksWithShortcodes(node);
-    }
-
-    // 处理Hash ID
-    if (handleHashIds) {
-      transformHashIds(node);
-    }
-
-    // 转换自闭合标签
-    // transformSelfClosingTags(node);
-
-    // // 转义花括号和小于号
-    // if (escapeBraces) {
-    //   escapeRegularBraces(node);
-    //   escapeRegularLessThan(node);
-    // }
-  });
 }
 
 export function getRemarkHugoShortcodeOptions(
