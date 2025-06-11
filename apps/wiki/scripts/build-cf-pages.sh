@@ -14,6 +14,6 @@ unlink public/hugo-static
 cp -r ../../source/static public/hugo-static
 
 # Execute build command, continue with cleanup even if it fails
-pnpm dlx @cloudflare/next-on-pages || echo "Build command completed (may have errors)"
+pnpm run build || echo "Build command completed (may have errors)"
 
 # Note: Cleanup operations are now handled by trap and will execute automatically on script exit
