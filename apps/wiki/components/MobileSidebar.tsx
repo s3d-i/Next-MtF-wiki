@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Link } from "./progress";
 import { t } from "@/lib/i18n/client";
-import type { DocItem } from "@/service/directory-service";
+import type { DocItemForClient } from "@/service/directory-service-client";
 import { useAtom } from "jotai";
 import { bannerHeightAtom } from "@/lib/banner-atoms";
 import { ChevronDown, Menu, X } from "lucide-react";
 
 interface MobileSidebarProps {
-  navigationItems: DocItem[];
+  navigationItems: DocItemForClient[];
   language: string;
 }
 
@@ -21,7 +21,7 @@ const MobileNavItem = ({
   currentPath,
   onItemClick,
 }: {
-  item: DocItem;
+  item: DocItemForClient;
   language: string;
   level?: number;
   currentPath: string;
@@ -31,7 +31,7 @@ const MobileNavItem = ({
   const hasChildren = item.children && item.children.length > 0;
 
   // 构建完整的链接路径
-  const fullPath = `/${language}/${item.displayPath}`;
+  const fullPath = `/${language}/${item.path}`;
 
   // 检查当前路径是否匹配
   const isActive = currentPath === fullPath;
@@ -42,7 +42,7 @@ const MobileNavItem = ({
       isActive ||
       (hasChildren &&
         item.children?.some((child) =>
-          currentPath.startsWith(`/${language}/${child.displayPath}`)
+          currentPath.startsWith(`/${language}/${child.path}`)
         ))
     ) {
       setIsOpen(true);
@@ -65,7 +65,7 @@ const MobileNavItem = ({
                 ${isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-base-200"}
               `}
             >
-              {item.metadata.title}
+              {item.name}
             </Link>
             {/* 展开/收起按钮 */}
             <button
@@ -80,9 +80,9 @@ const MobileNavItem = ({
           {/* 子级内容 */}
           {isOpen && (
             <div className={`ml-${level > 0 ? 6 : 4} mt-1 space-y-1 border-l-2 border-base-300/50 pl-3`}>
-              {item.children?.map((child, idx) => (
+              {item.children?.map((child) => (
                 <MobileNavItem
-                  key={`${child.slug}-${idx}`}
+                  key={child.path}
                   item={child}
                   language={language}
                   level={level + 1}
@@ -104,7 +104,7 @@ const MobileNavItem = ({
             ${isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-base-200"}
           `}
         >
-          {item.metadata.title}
+          {item.name}
         </Link>
       )}
     </div>
@@ -221,9 +221,9 @@ export default function MobileSidebar({ navigationItems, language }: MobileSideb
             <div className="overflow-y-auto h-[calc(100vh-5rem)] p-4">
               <nav>
                 <div className="space-y-1">
-                  {navigationItems.map((item, idx) => (
+                  {navigationItems.map((item) => (
                     <MobileNavItem
-                      key={`${item.slug}-${idx}`}
+                      key={item.path}
                       item={item}
                       language={language}
                       currentPath={pathname}

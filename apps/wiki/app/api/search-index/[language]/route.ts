@@ -20,7 +20,7 @@ export async function generateStaticParams() {
   const languages = await getAvailableLanguages();
 
   return languages.map((language) => ({
-    lauguage: language,
+    language: language,
   }));
 }
 
@@ -177,10 +177,10 @@ async function collectDocuments(
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ lauguage: string }> }
+  { params }: { params: Promise<{ language: string }> }
 ) {
   try {
-    const { lauguage: language } = await params;
+    const { language } = await params;
 
     // 获取该语言的所有子文件夹配置
     const languageConfig = getLanguageConfig(language);

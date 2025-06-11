@@ -4,12 +4,12 @@ import { usePathname } from "next/navigation";
 import { Link } from "./progress";
 import { useState, useEffect, useRef } from "react";
 
-import type { DocItem } from "@/service/directory-service";
+import type { DocItemForClient } from "@/service/directory-service-client";
 import styles from "./css/sidebar.module.css";
 import { isElementInScrollContainerView } from "@/lib/utils";
 
 interface SidebarProps {
-  items: DocItem[];
+  items: DocItemForClient[];
   language: string;
 }
 
@@ -54,7 +54,7 @@ const NavItem = ({
   language,
   level = 0,
 }: {
-  item: DocItem;
+  item: DocItemForClient;
   language: string;
   level?: number;
 }) => {
@@ -65,7 +65,7 @@ const NavItem = ({
   function getIsShouldOpen(
     isActive: boolean,
     hasChildren: boolean | undefined,
-    item: DocItem,
+    item: DocItemForClient,
     currentPath?: string,
     language?: string,
   ) {
@@ -74,7 +74,7 @@ const NavItem = ({
       (hasChildren &&
         item.children?.some((child) =>
           currentPath?.startsWith(
-            `/${language}/${child.displayPath}`
+            `/${language}/${child.path}`
           )
         ))
     );
@@ -91,7 +91,7 @@ const NavItem = ({
   const [isOpen, setIsOpen] = useState(isShouldOpen);
 
   // 构建完整的链接路径，使用 fullPath
-  const fullPath = `/${language}/${item.displayPath}`;
+  const fullPath = `/${language}/${item.path}`;
 
   // 检查当前路径是否匹配
   const isActive = currentPath === fullPath;
@@ -155,7 +155,7 @@ const NavItem = ({
             ${level === 0 ? "font-medium" : ""}
           `}
               >
-                {item.metadata.title}
+                {item.name}
               </Link>
             </div>
           </summary>
@@ -164,9 +164,9 @@ const NavItem = ({
               level > 0 ? 2 : 1
             } mt-1 space-y-1 border-l border-base-300`}
           >
-            {item.children?.map((child, idx) => (
+            {item.children?.map((child) => (
               <NavItem
-                key={`${child.slug}-${idx}`}
+                key={child.path}
                 item={child}
                 language={language}
                 level={level + 1}
@@ -182,7 +182,7 @@ const NavItem = ({
             level === 0 ? "font-medium" : ""
           } ${isActive ? "menu-active" : ""}`}
         >
-          {item.metadata.title}
+          {item.name}
         </Link>
       )}
     </li>
@@ -236,9 +236,9 @@ export default function Sidebar({ items, language }: SidebarProps) {
       >
         <nav>
           <ul className="space-y-2 menu w-full">
-            {items.map((item, idx) => (
+            {items.map((item) => (
               <NavItem
-                key={`${item.slug}-${idx}`}
+                key={item.path}
                 item={item}
                 language={language}
               />

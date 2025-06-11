@@ -1,4 +1,4 @@
-import { getDocsNavigationForClient, getDocsNavigationForClientForAllSubfolders } from "@/service/directory-service";
+import { getDocsNavigationForClientForAllSubfolders } from "@/service/directory-service";
 import LayoutComponent from "./components/LayoutComponent";
 
 export default async function DocsLayout({

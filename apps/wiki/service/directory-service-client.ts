@@ -1,4 +1,8 @@
-
+export interface DocItemForClient {
+  name: string;
+  path: string;
+  children?: DocItemForClient[];
+}
 // 文档项接口
 export interface DocItem {
   slug: string;

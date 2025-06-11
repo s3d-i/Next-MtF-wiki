@@ -7,7 +7,11 @@ import {
 } from "../app/[language]/(documents)/[...slug]/utils";
 import { cache } from "react";
 import type { Frontmatter } from "../app/[language]/(documents)/[...slug]/types";
-import type { DocItem, DocMetadata } from "./directory-service-client";
+import type {
+  DocItem,
+  DocItemForClient,
+  DocMetadata,
+} from "./directory-service-client";
 import { getLanguageConfig, getLanguageConfigs } from "@/lib/site-config";
 
 // 语言信息接口
@@ -357,7 +361,7 @@ export async function getDocsNavigationMap(
 }
 
 const getDocsNavigationForClientInner = cache(
-  async (language: string, subfolder: string): Promise<DocItem[]> => {
+  async (language: string, subfolder: string): Promise<DocItemForClient[]> => {
     const rootItems = await getDocsNavigation(language, subfolder);
     return rootItems.map((item) => clearServerLocalInfo(item));
   }
@@ -368,11 +372,11 @@ const getDocsNavigationForClientInner = cache(
  * @param item 要处理的DocItem对象
  * @returns 新的DocItem对象，realPath字段为空字符串
  */
-export function clearServerLocalInfo(item: DocItem): DocItem {
+export function clearServerLocalInfo(item: DocItem): DocItemForClient {
   // 创建新的DocItem对象，realPath为空字符串
-  const newItem: DocItem = {
-    ...item,
-    realPath: "",
+  const newItem: DocItemForClient = {
+    name: item.metadata.title,
+    path: item.displayPath,
     children: item.children
       ? item.children.map((child) => clearServerLocalInfo(child))
       : undefined,
@@ -382,7 +386,7 @@ export function clearServerLocalInfo(item: DocItem): DocItem {
 }
 
 const getDocsNavigationForClientForAllSubfoldersInner = cache(
-  async (language: string): Promise<Map<string, DocItem[]>> => {
+  async (language: string): Promise<Map<string, DocItemForClient[]>> => {
     const allSubfolders = getLanguageConfig(language)?.subfolders || [];
 
     const allItems = await Promise.all(
@@ -391,7 +395,7 @@ const getDocsNavigationForClientForAllSubfoldersInner = cache(
         items: await getDocsNavigationForClient(language, subfolder),
       }))
     );
-    const map = new Map<string, DocItem[]>();
+    const map = new Map<string, DocItemForClient[]>();
     for (const item of allItems) {
       map.set(item.subfolder, item.items);
     }
@@ -401,14 +405,14 @@ const getDocsNavigationForClientForAllSubfoldersInner = cache(
 
 export async function getDocsNavigationForClientForAllSubfolders(
   language: string
-): Promise<Map<string, DocItem[]>> {
+): Promise<Map<string, DocItemForClient[]>> {
   return await getDocsNavigationForClientForAllSubfoldersInner(language);
 }
 
 export async function getDocsNavigationForClient(
   language: string,
   subfolder: string
-): Promise<DocItem[]> {
+): Promise<DocItemForClient[]> {
   return await getDocsNavigationForClientInner(language, subfolder);
 }
 

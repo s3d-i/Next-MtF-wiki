@@ -3,7 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import MobileSidebar from "@/components/MobileSidebar";
 import TableOfContents from "@/components/TableOfContents";
 import MobileTableOfContents from "@/components/MobileTableOfContents";
-import type { DocItem } from "@/service/directory-service-client";
+import type { DocItemForClient } from "@/service/directory-service-client";
 import { useParams, usePathname } from "next/navigation";
 import SuggestionBox from "@/components/SuggestionBox";
 import { DocContent } from "./doc-content";
@@ -13,7 +13,7 @@ export default function LayoutComponent({
   language,
   children,
 }: {
-  navigationItems: Map<string, DocItem[]>;
+  navigationItems: Map<string, DocItemForClient[]>;
   language: string;
   children: React.ReactNode;
 }) {
