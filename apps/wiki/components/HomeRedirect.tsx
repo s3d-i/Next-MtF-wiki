@@ -81,26 +81,26 @@ export default function HomeRedirect({
         <header className="lg:sticky lg:top-0 z-49 border-b bg-base-100/80 backdrop-blur-xl border-base-300/50 shadow-sm">
           <div className="container flex items-center justify-between px-6 py-4 mx-auto">
             <div className="flex items-center space-x-8">
-              <div className="skeleton h-9 w-32"></div>
+              <div className="skeleton h-9 w-32" />
               <nav className="hidden space-x-8 md:flex">
-                <div className="skeleton h-8 w-16"></div>
-                <div className="skeleton h-8 w-20"></div>
-                <div className="skeleton h-8 w-16"></div>
+                <div className="skeleton h-8 w-16" />
+                <div className="skeleton h-8 w-20" />
+                <div className="skeleton h-8 w-16" />
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="skeleton h-8 w-48 hidden xl:block"></div>
-              <div className="skeleton h-8 w-8 rounded-full"></div>
-              <div className="skeleton h-8 w-20"></div>
+              <div className="skeleton h-8 w-48 hidden xl:block" />
+              <div className="skeleton h-8 w-8 rounded-full" />
+              <div className="skeleton h-8 w-20" />
             </div>
           </div>
 
           {/* 移动端导航菜单骨架 */}
           <div className="border-t md:hidden border-base-300/50">
             <nav className="flex px-6 py-3 space-x-6 overflow-x-auto">
-              <div className="skeleton h-8 w-16"></div>
-              <div className="skeleton h-8 w-20"></div>
-              <div className="skeleton h-8 w-16"></div>
+              <div className="skeleton h-8 w-16" />
+              <div className="skeleton h-8 w-20" />
+              <div className="skeleton h-8 w-16" />
             </nav>
           </div>
         </header>
@@ -110,9 +110,9 @@ export default function HomeRedirect({
           <div className="hero min-h-[70vh] bg-base-200 rounded-lg">
             <div className="text-center hero-content">
               <div className="max-w-md space-y-6">
-                <div className="skeleton h-16 w-full"></div>
-                <div className="skeleton h-4 w-3/4 mx-auto"></div>
-                <div className="skeleton h-12 w-32 mx-auto rounded-btn"></div>
+                <div className="skeleton h-16 w-full" />
+                <div className="skeleton h-4 w-3/4 mx-auto" />
+                <div className="skeleton h-12 w-32 mx-auto rounded-btn" />
               </div>
             </div>
           </div>
@@ -123,23 +123,23 @@ export default function HomeRedirect({
           <div className="container px-6 py-8 mx-auto">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               <div className="space-y-4">
-                <div className="skeleton h-8 w-24"></div>
-                <div className="skeleton h-4 w-full"></div>
+                <div className="skeleton h-8 w-24" />
+                <div className="skeleton h-4 w-full" />
               </div>
               <div className="space-y-4">
-                <div className="skeleton h-6 w-20"></div>
+                <div className="skeleton h-6 w-20" />
                 <div className="space-y-2">
-                  <div className="skeleton h-4 w-16"></div>
-                  <div className="skeleton h-4 w-20"></div>
+                  <div className="skeleton h-4 w-16" />
+                  <div className="skeleton h-4 w-20" />
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="skeleton h-6 w-16"></div>
-                <div className="skeleton h-4 w-full"></div>
+                <div className="skeleton h-6 w-16" />
+                <div className="skeleton h-4 w-full" />
               </div>
             </div>
             <div className="pt-6 mt-8 text-center border-t border-base-300">
-              <div className="skeleton h-4 w-48 mx-auto"></div>
+              <div className="skeleton h-4 w-48 mx-auto" />
             </div>
           </div>
         </footer>
@@ -162,6 +162,7 @@ export default function HomeRedirect({
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-2xl">
                   {languageConfigs.map((config) => (
                     <a
+                      key={config.code}
                       href={`/${config.code}`}
                       className="btn btn-outline btn-lg"
                     >

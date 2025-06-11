@@ -25,7 +25,7 @@ const slashedProtocols = /https?|ftp|gopher|file/;
 function stringifyUrlQueryParam(param: unknown): string {
   if (
     typeof param === "string" ||
-    (typeof param === "number" && !isNaN(param)) ||
+    (typeof param === "number" && !Number.isNaN(param)) ||
     typeof param === "boolean"
   ) {
     return String(param);
@@ -38,13 +38,15 @@ export function urlQueryToSearchParams(
   urlQuery: Record<string, string | number | boolean | Array<string | number | boolean>>
 ): URLSearchParams {
   const result = new URLSearchParams();
-  Object.entries(urlQuery).forEach(([key, value]) => {
+  for (const [key, value] of Object.entries(urlQuery)) {
     if (Array.isArray(value)) {
-      value.forEach((item) => result.append(key, stringifyUrlQueryParam(item)));
+      for (const item of value) {
+        result.append(key, stringifyUrlQueryParam(item));
+      }
     } else {
       result.set(key, stringifyUrlQueryParam(value));
     }
-  });
+  }
   return result;
 }
 
@@ -68,14 +70,14 @@ export function formatUrl(urlObj: {
   let query = urlObj.query || "";
   let host: string | false = false;
 
-  auth = auth ? encodeURIComponent(auth).replace(/%3A/i, ":") + "@" : "";
+  auth = auth ? `${encodeURIComponent(auth).replace(/%3A/i, ":")}@` : "";
 
   if (urlObj.host) {
     host = auth + urlObj.host;
   } else if (hostname) {
     host = auth + (~hostname.indexOf(":") ? `[${hostname}]` : hostname);
     if (urlObj.port) {
-      host += ":" + urlObj.port;
+      host += `:${urlObj.port}`;
     }
   }
 
@@ -91,14 +93,14 @@ export function formatUrl(urlObj: {
     urlObj.slashes ||
     ((!protocol || slashedProtocols.test(protocol)) && host !== false)
   ) {
-    host = "//" + (host || "");
-    if (pathname && pathname[0] !== "/") pathname = "/" + pathname;
+    host = `//${host || ""}`;
+    if (pathname && pathname[0] !== "/") pathname = `/${pathname}`;
   } else if (!host) {
     host = "";
   }
 
-  if (hash && hash[0] !== "#") hash = "#" + hash;
-  if (search && search[0] !== "?") search = "?" + search;
+  if (hash && hash[0] !== "#") hash = `#${hash}`;
+  if (search && search[0] !== "?") search = `?${search}`;
 
   pathname = pathname.replace(/[?#]/g, encodeURIComponent);
   search = search.replace("#", "%23");
