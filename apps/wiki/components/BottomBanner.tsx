@@ -13,34 +13,31 @@ interface BottomBannerProps {
   text: string;
   buttonText: string | null;
   buttonLink: string | null;
+  closeButtonText: string | null;
   enableCloseButton?: boolean;
 }
-
 export default function BottomBanner({
   text,
   buttonText,
   buttonLink,
-  enableCloseButton = process.env.NEXT_PUBLIC_BANNER_ENABLE_CLOSE === "true",
+  closeButtonText,
 }: BottomBannerProps) {
   const [isVisible] = useAtom(bannerVisibilityAtom);
   const [, closeBanner] = useAtom(closeBannerAtom);
 
   const handleClose = () => {
-    if (enableCloseButton) {
+    if (closeButtonText) {
       closeBanner();
     }
   };
-
-  if (!isVisible) {
-    return null;
-  }
-  console.log("BottomBanner", isVisible, enableCloseButton);
+  //console.log("BottomBanner", isVisible, enableCloseButton);
   return (
     <div
-      className="
-        sticky bottom-0 left-0 right-0 z-40 
+      className={`
+        ${isVisible ? "sticky" : "block"}
+          bottom-0 left-0 right-0 z-40 
         bg-[#444] text-white shadow-lg
-      "
+      `}
     >
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
@@ -68,7 +65,7 @@ export default function BottomBanner({
             )}
 
             {/* 关闭按钮 */}
-            {enableCloseButton && (
+            {closeButtonText && isVisible && (
               <button
                 type="button"
                 onClick={handleClose}
@@ -80,7 +77,7 @@ export default function BottomBanner({
                   whitespace-nowrap
                 "
               >
-                关闭
+                {closeButtonText}
               </button>
             )}
           </div>

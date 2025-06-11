@@ -162,7 +162,8 @@ export default async function LanguageLayout({
       <BottomBanner 
         text={sT(process.env.NEXT_PUBLIC_BANNER_TEXT as any || "banner-text-disclaimer", language)}
         buttonText={sT(process.env.NEXT_PUBLIC_BANNER_BUTTON_TEXT as any || "banner-button-text-disclaimer", language)}
-        buttonLink={process.env.NEXT_PUBLIC_BANNER_BUTTON_LINK as string || null}
+        buttonLink={sT(process.env.NEXT_PUBLIC_BANNER_BUTTON_LINK as any || "banner-button-link-disclaimer", language) || null}
+        closeButtonText={sT(process.env.NEXT_PUBLIC_BANNER_CLOSE_BUTTON_TEXT as any || "banner-button-text-close", language)}
         language={language}
       />
     </div>
