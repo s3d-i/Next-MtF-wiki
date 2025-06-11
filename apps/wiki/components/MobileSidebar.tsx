@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { Link } from "./progress";
 import { t } from "@/lib/i18n/client";
 import type { DocItem } from "@/service/directory-service";
+import { useAtom } from "jotai";
+import { bannerHeightAtom } from "@/lib/banner-atoms";
 
 interface MobileSidebarProps {
   navigationItems: DocItem[];
@@ -122,6 +124,7 @@ const MobileNavItem = ({
 export default function MobileSidebar({ navigationItems, language }: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const [bannerHeight] = useAtom(bannerHeightAtom);
 
   // 防止背景滚动
   useEffect(() => {
@@ -157,13 +160,17 @@ export default function MobileSidebar({ navigationItems, language }: MobileSideb
     setIsOpen(false);
   };
 
+  // 计算按钮的底部位置，如果有 banner 就在 banner 上方
+  const buttonBottomPosition = bannerHeight > 0 ? `${bannerHeight + 24}px` : '24px';
+
   return (
     <>
       {/* 浮动按钮 - 直接显示为"目录"或"导航" */}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 z-40 lg:hidden flex items-center space-x-2 px-4 py-3 rounded-full bg-primary text-primary-content shadow-lg hover:bg-primary/90 transition-all duration-200 hover:scale-105"
+        className="fixed left-6 z-40 lg:hidden flex items-center space-x-2 px-4 py-3 rounded-full bg-primary text-primary-content shadow-lg hover:bg-primary/90 transition-all duration-200 hover:scale-105"
+        style={{ bottom: buttonBottomPosition }}
         aria-label={t("docs", language)}
       >
         <svg 
@@ -265,7 +272,6 @@ export default function MobileSidebar({ navigationItems, language }: MobileSideb
           </div>
         </div>
       )}
-
 
     </>
   );

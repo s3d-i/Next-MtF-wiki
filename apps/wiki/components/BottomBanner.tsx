@@ -1,11 +1,12 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "@/components/progress/next";
 import {
   bannerVisibilityAtom,
   closeBannerAtom,
+  bannerHeightAtom,
 } from "../lib/banner-atoms";
 
 interface BottomBannerProps {
@@ -24,15 +25,40 @@ export default function BottomBanner({
 }: BottomBannerProps) {
   const [isVisible] = useAtom(bannerVisibilityAtom);
   const [, closeBanner] = useAtom(closeBannerAtom);
+  const [, setBannerHeight] = useAtom(bannerHeightAtom);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   const handleClose = () => {
     if (closeButtonText) {
       closeBanner();
     }
   };
+
+  // 监听 banner 高度变化
+  useEffect(() => {
+    const updateHeight = () => {
+      if (bannerRef.current && isVisible) {
+        setBannerHeight(bannerRef.current.offsetHeight);
+      } else {
+        setBannerHeight(0);
+      }
+    };
+
+    updateHeight();
+
+    // 监听窗口大小变化，可能会影响 banner 高度
+    window.addEventListener('resize', updateHeight);
+    
+    return () => {
+      window.removeEventListener('resize', updateHeight);
+      setBannerHeight(0);
+    };
+  }, [isVisible, setBannerHeight]);
+
   //console.log("BottomBanner", isVisible, enableCloseButton);
   return (
     <div
+      ref={bannerRef}
       className={`
         ${isVisible ? "sticky" : "block"}
           bottom-0 left-0 right-0 z-40 

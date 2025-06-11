@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { t } from "@/lib/i18n/client";
+import { useAtom } from "jotai";
+import { bannerHeightAtom } from "@/lib/banner-atoms";
 
 interface TocItem {
   id: string;
@@ -17,6 +19,7 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
   const [isOpen, setIsOpen] = useState(false);
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
+  const [bannerHeight] = useAtom(bannerHeightAtom);
 
   useEffect(() => {
     // 提取页面中main元素内的标题
@@ -132,13 +135,17 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
     return null;
   }
 
+  // 计算按钮的底部位置，如果有 banner 就在 banner 上方
+  const buttonBottomPosition = bannerHeight > 0 ? `${bannerHeight + 24}px` : '24px';
+
   return (
     <>
       {/* 浮动按钮 */}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 xl:hidden p-3 rounded-full bg-base-200/80 backdrop-blur-sm text-base-content shadow-lg hover:bg-base-200 transition-all duration-200 hover:scale-105 border border-base-300/50"
+        className="fixed right-6 z-40 xl:hidden p-3 rounded-full bg-base-200/80 backdrop-blur-sm text-base-content shadow-lg hover:bg-base-200 transition-all duration-200 hover:scale-105 border border-base-300/50"
+        style={{ bottom: buttonBottomPosition }}
         aria-label={t("tableOfContents", language)}
       >
         <svg 

@@ -30,6 +30,9 @@ export const bannerVisibilityAtom = atom<boolean>((get) => {
   return false;
 });
 
+// Banner 高度 atom，用于其他组件调整位置
+export const bannerHeightAtom = atom<number>(0);
+
 // 关闭 banner 的 action atom
 export const closeBannerAtom = atom(
   null,
