@@ -58,8 +58,8 @@ export default async function LanguageLayout({
               ))}
             </nav>
           </div>
-          <div className="h-6 border-l border-base-300" />
           <div className="flex items-center space-x-4">
+            <div className="h-6 border-l border-base-300" />
             {/* 搜索框 */}
             <div className="hidden xl:block">
               <SearchBox
@@ -85,7 +85,6 @@ export default async function LanguageLayout({
 
         {/* 移动端导航菜单 */}
         <div className="border-t md:hidden border-base-300/50">
-
           <nav className="flex px-6 py-3 space-x-6 overflow-x-auto">
             {navigationItems.map((item) => (
               <Link
@@ -101,9 +100,7 @@ export default async function LanguageLayout({
       </header>
 
       {/* 主要内容区域 */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
 
       {/* 页脚 */}
       <footer className="footer sm:footer-horizontal bg-base-300 text-base-content px-10 pt-10 pb-2">
@@ -119,93 +116,93 @@ export default async function LanguageLayout({
             {sT("footer-quote", language)}
           </blockquote>
         </aside>
-        
+
         <nav>
           <h6 className="footer-title">{sT("project", language)}</h6>
-          <Link 
-            href="https://github.com/project-trans/MtF-wiki" 
-            className="link link-hover" 
-            target="_blank" 
+          <Link
+            href="https://github.com/project-trans/MtF-wiki"
+            className="link link-hover"
+            target="_blank"
             rel="noreferrer"
           >
             {sT("content-source", language)}
           </Link>
-          <Link 
-            href="https://github.com/project-trans/Next-MtF-wiki" 
-            className="link link-hover" 
-            target="_blank" 
+          <Link
+            href="https://github.com/project-trans/Next-MtF-wiki"
+            className="link link-hover"
+            target="_blank"
             rel="noreferrer"
           >
             {sT("website-source", language)}
           </Link>
-          <Link 
-            href="https://2345.lgbt" 
-            className="link link-hover" 
-            target="_blank" 
+          <Link
+            href="https://2345.lgbt"
+            className="link link-hover"
+            target="_blank"
             rel="noreferrer"
           >
             {sT("navigation-site", language)}
           </Link>
         </nav>
-        
+
         <nav>
           <h6 className="footer-title">{sT("updates", language)}</h6>
-          <Link 
-            href="https://x.com/MtFwiki" 
-            className="link link-hover" 
-            target="_blank" 
+          <Link
+            href="https://x.com/MtFwiki"
+            className="link link-hover"
+            target="_blank"
             rel="noreferrer"
           >
             {sT("twitter", language)}
           </Link>
-          <Link 
-            href="https://t.me/MtFwiki" 
-            className="link link-hover" 
-            target="_blank" 
+          <Link
+            href="https://t.me/MtFwiki"
+            className="link link-hover"
+            target="_blank"
             rel="noreferrer"
           >
             {sT("telegram-channel", language)}
           </Link>
         </nav>
-        
+
         <nav>
           <h6 className="footer-title">{sT("contact", language)}</h6>
           {language.startsWith("zh") && (
-          <Link 
-            href={`/${language}/docs/contributor-guide/`} 
-            className="link link-hover"
-          >
-            {sT("contributor-guide", language)}
-          </Link>
+            <Link
+              href={`/${language}/docs/contributor-guide/`}
+              className="link link-hover"
+            >
+              {sT("contributor-guide", language)}
+            </Link>
           )}
-          <Link 
-            href="https://github.com/project-trans" 
-            className="link link-hover" 
-            target="_blank" 
+          <Link
+            href="https://github.com/project-trans"
+            className="link link-hover"
+            target="_blank"
             rel="noreferrer"
           >
             {sT("github", language)}
           </Link>
-          <Link 
-            href="mailto:mtfwiki@project-trans.org" 
+          <Link
+            href="mailto:mtfwiki@project-trans.org"
             className="link link-hover"
           >
             {sT("email", language)}
           </Link>
         </nav>
       </footer>
-      
+
       <footer className="footer bg-base-300 text-base-content border-base-300 border-t px-10 py-4">
         <aside className="grid-flow-col items-center">
           <p className="text-sm">
-            © 2020-{new Date().getFullYear()} 
+            © 2020-{new Date().getFullYear()}
             <Link href="https://MtF.wiki" className="link link-hover ml-1">
               MtF.wiki
             </Link>
             <span className="ml-1">{sT("all-rights-reserved", language)}</span>
-            <Link 
-              href="https://project-trans.org/" 
-              target="_blank" 
+            <Link
+              href="https://project-trans.org/"
+              target="_blank"
               rel="noreferrer"
               className="link link-hover ml-1"
             >
@@ -221,15 +218,31 @@ export default async function LanguageLayout({
         </aside>
       </footer>
 
-      <BottomBanner 
-        text={sT(process.env.NEXT_PUBLIC_BANNER_TEXT as any || "banner-text-disclaimer", language)}
-        buttonText={sT(process.env.NEXT_PUBLIC_BANNER_BUTTON_TEXT as any || "banner-button-text-disclaimer", language)}
-        buttonLink={sT(process.env.NEXT_PUBLIC_BANNER_BUTTON_LINK as any || "banner-button-link-disclaimer", language) || null}
-        closeButtonText={sT(process.env.NEXT_PUBLIC_BANNER_CLOSE_BUTTON_TEXT as any || "banner-button-text-close", language)}
+      <BottomBanner
+        text={sT(
+          (process.env.NEXT_PUBLIC_BANNER_TEXT as any) ||
+            "banner-text-disclaimer",
+          language
+        )}
+        buttonText={sT(
+          (process.env.NEXT_PUBLIC_BANNER_BUTTON_TEXT as any) ||
+            "banner-button-text-disclaimer",
+          language
+        )}
+        buttonLink={
+          sT(
+            (process.env.NEXT_PUBLIC_BANNER_BUTTON_LINK as any) ||
+              "banner-button-link-disclaimer",
+            language
+          ) || null
+        }
+        closeButtonText={sT(
+          (process.env.NEXT_PUBLIC_BANNER_CLOSE_BUTTON_TEXT as any) ||
+            "banner-button-text-close",
+          language
+        )}
         language={language}
       />
     </div>
   );
 }
-
-
