@@ -20,6 +20,7 @@ import remarkCsvToTable from "./remarkCsvToTable";
 import { remarkHugoShortcode } from "./remarkHugoShortcode";
 import type { Frontmatter } from "./types";
 import { sT } from "@/lib/i18n/server";
+import remarkHtmlContent from "./remarkHtmlContent";
 
 interface DocParams {
   language: string;
@@ -156,6 +157,7 @@ export default async function DocPage({
     remarkHugoShortcodePlugin,
     remarkGfm,
     remarkMath,
+    remarkHtmlContent,
   ];
 
   async function ImageComponent(

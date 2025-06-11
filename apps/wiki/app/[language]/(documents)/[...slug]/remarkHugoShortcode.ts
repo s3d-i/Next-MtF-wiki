@@ -636,7 +636,7 @@ export function getRemarkHugoShortcodeOptions(
                 return {
                   type: "hugoShortcode-Link-Href",
                   value:
-                    `/${options.currentLanguage}/docs/${
+                    `/${options.currentLanguage}/${
                       getNavigationForOriginalSlug(
                         options.currentLanguage!,
                         href,
