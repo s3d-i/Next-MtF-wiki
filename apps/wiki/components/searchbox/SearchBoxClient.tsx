@@ -252,8 +252,8 @@ export default function SearchBoxClient({
 
     return parts.map((part, index) =>
       regex.test(part) ? (
-        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
         <mark
+          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
           key={index}
           className="bg-yellow-200 dark:bg-yellow-800 px-1 rounded"
         >
@@ -269,8 +269,8 @@ export default function SearchBoxClient({
   const SkeletonLoader = () => (
     <div className="py-2">
       {Array.from({ length: 3 }).map((_, index) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
         <div
+          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
           key={index}
           className="px-4 py-3 border-b border-base-300/50 last:border-b-0"
         >

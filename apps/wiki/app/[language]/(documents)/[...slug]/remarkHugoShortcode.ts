@@ -212,7 +212,6 @@ export interface RemarkHugoShortcodeOptions {
 
 export function transformHugoShortcodeLinks(tree: Root): void {
   visit(tree, (node: Node, index?: number, parent?: Parent) => {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const hugoNode = node as any;
     //console.log("hugoNode: ", JSON.stringify(hugoNode, null, 2));
     if (
@@ -387,7 +386,6 @@ export function getRemarkHugoShortcodeOptions(
 ) {
   const options1 = {
     noSelfClosingElements: getNonSelfClosingElements(),
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     hugoShortcodeElementOnEnterTransform:
       options.currentLanguage && options.navigationItems
         ? (node: any) => {
