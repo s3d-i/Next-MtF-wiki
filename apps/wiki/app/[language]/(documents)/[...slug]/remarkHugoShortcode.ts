@@ -83,35 +83,6 @@ interface RemarkTextElement {
   value: string;
 }
 
-// 转换Hugo shortcode参数为MDX JSX属性
-function convertHugoArgumentsToMdxAttributes(
-  arguments_: HugoShortcodeArgument[]
-) {
-  const attributes = [];
-
-  for (let i = 0; i < arguments_.length; i++) {
-    const arg = arguments_[i];
-
-    if (arg.type === "hugoShortcodeArgumentNamed") {
-      // 命名参数
-      attributes.push({
-        type: "mdxJsxAttribute",
-        name: arg.name,
-        value: arg.value || null,
-      });
-    } else if (arg.type === "hugoShortcodeArgumentPositional") {
-      // 位置参数，使用索引作为属性名
-      attributes.push({
-        type: "mdxJsxAttribute",
-        name: `arg${i}`,
-        value: arg.value || null,
-      });
-    }
-  }
-
-  return attributes;
-}
-
 // 转换Hugo shortcode节点为MDX JSX节点
 function convertHugoShortcodeToMdxJsx(
   node: HugoShortcodeElement,
@@ -143,27 +114,15 @@ function convertHugoShortcodeToMdxJsx(
     "hugoShortcodeFlowElement";
   const targetType = isFlow ? "mdxJsxFlowElement" : "mdxJsxTextElement";
 
-  // 为位置参数和命名参数创建attrs表达式属性
-  const positionalArgs = node.arguments
-    .filter((arg) => arg.type === "hugoShortcodeArgumentPositional")
-    .map((arg) => arg.value || "");
-
-  const namedArgs = node.arguments
-    .filter((arg) => arg.type === "hugoShortcodeArgumentNamed")
-    .reduce((acc, arg) => {
-      if (arg.name) {
-        acc[arg.name] = arg.value || "";
-      }
-      return acc;
-    }, {} as Record<string, string>);
-
   // 构建 attrs 数组：[["key","value"],["key","value"]]，位置参数的 key 为 null
-  const attrsArray = [
-    // 位置参数，key 为 null
-    ...positionalArgs.map((value) => [null, value]),
-    // 命名参数，key 为参数名
-    ...Object.entries(namedArgs),
-  ];
+  const attrsArray = node.arguments.map((arg) => {
+    if (arg.type === "hugoShortcodeArgumentPositional") {
+      return [null, arg.value || ""];
+    } else if (arg.type === "hugoShortcodeArgumentNamed") {
+      return [arg.name, arg.value || ""];
+    }
+    return [null, ""];
+  });
 
   // console.log("attrsArray: ", JSON.stringify(attrsArray, null, 2));
 

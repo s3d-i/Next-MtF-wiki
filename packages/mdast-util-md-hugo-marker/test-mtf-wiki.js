@@ -6,7 +6,7 @@ const options = {
   noSelfClosingElements: ['ref','mtf-wiki','telephone'],
 }
 
-const ast = fromMarkdown("{{< telephone \"021-54237559 345\" >}}", {
+const ast = fromMarkdown("{{< shields/qq 717099350 \"https://jq.qq.com/?_wv=1027&k=byC0cbS4\" />}}", {
   extensions: [hugoShortcode()],
   mdastExtensions: [hugoShortcodeFromMarkdown(options)],
 })
