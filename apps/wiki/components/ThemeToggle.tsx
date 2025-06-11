@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import { themePreferenceAtom, themeMenuOpenAtom } from '../lib/theme-atoms';
 import { getThemeOptions } from '../lib/site-config';
 import { t } from '../lib/i18n/client';
-import { Computer, Moon, Sun } from 'lucide-react';
+import { SunMoon, Moon, Sun, Palette } from 'lucide-react';
 
 // 图标组件
 const ThemeIcon = ({ icon, className = "w-5 h-5" }: { icon: string; className?: string }) => {
@@ -22,7 +22,7 @@ const ThemeIcon = ({ icon, className = "w-5 h-5" }: { icon: string; className?: 
       );
     case 'computer':
       return (
-        <Computer className={className} />
+        <SunMoon className={className} />
       );
     // 未来可以在这里添加更多图标，例如：
     // case 'contrast':
@@ -30,21 +30,7 @@ const ThemeIcon = ({ icon, className = "w-5 h-5" }: { icon: string; className?: 
     // case 'palette':
     default:
       return (
-        <svg
-          className={className}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
+        <Palette className={className} />
       );
   }
 };
