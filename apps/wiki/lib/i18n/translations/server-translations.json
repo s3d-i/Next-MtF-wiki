@@ -61,5 +61,117 @@
     "ja": "最近更新於",
     "es": "Última modificación ",
     "en": "Last Modified "
+  },
+  "home-page-title":{
+    "zh-cn": "MtF.wiki",
+    "zh-hant": "MtF.wiki",
+    "ja": "MtF.wiki",
+    "es": "MtF.wiki",
+    "en": "MtF.wiki"
+  },
+  "home-page-description":{
+    "zh-cn": "欢迎来到 MtF.wiki．我们试图整理汇总女性倾向跨性别的相关资料，为大家提供更好的帮助~",
+    "zh-hant": "歡迎來到 MtF.wiki．我們試圖整理匯總女性傾向跨性別的相關資料，為大家提供更好的幫助~",
+    "ja": "MtF.wiki へようこそ。 吾輩は、女性的なトランスジェンダーに関する情報を整理して要約し、より良い支援を提供するよう努めています〜",
+    "es": "Bienvenida a MtF.wiki. Tratamos de organizar la información relevante de transfeminidad para daros mejor ayuda ^_^",
+    "en": "Welcome to the MtF.wiki. We are trying to organize the relevant information of transfeminine to provide you with better help ^_^"
+  },
+  "home-page-get-started":{
+    "zh-cn": "查看文档",
+    "zh-hant": "查看文檔",
+    "ja": "ドキュメントを見る",
+    "es": "Ver documentos",
+    "en": "View documents"
+  },
+  "project":{
+    "zh-cn": "项目",
+    "zh-hant": "項目",
+    "ja": "プロジェクト",
+    "es": "Proyecto",
+    "en": "Project"
+  },
+  "footer-quote": {
+    "zh-cn": "我们的存在，就是对恶意最大的反抗。",
+    "zh-hant": "我們的存在，就是對惡意最大的反抗。",
+    "ja": "私たちの存在は、悪意への最大の反抗である。",
+    "es": "Nuestra existencia es resistencia.",
+    "en": "Our existence is resistance."
+  },
+  "content-source": {
+    "zh-cn": "文档内容源码",
+    "zh-hant": "文檔內容源碼",
+    "ja": "ドキュメントコンテンツソースコード",
+    "es": "Código fuente del contenido del documento",
+    "en": "Document Content Source Code"
+  },
+  "website-source": {
+    "zh-cn": "网站框架源码",
+    "zh-hant": "網站框架源碼",
+    "ja": "ウェブサイトフレームワークソースコード",
+    "es": "Código fuente del sitio web",
+    "en": "Website Framework Source Code"
+  },
+  "navigation-site": {
+    "zh-cn": "导航站 2345.LGBT",
+    "zh-hant": "導航站 2345.LGBT",
+    "ja": "ナビゲーションサイト 2345.LGBT",
+    "es": "Sitio de navegación 2345.LGBT",
+    "en": "Navigation Site 2345.LGBT"
+  },
+  "updates": {
+    "zh-cn": "动态",
+    "zh-hant": "動態",
+    "ja": "更新情報",
+    "es": "Actualizaciones",
+    "en": "Updates"
+  },
+  "twitter": {
+    "zh-cn": "Twitter",
+    "zh-hant": "Twitter",
+    "ja": "Twitter",
+    "es": "Twitter",
+    "en": "Twitter"
+  },
+  "telegram-channel": {
+    "zh-cn": "Telegram 频道",
+    "zh-hant": "Telegram 頻道",
+    "ja": "Telegram チャンネル",
+    "es": "Canal de Telegram",
+    "en": "Telegram Channel"
+  },
+  "contact": {
+    "zh-cn": "联系",
+    "zh-hant": "聯繫",
+    "ja": "お問い合わせ",
+    "es": "Contacto",
+    "en": "Contact"
+  },
+  "contributor-guide": {
+    "zh-cn": "贡献者指南",
+    "zh-hant": "貢獻者指南",
+    "ja": "コントリビューターガイド",
+    "es": "Guía del contribuyente",
+    "en": "Contributor Guide"
+  },
+  "github": {
+    "zh-cn": "GitHub",
+    "zh-hant": "GitHub",
+    "ja": "GitHub",
+    "es": "GitHub",
+    "en": "GitHub"
+  },
+  "email": {
+    "zh-cn": "电子邮件",
+    "zh-hant": "電子郵件",
+    "ja": "メール",
+    "es": "Correo electrónico",
+    "en": "Email"
+  },
+  "all-rights-reserved": {
+    "zh-cn": "All rights reserved. Maintained by",
+    "zh-hant": "All rights reserved. Maintained by",
+    "ja": "All rights reserved. Maintained by",
+    "es": "Todos los derechos reservados. Mantenido por",
+    "en": "All rights reserved. Maintained by"
   }
 }

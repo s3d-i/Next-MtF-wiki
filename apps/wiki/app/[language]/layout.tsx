@@ -107,56 +107,119 @@ export default async function LanguageLayout({
       </main>
 
       {/* 页脚 */}
-      <footer className="border-t bg-gradient-to-r from-base-200 to-base-300 border-base-300">
-        <div className="container px-6 py-8 mx-auto">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="space-y-4">
+      <footer className="footer sm:footer-horizontal bg-base-300 text-base-content px-10 pt-10 pb-2">
+        <aside>
+          <Image
+            src="/hugo-static/new/mtf-wiki-long.svg"
+            alt="MtF Wiki Logo"
+            width={120}
+            height={30}
+            className="h-8 w-auto"
+          />
+          <blockquote className="text-sm border-l-4 border-primary/30 pl-4 pr-4 italic text-base-content/70 bg-base-100/50 py-2 rounded-r">
+            {sT("footer-quote", language)}
+          </blockquote>
+        </aside>
+        
+        <nav>
+          <h6 className="footer-title">{sT("project", language)}</h6>
+          <Link 
+            href="https://github.com/project-trans/MtF-wiki" 
+            className="link link-hover" 
+            target="_blank" 
+            rel="noreferrer"
+          >
+            {sT("content-source", language)}
+          </Link>
+          <Link 
+            href="https://github.com/project-trans/Next-MtF-wiki" 
+            className="link link-hover" 
+            target="_blank" 
+            rel="noreferrer"
+          >
+            {sT("website-source", language)}
+          </Link>
+          <Link 
+            href="https://2345.lgbt" 
+            className="link link-hover" 
+            target="_blank" 
+            rel="noreferrer"
+          >
+            {sT("navigation-site", language)}
+          </Link>
+        </nav>
+        
+        <nav>
+          <h6 className="footer-title">{sT("updates", language)}</h6>
+          <Link 
+            href="https://x.com/MtFwiki" 
+            className="link link-hover" 
+            target="_blank" 
+            rel="noreferrer"
+          >
+            {sT("twitter", language)}
+          </Link>
+          <Link 
+            href="https://t.me/MtFwiki" 
+            className="link link-hover" 
+            target="_blank" 
+            rel="noreferrer"
+          >
+            {sT("telegram-channel", language)}
+          </Link>
+        </nav>
+        
+        <nav>
+          <h6 className="footer-title">{sT("contact", language)}</h6>
+          {language.startsWith("zh") && (
+          <Link 
+            href={`/${language}/docs/contributor-guide/`} 
+            className="link link-hover"
+          >
+            {sT("contributor-guide", language)}
+          </Link>
+          )}
+          <Link 
+            href="https://github.com/project-trans" 
+            className="link link-hover" 
+            target="_blank" 
+            rel="noreferrer"
+          >
+            {sT("github", language)}
+          </Link>
+          <Link 
+            href="mailto:mtfwiki@project-trans.org" 
+            className="link link-hover"
+          >
+            {sT("email", language)}
+          </Link>
+        </nav>
+      </footer>
+      
+      <footer className="footer bg-base-300 text-base-content border-base-300 border-t px-10 py-4">
+        <aside className="grid-flow-col items-center">
+          <p className="text-sm">
+            © 2020-{new Date().getFullYear()} 
+            <Link href="https://MtF.wiki" className="link link-hover ml-1">
+              MtF.wiki
+            </Link>
+            <span className="ml-1">{sT("all-rights-reserved", language)}</span>
+            <Link 
+              href="https://project-trans.org/" 
+              target="_blank" 
+              rel="noreferrer"
+              className="link link-hover ml-1"
+            >
               <Image
-                src="/hugo-static/new/mtf-wiki-long.svg"
-                alt="Logo"
-                width={120}
-                height={30}
-                className="w-auto h-8"
+                src="/hugo-static/new/project-trans-inline.svg"
+                alt="Project Trans"
+                width={80}
+                height={15}
+                className="h-3 w-auto inline"
               />
-              <p className="text-sm text-base-content/70">
-                {t("description", language)}
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-semibold text-base-content">
-                {t("quickLinks", language)}
-              </h3>
-              <ul className="space-y-2 text-sm text-base-content/70">
-                <li>
-                  <Link href={`/${language}/docs`} className="transition-colors hover:text-primary">
-                    {t("browseDocs", language)}
-                  </Link>
-                </li>
-                <li>
-                  <Link href={`/${language}/about`} className="transition-colors hover:text-primary">
-                    {t("aboutUs", language)}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-semibold text-base-content">
-                {t("community", language)}
-              </h3>
-              <p className="text-sm text-base-content/70">
-                {t("communityDesc", language)}
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-6 mt-8 text-center border-t border-base-300">
-            <p className="text-sm text-base-content/60">
-              © {new Date().getFullYear()} MtF Wiki.{t("copyright", language)}
-            </p>
-          </div>
-        </div>
+            </Link>
+          </p>
+        </aside>
       </footer>
 
       <BottomBanner 
