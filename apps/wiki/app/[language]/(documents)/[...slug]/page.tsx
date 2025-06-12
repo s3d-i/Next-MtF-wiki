@@ -269,8 +269,12 @@ export default async function DocPage({
         {lastModifiedTime && (
           <div className="mt-8 text-right">
             <span className="text-xs text-base-content/40 font-mono">
-              {sT("last-modified-time", language)}&nbsp;
-              {lastModifiedTime.toLocaleDateString(language)}
+              {sT("last-modified-time", language)}
+              {lastModifiedTime.toLocaleDateString(language, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
             </span>
           </div>
         )}
