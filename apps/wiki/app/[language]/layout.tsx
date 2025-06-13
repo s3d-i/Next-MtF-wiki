@@ -31,7 +31,10 @@ export default async function LanguageLayout({
   const navigationItems = getNavigationItems(language);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-base-100 to-base-200">
+    <div
+      className="flex flex-col min-h-screen bg-gradient-to-br from-base-100 to-base-200"
+      lang={language}
+    >
       {/* 顶部导航栏 */}
       <header className="lg:sticky lg:top-0 z-49 border-b bg-base-100/80 backdrop-blur-xl border-base-300/50 shadow-sm">
         <div className="container flex items-center justify-between px-6 py-4 mx-auto">

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     icon: [
       {
         url: "/favicon/favicon-16x16.png",
-        sizes: "16x16",  
+        sizes: "16x16",
         type: "image/png",
       },
       {
@@ -40,7 +40,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh" suppressHydrationWarning>
+    // biome-ignore lint/a11y/useHtmlLang:
+    <html suppressHydrationWarning>
       <body className={"antialiased"}>
         <JotaiProvider>
           <ThemeProvider>
