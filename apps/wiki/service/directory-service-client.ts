@@ -18,6 +18,7 @@ export interface DocItem {
 
 export interface DocMetadata {
   title: string;
+  description?: string | null;
   draft?: boolean;
   order?: number | null;
   preferredSlug?: string | null;

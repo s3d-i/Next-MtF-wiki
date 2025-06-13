@@ -54,6 +54,7 @@ async function getDocMetadata(
   const preferredSlug = frontmatter?.slug;
   return {
     title: await getDocTitleFromFrontmatter(filePath, frontmatter),
+    description: frontmatter?.description?.toString() || null,
     draft: Boolean(frontmatter?.draft),
     order: Number(frontmatter?.weight) || null,
     preferredSlug: preferredSlug?.toString() || null,

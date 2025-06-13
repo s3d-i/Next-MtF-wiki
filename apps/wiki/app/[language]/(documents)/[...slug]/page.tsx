@@ -100,8 +100,18 @@ export async function generateMetadata({
     };
   }
 
+  const ogBaseUrl = process.env.NEXT_PUBLIC_OG_BASE_URL || "https://mtf.wiki/";
+
   return {
     title: `${navItem.metadata.title} - ${t("mtfwiki", language)}`,
+    description: navItem.metadata.description || null,
+    openGraph: {
+      title: navItem.metadata.title,
+      siteName: t("mtfwiki", language),
+      type: "article",
+      url: `${ogBaseUrl}/${language}/${navItem.displayPath}`,
+      locale: language,
+    },
   };
 }
 
