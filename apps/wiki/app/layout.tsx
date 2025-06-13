@@ -11,7 +11,6 @@ import { Provider as JotaiProvider } from "jotai";
 
 export const metadata: Metadata = {
   title: "MtF.wiki",
-  description: "MtF.wiki",
   icons: {
     apple: {
       url: "/favicon/apple-touch-icon.png",
