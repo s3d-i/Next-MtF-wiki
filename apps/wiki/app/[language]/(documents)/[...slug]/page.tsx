@@ -109,7 +109,7 @@ export async function generateMetadata({
       title: navItem.metadata.title,
       siteName: t("mtfwiki", language),
       type: "article",
-      url: `${ogBaseUrl}/${language}/${navItem.displayPath}`,
+      url: `${ogBaseUrl}${language}/${navItem.displayPath}`,
       locale: language,
     },
   };
