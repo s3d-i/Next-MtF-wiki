@@ -1,6 +1,7 @@
 import { HormoneConverter } from './components/HormoneConverter';
 import { HelpTooltip } from './components/HelpTooltip';
 import { Link } from '@/components/progress';
+import SuggestionBox from '@/components/SuggestionBox';
 
 export async function generateMetadata({
   params,
@@ -18,9 +19,7 @@ export default function ConverterPage() {
       <div className="max-w-6xl mx-auto">
         <header className="text-center mb-6 md:mb-8 relative">
           <div className="flex items-center justify-center gap-4 mb-4">
-            <h1 className="text-4xl font-bold text-base-content">
-              激素换算器
-            </h1>
+            <h1 className="text-4xl font-bold text-base-content">激素换算器</h1>
             <HelpTooltip />
           </div>
         </header>
@@ -38,7 +37,8 @@ export default function ConverterPage() {
               >
                 IU（国际单位）
               </Link>
-              作为衡量激素水平的单位，但由于IU为医学效价单位，其与质量单位的换算取决于药物种类且可能随时间变化。详见 <Link
+              作为衡量激素水平的单位，但由于IU为医学效价单位，其与质量单位的换算取决于药物种类且可能随时间变化。详见{' '}
+              <Link
                 href="/zh-cn/converter/science-literacy"
                 className="link link-primary"
               >
@@ -46,10 +46,14 @@ export default function ConverterPage() {
               </Link>
             </p>
             <p>
-              <strong>数据存储说明：</strong>您的换算历史记录仅存储在浏览器本地，不会上传到服务器。
+              <strong>数据存储说明：</strong>
+              您的换算历史记录仅存储在浏览器本地，不会上传到服务器。
             </p>
           </div>
         </footer>
+        <div className="mt-8">
+          <SuggestionBox />
+        </div>
       </div>
     </div>
   );

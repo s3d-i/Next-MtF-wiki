@@ -1,3 +1,4 @@
+import SuggestionBox from '@/components/SuggestionBox';
 import { CupCalculator } from './components/CupCalculator';
 import { Ruler, Shield } from 'lucide-react';
 
@@ -22,12 +23,10 @@ export default function CupCalculatorPage() {
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-500 rounded-xl flex items-center justify-center">
               <Ruler className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-base-content">
-              罩杯计算器
-            </h1>
+            <h1 className="text-4xl font-bold text-base-content">罩杯计算器</h1>
           </div>
           <p className="text-base-content/70 text-lg max-w-2xl mx-auto">
-          {/* description */}
+            {/* description */}
           </p>
         </header>
 
@@ -75,7 +74,7 @@ export default function CupCalculatorPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="border-t border-base-300/30 pt-3">
               <p>
                 <strong>免责声明：</strong>
@@ -84,17 +83,20 @@ export default function CupCalculatorPage() {
                 如有特殊需求，请咨询专业的内衣顾问。
               </p>
             </div>
-            
+
             <div className="border-t border-base-300/30 pt-3">
               <p>
                 <strong>算法说明：</strong>
-                胸下围 = (放松测量 + 呼气测量) ÷ 2，
-                罩杯差值 = (胸围放松 + 胸围45° + 胸围90°) ÷ 3 - 胸下围，
-                最终尺寸 = 胸下围(向上取整到5的倍数) + 对应罩杯字母
+                胸下围 = (放松测量 + 呼气测量) ÷ 2， 罩杯差值 = (胸围放松 +
+                胸围45° + 胸围90°) ÷ 3 - 胸下围， 最终尺寸 =
+                胸下围(向上取整到5的倍数) + 对应罩杯字母
               </p>
             </div>
           </div>
         </footer>
+        <div className="mt-8">
+          <SuggestionBox />
+        </div>
       </div>
     </div>
   );
