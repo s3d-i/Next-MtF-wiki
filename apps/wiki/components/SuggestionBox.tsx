@@ -36,8 +36,11 @@ const SuggestionBox_: FC<SuggestionBoxProps> = (props) => {
   const { resolvedTheme } = useTheme();
   if (!isClient)
     return (
-      <div className="skeleton h-45 flex items-center justify-center">
-        <noscript>Suggestion Box requires JavaScript to load.</noscript>
+      <div className="skeleton h-45 text-center flex items-center justify-center">
+        <noscript>
+          <p>提问箱需要运行 JavaScript 以加载。</p>
+          <p>Suggestion Box requires JavaScript to load.</p>
+        </noscript>
       </div>
     );
   return (
