@@ -2,6 +2,7 @@
 import MobileSidebar from '@/components/MobileSidebar';
 import MobileTableOfContents from '@/components/MobileTableOfContents';
 import Sidebar from '@/components/Sidebar';
+import SuggestionBox from '@/components/SuggestionBox';
 import TableOfContents from '@/components/TableOfContents';
 import type { DocItemForClient } from '@/service/directory-service-client';
 import { useParams, usePathname } from 'next/navigation';
@@ -47,6 +48,9 @@ export default function LayoutComponent({
         {/* 主要内容区域 */}
         <main className="flex-1 min-w-0">
           <DocContent>{children}</DocContent>
+          <div className="mt-8">
+            <SuggestionBox />
+          </div>
         </main>
 
         {isShowTableOfContents && (
