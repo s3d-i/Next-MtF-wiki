@@ -1,5 +1,5 @@
 "use client";
-import { cache, type FC, use } from "react";
+import { cache, type FC, memo, use } from "react";
 import { useTheme } from "next-themes";
 import { useIsClient } from "foxact/use-is-client";
 
@@ -23,19 +23,22 @@ declare module "react" {
   }
 }
 
-const suggestionBoxPromise = cache(async () => {
+const loadSuggestionBox = async () => {
   if (typeof window === "undefined" || typeof document === "undefined") return;
   import("@project-trans/suggestion-box/aio");
-})();
+};
 
-const SuggestionBox: FC<SuggestionBoxProps> = (props) => {
+const suggestionBoxPromise = cache(loadSuggestionBox)();
+
+const SuggestionBox_: FC<SuggestionBoxProps> = (props) => {
   const isClient = useIsClient();
   if (isClient) use(suggestionBoxPromise);
   const { resolvedTheme } = useTheme();
+  if (!isClient) return <div>Suggestion Box requires JavaScript to load.</div>;
   return (
     <suggestion-box
       {...props}
-      className={isClient && resolvedTheme === "dark" ? "dark" : ""}
+      className={resolvedTheme === "dark" ? "dark" : ""}
       style={{
         "--c-action-bg-light": "var(--color-base-200)",
         "--c-textarea-bg-light": "var(--color-base-100)",
@@ -45,5 +48,7 @@ const SuggestionBox: FC<SuggestionBoxProps> = (props) => {
     />
   );
 };
+
+const SuggestionBox = memo(SuggestionBox_, () => true);
 
 export default SuggestionBox;
