@@ -34,7 +34,12 @@ const SuggestionBox_: FC<SuggestionBoxProps> = (props) => {
   const isClient = useIsClient();
   if (isClient) use(suggestionBoxPromise);
   const { resolvedTheme } = useTheme();
-  if (!isClient) return <div>Suggestion Box requires JavaScript to load.</div>;
+  if (!isClient)
+    return (
+      <div className="skeleton h-45 flex items-center justify-center">
+        <noscript>Suggestion Box requires JavaScript to load.</noscript>
+      </div>
+    );
   return (
     <suggestion-box
       {...props}
