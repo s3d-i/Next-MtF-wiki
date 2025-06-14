@@ -27,55 +27,6 @@
     "es": "Calculadora de talla de sujetador",
     "en": "Cup Calculator"
   },
-  "description": {
-    "zh-cn": "技术测试站点，内容仅供学习交流使用",
-    "zh-hant": "技術測試站點，內容僅供學習交流使用",
-    "ja": "技術テストサイト、内容は学習・交流目的のみ",
-    "es": "Sitio de prueba técnica, contenido solo para aprendizaje e intercambio",
-    "en": "Technical testing site, content for learning and exchange purposes only"
-  },
-  "quickLinks": {
-    "zh-cn": "快速链接",
-    "zh-hant": "快速連結",
-    "ja": "クイックリンク",
-    "es": "Enlaces rápidos",
-    "en": "Quick Links"
-  },
-  "browseDocs": {
-    "zh-cn": "浏览文档",
-    "zh-hant": "瀏覽文檔",
-    "ja": "ドキュメントを見る",
-    "es": "Ver documentos",
-    "en": "Browse Documents"
-  },
-  "aboutUs": {
-    "zh-cn": "关于本站",
-    "zh-hant": "關於本站",
-    "ja": "このサイトについて",
-    "es": "Acerca del sitio",
-    "en": "About This Site"
-  },
-  "community": {
-    "zh-cn": "免责声明",
-    "zh-hant": "免責聲明",
-    "ja": "免責事項",
-    "es": "Descargo de responsabilidad",
-    "en": "Disclaimer"
-  },
-  "communityDesc": {
-    "zh-cn": "本站为技术测试站点，所有内容仅供参考学习，不承担任何责任",
-    "zh-hant": "本站為技術測試站點，所有內容僅供參考學習，不承擔任何責任",
-    "ja": "このサイトは技術テストサイトです。すべての内容は参考・学習目的のみで、一切の責任を負いません",
-    "es": "Este sitio es para pruebas técnicas. Todo el contenido es solo de referencia y aprendizaje, sin responsabilidad alguna",
-    "en": "This site is for technical testing. All content is for reference and learning only, with no liability assumed"
-  },
-  "copyright": {
-    "zh-cn": " 技术测试站点，内容仅供学习参考。",
-    "zh-hant": " 技術測試站點，內容僅供學習參考。",
-    "ja": " 技術テストサイト、内容は学習参考用のみ。",
-    "es": " Sitio de prueba técnica, contenido solo para referencia de aprendizaje.",
-    "en": " Technical testing site, content for learning reference only."
-  },
   "tableOfContents": {
     "zh-cn": "目录",
     "zh-hant": "目錄",
