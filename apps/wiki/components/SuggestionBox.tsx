@@ -1,7 +1,7 @@
-"use client";
-import { cache, type FC, memo, use } from "react";
-import { useTheme } from "next-themes";
-import { useIsClient } from "foxact/use-is-client";
+'use client';
+import { useIsClient } from 'foxact/use-is-client';
+import { useTheme } from 'next-themes';
+import { type FC, cache, memo, use } from 'react';
 
 interface SuggestionBoxProps {
   attachImageButtonText?: string | undefined;
@@ -15,17 +15,17 @@ interface SuggestionBoxProps {
   style?: Record<string, string>;
 }
 
-declare module "react" {
+declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
-      "suggestion-box": SuggestionBoxProps & HTMLAttributes<HTMLElement>;
+      'suggestion-box': SuggestionBoxProps & HTMLAttributes<HTMLElement>;
     }
   }
 }
 
 const loadSuggestionBox = async () => {
-  if (typeof window === "undefined" || typeof document === "undefined") return;
-  import("@project-trans/suggestion-box/aio");
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  import('@project-trans/suggestion-box/aio');
 };
 
 const suggestionBoxPromise = cache(loadSuggestionBox)();
@@ -38,11 +38,11 @@ const SuggestionBox_: FC<SuggestionBoxProps> = (props) => {
   return (
     <suggestion-box
       {...props}
-      className={resolvedTheme === "dark" ? "dark" : ""}
+      className={resolvedTheme === 'dark' ? 'dark' : ''}
       style={{
-        "--c-action-bg-light": "var(--color-base-200)",
-        "--c-textarea-bg-light": "var(--color-base-100)",
-        "--c-contact-bg-light": "var(--color-base-100)",
+        '--c-action-bg-light': 'var(--color-base-200)',
+        '--c-textarea-bg-light': 'var(--color-base-100)',
+        '--c-contact-bg-light': 'var(--color-base-100)',
       }}
       targetUrl="https://suggestion-box.project-trans.org/api/v1/suggestion"
     />

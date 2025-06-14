@@ -1,6 +1,6 @@
 import SuggestionBox from '@/components/SuggestionBox';
-import { CupCalculator } from './components/CupCalculator';
 import { Ruler, Shield } from 'lucide-react';
+import { CupCalculator } from './components/CupCalculator';
 
 export async function generateMetadata({
   params,

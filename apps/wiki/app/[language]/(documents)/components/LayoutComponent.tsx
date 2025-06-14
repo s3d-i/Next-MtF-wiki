@@ -1,8 +1,8 @@
 'use client';
-import Sidebar from '@/components/Sidebar';
 import MobileSidebar from '@/components/MobileSidebar';
-import TableOfContents from '@/components/TableOfContents';
 import MobileTableOfContents from '@/components/MobileTableOfContents';
+import Sidebar from '@/components/Sidebar';
+import TableOfContents from '@/components/TableOfContents';
 import type { DocItemForClient } from '@/service/directory-service-client';
 import { useParams, usePathname } from 'next/navigation';
 import { DocContent } from './doc-content';

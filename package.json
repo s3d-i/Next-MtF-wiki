@@ -9,11 +9,16 @@
     "start": "turbo run start",
     "deploy": "turbo run deploy",
     "cleanup": "rm -rf apps/wiki/.next && rm -rf .turbo",
-    "lint": "biome check"
+    "lint": "biome check",
+    "prepare": "simple-git-hooks install"
   },
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "simple-git-hooks": "^2.13.0",
     "turbo": "^2.5.4"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint --changed"
   }
 }

@@ -1,7 +1,7 @@
-import { HormoneConverter } from './components/HormoneConverter';
-import { HelpTooltip } from './components/HelpTooltip';
-import { Link } from '@/components/progress';
 import SuggestionBox from '@/components/SuggestionBox';
+import { Link } from '@/components/progress';
+import { HelpTooltip } from './components/HelpTooltip';
+import { HormoneConverter } from './components/HormoneConverter';
 
 export async function generateMetadata({
   params,

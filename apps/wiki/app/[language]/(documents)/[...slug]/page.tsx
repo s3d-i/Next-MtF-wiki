@@ -1,7 +1,9 @@
 import fs from 'node:fs/promises';
+import SuggestionBox from '@/components/SuggestionBox';
 import { Link } from '@/components/progress';
 import { ShortCodeComp } from '@/components/shortcode';
 import { t } from '@/lib/i18n/client';
+import { sT } from '@/lib/i18n/server';
 import { getLanguageConfigs } from '@/lib/site-config';
 import {
   generateAllStaticParams,
@@ -17,11 +19,9 @@ import remarkGfm from 'remark-gfm';
 import remarkHeadingId from 'remark-heading-id';
 import remarkMath from 'remark-math';
 import remarkCsvToTable from './remarkCsvToTable';
+import remarkHtmlContent from './remarkHtmlContent';
 import { remarkHugoShortcode } from './remarkHugoShortcode';
 import type { Frontmatter } from './types';
-import { sT } from '@/lib/i18n/server';
-import remarkHtmlContent from './remarkHtmlContent';
-import SuggestionBox from '@/components/SuggestionBox';
 
 interface DocParams {
   language: string;
