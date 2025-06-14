@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { t } from "@/lib/i18n/client";
-import { useAtom } from "jotai";
-import { bannerHeightAtom } from "@/lib/banner-atoms";
-import { SquareMenu, X } from "lucide-react";
+import { bannerHeightAtom } from '@/lib/banner-atoms';
+import { t } from '@/lib/i18n/client';
+import { useAtom } from 'jotai';
+import { SquareMenu, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useState } from 'react';
 
 interface TocItem {
   id: string;
@@ -16,28 +17,30 @@ interface MobileTableOfContentsProps {
   language: string;
 }
 
-export default function MobileTableOfContents({ language }: MobileTableOfContentsProps) {
+export default function MobileTableOfContents({
+  language,
+}: MobileTableOfContentsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
-  const [activeId, setActiveId] = useState<string>("");
+  const [activeId, setActiveId] = useState<string>('');
   const [bannerHeight] = useAtom(bannerHeightAtom);
 
   useEffect(() => {
     // 提取页面中main元素内的标题
     const extractHeadings = () => {
-      const mainElement = document.getElementById("markdown-content");
+      const mainElement = document.getElementById('markdown-content');
       if (!mainElement) {
         setTocItems([]);
         return;
       }
 
-      const headings = mainElement.querySelectorAll("h1, h2, h3, h4, h5, h6");
+      const headings = mainElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
       const items: TocItem[] = [];
 
       headings.forEach((heading, index) => {
         const level = Number.parseInt(heading.tagName.charAt(1));
-        const text = heading.textContent?.trim() || "";
-        
+        const text = heading.textContent?.trim() || '';
+
         // 如果标题没有 id，创建一个
         let id = heading.id;
         if (!id) {
@@ -61,7 +64,7 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
     });
 
     // 开始观察main元素变化
-    const mainElement = document.querySelector("main");
+    const mainElement = document.querySelector('main');
     if (mainElement) {
       observer.observe(mainElement, {
         childList: true,
@@ -77,12 +80,14 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
   useEffect(() => {
     // 滚动监听，高亮当前标题
     const handleScroll = () => {
-      const headings = tocItems.map(item => ({
-        id: item.id,
-        element: document.getElementById(item.id),
-      })).filter(item => item.element);
+      const headings = tocItems
+        .map((item) => ({
+          id: item.id,
+          element: document.getElementById(item.id),
+        }))
+        .filter((item) => item.element);
 
-      let currentId = "";
+      let currentId = '';
       for (const heading of headings) {
         if (heading.element) {
           const rect = heading.element.getBoundingClientRect();
@@ -98,12 +103,12 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
     };
 
     if (tocItems.length > 0) {
-      window.addEventListener("scroll", handleScroll);
+      window.addEventListener('scroll', handleScroll);
       handleScroll();
     }
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [tocItems]);
 
@@ -111,8 +116,8 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
+        behavior: 'smooth',
+        block: 'start',
       });
       setIsOpen(false); // 滚动后关闭弹窗
     }
@@ -125,7 +130,7 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
     } else {
       document.body.style.overflow = 'unset';
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -137,7 +142,8 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
   }
 
   // 计算按钮的底部位置，如果有 banner 就在 banner 上方
-  const buttonBottomPosition = bannerHeight > 0 ? `${bannerHeight + 24}px` : '24px';
+  const buttonBottomPosition =
+    bannerHeight > 0 ? `${bannerHeight + 24}px` : '24px';
 
   return (
     <>
@@ -147,77 +153,89 @@ export default function MobileTableOfContents({ language }: MobileTableOfContent
         onClick={() => setIsOpen(true)}
         className="fixed right-6 z-40 xl:hidden p-3 rounded-full bg-base-200/80 backdrop-blur-sm text-base-content shadow-lg hover:bg-base-200 transition-all duration-200 hover:scale-105 border border-base-300/50"
         style={{ bottom: buttonBottomPosition }}
-        aria-label={t("tableOfContents", language)}
+        aria-label={t('tableOfContents', language)}
       >
-        <SquareMenu className="w-5 h-5"/>
+        <SquareMenu className="w-5 h-5" />
       </button>
 
       {/* 目录弹窗 */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 xl:hidden">
-          {/* 遮罩层 */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setIsOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                setIsOpen(false);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-            aria-label="关闭目录"
-          />
-          
-          {/* 弹窗内容 */}
-          <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] bg-base-100 rounded-t-xl shadow-2xl border-t border-base-300 transform animate-in slide-in-from-bottom duration-300">
-            {/* 头部 */}
-            <div className="flex items-center justify-between p-4 border-b border-base-300 bg-primary/5">
-              <h2 className="text-lg font-semibold text-base-content flex items-center space-x-2">
-                <SquareMenu className="w-5 h-5 text-primary"/>
-                <span>{t("tableOfContents", language)}</span>
-              </h2>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="p-2 rounded-lg hover:bg-base-300/50 transition-colors"
-                aria-label="关闭目录"
-              >
-                <X className="w-5 h-5"/>
-              </button>
-            </div>
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-50 xl:hidden">
+            {/* 遮罩层 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15, ease: 'easeInOut' }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setIsOpen(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  setIsOpen(false);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="关闭目录"
+            />
 
-            {/* 目录内容 */}
-            <div className="overflow-y-auto max-h-96 p-4">
-              <nav className="space-y-1">
-                {tocItems.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => scrollToHeading(item.id)}
-                    className={`
+            {/* 弹窗内容 */}
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="absolute bottom-0 left-0 right-0 max-h-[70vh] bg-base-100 rounded-t-xl shadow-2xl border-t border-base-300"
+            >
+              {/* 头部 */}
+              <div className="flex items-center justify-between p-4 border-b border-base-300 bg-primary/5">
+                <h2 className="text-lg font-semibold text-base-content flex items-center space-x-2">
+                  <SquareMenu className="w-5 h-5 text-primary" />
+                  <span>{t('tableOfContents', language)}</span>
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 rounded-lg hover:bg-base-300/50 transition-colors"
+                  aria-label="关闭目录"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* 目录内容 */}
+              <div className="overflow-y-auto max-h-96 p-4">
+                <nav className="space-y-1">
+                  {tocItems.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => scrollToHeading(item.id)}
+                      className={`
                       block w-full text-left text-sm transition-colors
-                      ${item.level === 1 ? "font-medium" : ""}
-                      ${item.level === 2 ? "pl-3" : ""}
-                      ${item.level === 3 ? "pl-6" : ""}
-                      ${item.level === 4 ? "pl-9" : ""}
-                      ${item.level >= 5 ? "pl-12" : ""}
+                      ${item.level === 1 ? 'font-medium' : ''}
+                      ${item.level === 2 ? 'pl-3' : ''}
+                      ${item.level === 3 ? 'pl-6' : ''}
+                      ${item.level === 4 ? 'pl-9' : ''}
+                      ${item.level >= 5 ? 'pl-12' : ''}
                       ${
                         activeId === item.id
-                          ? "text-primary font-medium bg-primary/10"
-                          : "text-base-content/80 hover:text-base-content hover:bg-base-200/50"
+                          ? 'text-primary font-medium bg-primary/10'
+                          : 'text-base-content/80 hover:text-base-content hover:bg-base-200/50'
                       }
                       py-2 px-3 rounded-lg
                     `}
-                  >
-                    {item.text}
-                  </button>
-                ))}
-              </nav>
-            </div>
+                    >
+                      {item.text}
+                    </button>
+                  ))}
+                </nav>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
-} 
+}

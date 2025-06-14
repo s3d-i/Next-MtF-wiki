@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { Link } from "./progress";
-import { t } from "@/lib/i18n/client";
-import type { DocItemForClient } from "@/service/directory-service-client";
-import { useAtom } from "jotai";
-import { bannerHeightAtom } from "@/lib/banner-atoms";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { bannerHeightAtom } from '@/lib/banner-atoms';
+import { t } from '@/lib/i18n/client';
+import type { DocItemForClient } from '@/service/directory-service-client';
+import { useAtom } from 'jotai';
+import { ChevronDown, Menu, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Link } from './progress';
 
 interface MobileSidebarProps {
   navigationItems: DocItemForClient[];
@@ -42,7 +43,7 @@ const MobileNavItem = ({
       isActive ||
       (hasChildren &&
         item.children?.some((child) =>
-          currentPath.startsWith(`/${language}/${child.path}`)
+          currentPath.startsWith(`/${language}/${child.path}`),
         ))
     ) {
       setIsOpen(true);
@@ -61,8 +62,8 @@ const MobileNavItem = ({
               onClick={onItemClick}
               className={`
                 flex-1 block py-2 px-3 rounded-lg text-sm transition-colors
-                ${level === 0 ? "font-medium text-base-content" : "text-base-content/80"}
-                ${isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-base-200"}
+                ${level === 0 ? 'font-medium text-base-content' : 'text-base-content/80'}
+                ${isActive ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200'}
               `}
             >
               {item.name}
@@ -72,14 +73,18 @@ const MobileNavItem = ({
               type="button"
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 ml-1 rounded-lg hover:bg-base-200 transition-colors"
-              aria-label={isOpen ? "收起" : "展开"}
+              aria-label={isOpen ? '收起' : '展开'}
             >
-              <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+              <ChevronDown
+                className={`w-4 h-4 transition-transform ${isOpen ? '' : '-rotate-90'}`}
+              />
             </button>
           </div>
           {/* 子级内容 */}
           {isOpen && (
-            <div className={`ml-${level > 0 ? 6 : 4} mt-1 space-y-1 border-l-2 border-base-300/50 pl-3`}>
+            <div
+              className={`ml-${level > 0 ? 6 : 4} mt-1 space-y-1 border-l-2 border-base-300/50 pl-3`}
+            >
               {item.children?.map((child) => (
                 <MobileNavItem
                   key={child.path}
@@ -100,8 +105,8 @@ const MobileNavItem = ({
           onClick={onItemClick}
           className={`
             block py-2 px-3 rounded-lg text-sm transition-colors
-            ${level === 0 ? "font-medium text-base-content" : "text-base-content/80"}
-            ${isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-base-200"}
+            ${level === 0 ? 'font-medium text-base-content' : 'text-base-content/80'}
+            ${isActive ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200'}
           `}
         >
           {item.name}
@@ -111,7 +116,10 @@ const MobileNavItem = ({
   );
 };
 
-export default function MobileSidebar({ navigationItems, language }: MobileSidebarProps) {
+export default function MobileSidebar({
+  navigationItems,
+  language,
+}: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const [bannerHeight] = useAtom(bannerHeightAtom);
@@ -123,7 +131,7 @@ export default function MobileSidebar({ navigationItems, language }: MobileSideb
     } else {
       document.body.style.overflow = 'unset';
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -151,7 +159,8 @@ export default function MobileSidebar({ navigationItems, language }: MobileSideb
   };
 
   // 计算按钮的底部位置，如果有 banner 就在 banner 上方
-  const buttonBottomPosition = bannerHeight > 0 ? `${bannerHeight + 24}px` : '24px';
+  const buttonBottomPosition =
+    bannerHeight > 0 ? `${bannerHeight + 24}px` : '24px';
 
   return (
     <>
@@ -161,82 +170,91 @@ export default function MobileSidebar({ navigationItems, language }: MobileSideb
         onClick={() => setIsOpen(true)}
         className="fixed left-6 z-40 lg:hidden flex items-center space-x-2 px-4 py-3 rounded-full bg-primary text-primary-content shadow-lg hover:bg-primary/90 transition-all duration-200 hover:scale-105"
         style={{ bottom: buttonBottomPosition }}
-        aria-label={t("docs", language)}
+        aria-label={t('docs', language)}
       >
-        <Menu className="w-5 h-5"/>
-        <span className="text-sm font-medium">
-          {t("navigation", language)}
-        </span>
+        <Menu className="w-5 h-5" />
+        <span className="text-sm font-medium">{t('navigation', language)}</span>
       </button>
 
       {/* 遮罩层和侧边栏 */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          {/* 遮罩层 */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setIsOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                setIsOpen(false);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-            aria-label="关闭导航"
-          />
-          
-          {/* 侧边栏内容 */}
-          <div className="absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-base-100 shadow-2xl border-r border-base-300 transform animate-in slide-in-from-left duration-300">
-            {/* 头部 */}
-            <div className="flex items-center justify-between p-4 border-b border-base-300 bg-primary/5">
-              <h2 className="text-lg font-semibold text-base-content flex items-center space-x-2">
-                <svg 
-                  className="w-5 h-5 text-primary" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-                  />
-                </svg>
-                <span>{t("docs", language)}</span>
-              </h2>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="p-2 rounded-lg hover:bg-base-300/50 transition-colors"
-                aria-label="关闭导航"
-              >
-                <X className="w-5 h-5"/>
-              </button>
-            </div>
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            {/* 遮罩层 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15, ease: 'easeInOut' }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setIsOpen(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  setIsOpen(false);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="关闭导航"
+            />
 
-            {/* 导航内容 */}
-            <div className="overflow-y-auto h-[calc(100vh-5rem)] p-4">
-              <nav>
-                <div className="space-y-1">
-                  {navigationItems.map((item) => (
-                    <MobileNavItem
-                      key={item.path}
-                      item={item}
-                      language={language}
-                      currentPath={pathname}
-                      onItemClick={handleItemClick}
+            {/* 侧边栏内容 */}
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-base-100 shadow-2xl border-r border-base-300"
+            >
+              {/* 头部 */}
+              <div className="flex items-center justify-between p-4 border-b border-base-300 bg-primary/5">
+                <h2 className="text-lg font-semibold text-base-content flex items-center space-x-2">
+                  <svg
+                    className="w-5 h-5 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                     />
-                  ))}
-                </div>
-              </nav>
-            </div>
-          </div>
-        </div>
-      )}
+                  </svg>
+                  <span>{t('docs', language)}</span>
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 rounded-lg hover:bg-base-300/50 transition-colors"
+                  aria-label="关闭导航"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
+              {/* 导航内容 */}
+              <div className="overflow-y-auto h-[calc(100vh-5rem)] p-4">
+                <nav>
+                  <div className="space-y-1">
+                    {navigationItems.map((item) => (
+                      <MobileNavItem
+                        key={item.path}
+                        item={item}
+                        language={language}
+                        currentPath={pathname}
+                        onItemClick={handleItemClick}
+                      />
+                    ))}
+                  </div>
+                </nav>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
-} 
+}
