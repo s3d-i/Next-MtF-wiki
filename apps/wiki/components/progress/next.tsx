@@ -1,10 +1,10 @@
-"use client";
-import React, { startTransition, useEffect, useState } from "react";
-import NextLink from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useProgress } from "./context";
-import { useSkeleton } from "./skeleton";
-import { formatUrl } from "./format-url";
+'use client';
+import NextLink from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { startTransition, useEffect, useState } from 'react';
+import { useProgress } from './context';
+import { formatUrl } from './format-url';
+import { useSkeleton } from './skeleton';
 
 interface LinkProps extends React.ComponentProps<typeof NextLink> {
   showSkeletonImmediately?: boolean;
@@ -15,7 +15,7 @@ interface LinkProps extends React.ComponentProps<typeof NextLink> {
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   function Link(
     { href, children, replace, scroll, showSkeletonImmediately, ...rest },
-    ref
+    ref,
   ) {
     const router = useRouter();
     const { start } = useProgress();
@@ -27,18 +27,17 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         ref={ref}
         href={href}
         onNavigate={(e) => {
-          const url = typeof href === "string" ? href : formatUrl(href as any);
+          const url = typeof href === 'string' ? href : formatUrl(href as any);
 
           e.preventDefault();
 
-          start();
+          start(url);
 
           if (showSkeletonImmediately) {
-            showSkeletonImmediatelyFn();
+            showSkeletonImmediatelyFn(url);
           } else {
-            showSkeleton();
+            showSkeleton(url);
           }
-
 
           if (replace) {
             router.replace(url, { scroll });
@@ -51,5 +50,5 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         {children}
       </NextLink>
     );
-  }
+  },
 );

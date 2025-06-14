@@ -1,12 +1,13 @@
-"use client";
-import React, { startTransition, useCallback } from "react";
+'use client';
 import {
-  useMotionTemplate,
-  useSpring,
-  m,
   LazyMotion,
   domAnimation,
-} from "motion/react";
+  m,
+  useMotionTemplate,
+  useSpring,
+} from 'motion/react';
+import { usePathname } from 'next/navigation';
+import React, { startTransition, useCallback } from 'react';
 import {
   type ReactNode,
   createContext,
@@ -14,9 +15,8 @@ import {
   useEffect,
   useRef,
   useState,
-} from "react";
-import { usePathname } from "next/navigation";
-import { flushSync } from "react-dom";
+} from 'react';
+import { flushSync } from 'react-dom';
 
 /**
  * Internal context for the progress bar.
@@ -33,7 +33,7 @@ function useProgressBarContext() {
 
   if (progress === null) {
     throw new Error(
-      "Make sure to use `ProgressBarProvider` before using the progress bar."
+      'Make sure to use `ProgressBarProvider` before using the progress bar.',
     );
   }
 
@@ -53,7 +53,7 @@ function random(min: number, max: number) {
  */
 function getDiff(
   /** The current number used to calculate the difference. */
-  current: number
+  current: number,
 ): number {
   let diff: number;
   if (current === 0) {
@@ -127,11 +127,11 @@ export function useProgressInternal() {
         if (spring.get() === 1) {
           spring.jump(0);
         }
-  
+
         const current = spring.get();
         spring.set(Math.min(current + getDiff(current * 100) * 0.01, 0.99));
-        });
-    }
+      });
+    };
 
     updateProgress();
 
@@ -146,13 +146,16 @@ export function useProgressInternal() {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  },[]);
+  }, []);
 
   /**
    * Start the progress.
    */
-  const start = () => {
+  const start = (path: string) => {
     // console.log("start() 开始进度条", prevPathname.current, pathname);
+    if (path === pathname) {
+      return;
+    }
 
     // 清除所有现有定时器
     clearAllTimers();
@@ -218,13 +221,13 @@ export function useProgressInternal() {
   useEffect(() => {
     const callback = (pageShowEvent: PageTransitionEvent) => {
       if (pageShowEvent.persisted) {
-        console.log("pageshow callback");
+        console.log('pageshow callback');
         complete();
       }
     };
-    window?.addEventListener("pageshow", callback);
+    window?.addEventListener('pageshow', callback);
     return () => {
-      window?.removeEventListener("pageshow", callback);
+      window?.removeEventListener('pageshow', callback);
     };
   }, [complete]);
 
@@ -273,9 +276,9 @@ export function ProgressBar({ className }: { className?: string }) {
       {progress.visible && (
         <m.div
           style={{
-            width: "100%",
-            transformOrigin: "left",
-            transition: "transform 100ms",
+            width: '100%',
+            transformOrigin: 'left',
+            transition: 'transform 100ms',
             transform,
           }}
           className={className}
@@ -285,7 +288,7 @@ export function ProgressBar({ className }: { className?: string }) {
   );
 }
 
-type StartProgress = () => void;
+type StartProgress = (pathname: string) => void;
 type CompleteProgress = () => void;
 
 /**
@@ -300,8 +303,8 @@ export function useProgress(): {
 } {
   const progress = useProgressBarContext();
 
-  const startProgress: StartProgress = () => {
-    progress.start();
+  const startProgress: StartProgress = (pathname: string) => {
+    progress.start(pathname);
   };
 
   const completeProgress: CompleteProgress = () => {

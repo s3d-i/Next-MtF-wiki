@@ -1,15 +1,15 @@
-"use client";
-import React, { useCallback, useRef } from "react";
-import { m, LazyMotion, domAnimation } from "motion/react";
+'use client';
+import { LazyMotion, domAnimation, m } from 'motion/react';
+import { usePathname } from 'next/navigation';
+import React, { useCallback, useRef } from 'react';
 import {
   type ReactNode,
   createContext,
   useContext,
   useEffect,
   useState,
-} from "react";
-import { usePathname } from "next/navigation";
-import { flushSync } from "react-dom";
+} from 'react';
+import { flushSync } from 'react-dom';
 
 /**
  * Internal context for the skeleton wrapper.
@@ -26,7 +26,7 @@ function useSkeletonContext() {
 
   if (skeleton === null) {
     throw new Error(
-      "Make sure to use `SkeletonProvider` before using the skeleton wrapper."
+      'Make sure to use `SkeletonProvider` before using the skeleton wrapper.',
     );
   }
 
@@ -66,8 +66,11 @@ export function useSkeletonInternal() {
   /**
    * Show the skeleton.
    */
-  function show(wait: number = 700) {
+  function show(path: string, wait: number = 700) {
     // console.log("show() 开始显示骨架屏");
+    if (path === pathname) {
+      return;
+    }
 
     // 清除所有现有定时器
     clearAllTimers();
@@ -91,8 +94,8 @@ export function useSkeletonInternal() {
     }, wait);
   }
 
-  function showImmediately() {
-    show(0);
+  function showImmediately(pathname: string) {
+    show(pathname, 0);
   }
 
   /**
@@ -127,9 +130,9 @@ export function useSkeletonInternal() {
         hide();
       }
     };
-    window?.addEventListener("pageshow", callback);
+    window?.addEventListener('pageshow', callback);
     return () => {
-      window?.removeEventListener("pageshow", callback);
+      window?.removeEventListener('pageshow', callback);
     };
   }, [hide]);
 
@@ -149,18 +152,14 @@ export function useSkeletonInternal() {
  */
 export function SkeletonProvider({ children }: { children: ReactNode }) {
   const skeleton = useSkeletonInternal();
-  return (
-    <SkeletonContext.Provider value={skeleton}>
-      {children}
-    </SkeletonContext.Provider>
-  );
+  return <SkeletonContext value={skeleton}>{children}</SkeletonContext>;
 }
 
 /**
  * Skeleton item component using daisyUI classes.
  */
 export function SkeletonItem({
-  className = "",
+  className = '',
   width,
   height,
 }: {
@@ -257,12 +256,12 @@ export function ArticleSkeleton() {
           <div className="skeleton h-4 w-4/5" />
         </div>
 
-        <div className="skeleton h-32 w-full"/>
+        <div className="skeleton h-32 w-full" />
 
         <div className="flex flex-col gap-2">
-          <div className="skeleton h-4 w-full"/>
-          <div className="skeleton h-4 w-full"/>
-          <div className="skeleton h-4 w-2/3"/>
+          <div className="skeleton h-4 w-full" />
+          <div className="skeleton h-4 w-full" />
+          <div className="skeleton h-4 w-2/3" />
         </div>
       </div>
     </div>
@@ -294,7 +293,7 @@ export function ContentSkeleton() {
 export function SkeletonWrapper({
   children,
   skeleton,
-  className = "",
+  className = '',
 }: {
   children: ReactNode;
   skeleton?: ReactNode;
@@ -308,14 +307,14 @@ export function SkeletonWrapper({
   return (
     <div className={`relative ${className}`}>
       {/* 内容层 - 始终渲染，作为布局基础 */}
-      <div className={`${skeletonState.visible ? "invisible" : "visible"}`}>
+      <div className={`${skeletonState.visible ? 'invisible' : 'visible'}`}>
         {children}
       </div>
 
       {/* 骨架屏层 - 绝对定位 */}
       <div
         className={`absolute inset-0 overflow-hidden ${
-          skeletonState.visible ? "block" : "hidden"
+          skeletonState.visible ? 'block' : 'hidden'
         }`}
       >
         {skeleton || defaultSkeleton}
@@ -324,7 +323,7 @@ export function SkeletonWrapper({
   );
 }
 
-type ShowSkeleton = () => void;
+type ShowSkeleton = (pathname: string) => void;
 type HideSkeleton = () => void;
 
 /**
@@ -340,9 +339,9 @@ export function useSkeleton(): {
 } {
   const skeleton = useSkeletonContext();
 
-  const showSkeleton: ShowSkeleton = () => {
+  const showSkeleton: ShowSkeleton = (pathname: string) => {
     flushSync(() => {
-      skeleton.show();
+      skeleton.show(pathname);
     });
   };
 
@@ -350,9 +349,9 @@ export function useSkeleton(): {
     skeleton.hide();
   };
 
-  const showSkeletonImmediately: ShowSkeleton = () => {
+  const showSkeletonImmediately: ShowSkeleton = (pathname: string) => {
     flushSync(() => {
-      skeleton.showImmediately();
+      skeleton.showImmediately(pathname);
     });
   };
 
