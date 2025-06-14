@@ -10,39 +10,37 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy to Cloudflare Pages
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # 获取完整历史记录
           submodules: true
-            
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: '10.10.0'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'pnpm'
-            
+          node-version: "22"
+          cache: "pnpm"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        
+
       - name: Build project
         run: pnpm run build
         env:
-          SITE_URL: '/'
-          ROBOTS_ALLOW: 'false'
-          INCLUDE_SITEMAP: 'false'
+          SITE_URL: "/"
+          ROBOTS_ALLOW: "false"
+          INCLUDE_SITEMAP: "false"
           NEXT_PUBLIC_DEPLOY_TIME: ${{ github.event.head_commit.timestamp }}
-          NEXT_PUBLIC_SERVER_BUILD_INDEX: 'true'
-          NEXT_PUBLIC_BANNER_TEXT: 'banner-text-disclaimer-preview'
-          NEXT_PUBLIC_OG_BASE_URL: 'https://mtf.wiki/'
-        
+          NEXT_PUBLIC_SERVER_BUILD_INDEX: "true"
+          NEXT_PUBLIC_BANNER_TEXT: "banner-text-disclaimer-preview"
+          NEXT_PUBLIC_OG_BASE_URL: "https://mtf.wiki/"
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
