@@ -1,5 +1,9 @@
 const config = {
-  plugins: ["@tailwindcss/postcss"],
+  plugins: [
+    '@tailwindcss/postcss',
+    '@csstools/postcss-cascade-layers',
+    '@csstools/postcss-oklab-function',
+  ],
 };
 
 export default config;
