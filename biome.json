@@ -15,7 +15,8 @@
       "**/build/**/*",
       "**/.vercel/**/*",
       "**/.next/**/*",
-      "**/.turbo/**/*"
+      "**/.turbo/**/*",
+      "apps/wiki/app/globals.css"
     ]
   },
   "formatter": {

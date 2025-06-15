@@ -3,7 +3,13 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {
   themes: cupcake --default, sunset --prefersdark;
-};
+}
+
+@supports not (selector(:where(*))) {
+  [hidden]:not(#\#):not(#\#):not(#\#) {
+    display: block !important;
+  }
+}
 
 :root {
   --background: var(--color-base-100);
