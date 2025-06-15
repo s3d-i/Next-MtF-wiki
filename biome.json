@@ -30,6 +30,11 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "useHookAtTopLevel": "error",
+        "useExhaustiveDependencies": "error",
+        "noRenderReturnValue": "error"
+      },
       "style": {
         "noNonNullAssertion": "off",
         "noUselessElse": "off",
