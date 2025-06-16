@@ -255,16 +255,21 @@ export default async function DocPage({
   const nextPage =
     currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
 
+  const showEditAndLastModifiedTime = strippedSource.length > 0;
+
   // 获取文件的最近修改时间
-  const lastModifiedTime = await getFileLastModifiedTime(navItem.realPath);
+  const lastModifiedTime = showEditAndLastModifiedTime
+    ? await getFileLastModifiedTime(navItem.realPath)
+    : null;
 
   // 生成GitHub编辑链接
   const editLinkGithubUrl = process.env.EDIT_LINK_GITHUB_URL;
-  const editLink = editLinkGithubUrl
-    ? `${editLinkGithubUrl}${path
-        .relative(getContentGitRootDir(), navItem.realPath)
-        .replace(/\\/g, '/')}`
-    : null;
+  const editLink =
+    showEditAndLastModifiedTime && editLinkGithubUrl
+      ? `${editLinkGithubUrl}${path
+          .relative(getContentGitRootDir(), navItem.realPath)
+          .replace(/\\/g, '/')}`
+      : null;
 
   return (
     <div className="flex flex-col">
