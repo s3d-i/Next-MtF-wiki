@@ -97,15 +97,16 @@ export default async function LanguageLayout({
         <div className="border-t xs:hidden border-base-300/50">
           <div className="dropdown dropdown-end w-full">
             <div
-              // biome-ignore lint/a11y/useSemanticElements: https://bugs.webkit.org/show_bug.cgi?id=22261
               role="button"
               tabIndex={0}
-              className="btn btn-ghost w-full justify-between px-4 py-2 rounded-none"
+              className="btn btn-ghost w-full justify-between px-4 py-2 rounded-md group"
             >
-              <span className="text-sm font-medium">导航</span>
-              <ChevronDown className="w-4 h-4 transition-transform duration-200" />
+              <span className="text-sm font-medium">
+                {t('navigation', language)}
+              </span>
+              <ChevronDown className="w-4 h-4 transition-transform duration-200 group-focus:rotate-180" />
             </div>
-            <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg border border-base-300/50">
+            <ul className="dropdown-content menu bg-base-100 rounded-md z-1 w-full p-2 shadow-lg border border-base-300/50">
               {navigationItems.map((item) => (
                 <li key={item.key}>
                   <DropdownLink

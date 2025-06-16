@@ -46,6 +46,9 @@
       },
       "complexity": {
         "noUselessSwitchCase": "off"
+      },
+      "a11y": {
+        "useSemanticElements": "off"
       }
     }
   },

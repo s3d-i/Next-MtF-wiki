@@ -1,12 +1,16 @@
 const config = {
   plugins: [
     '@tailwindcss/postcss',
-    [
-      'postcss-preset-env',
-      {
-        // Optionally add plugin options
-      },
-    ],
+    ...(process.env.NODE_ENV !== 'development'
+      ? [
+          [
+            'postcss-preset-env',
+            {
+              // Optionally add plugin options
+            },
+          ],
+        ]
+      : []),
   ],
 };
 
