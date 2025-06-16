@@ -1,8 +1,9 @@
-import type { ComponentType } from "react";
+import type { ComponentType } from 'react';
 
 export interface MdContextType {
   currentLanguage: string | null;
   currentSlug: string | null;
+  realCurrentSlug: string | null;
   isCurrentSlugIndex: boolean;
 }
 
@@ -13,7 +14,10 @@ export interface ShortCodeProps {
   mdContext?: MdContextType;
 }
 
-export type ShortCodeCompProps = Pick<ShortCodeProps, "attrs" | "children" | "mdContext">;
+export type ShortCodeCompProps = Pick<
+  ShortCodeProps,
+  'attrs' | 'children' | 'mdContext'
+>;
 
 export type ShortCodeCompType = ComponentType<ShortCodeCompProps>;
 

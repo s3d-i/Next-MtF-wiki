@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import { Link } from "./progress";
-import { useState, useEffect, useRef } from "react";
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { Link } from './progress';
 
-import type { DocItemForClient } from "@/service/directory-service-client";
-import styles from "./css/sidebar.module.css";
-import { isElementInScrollContainerView } from "@/lib/utils";
+import { isElementInScrollContainerView } from '@/lib/utils';
+import type { DocItemForClient } from '@/service/directory-service-client';
 
 interface SidebarProps {
   items: DocItemForClient[];
@@ -33,7 +32,7 @@ function scrollIntoContainerView(target: HTMLElement, container: HTMLElement) {
 function scrollIntoContainerViewCenter(
   target: HTMLElement,
   container: HTMLElement,
-  offsetPercentage: number = 0.3 // 默认显示在容器前30%位置
+  offsetPercentage: number = 0.3, // 默认显示在容器前30%位置
 ) {
   const targetRect = target.getBoundingClientRect();
   const containerRect = container.getBoundingClientRect();
@@ -43,7 +42,9 @@ function scrollIntoContainerViewCenter(
 
   // 计算容器指定百分比位置要 scrollTop 到多少
   const scrollTo =
-    targetOffset - (container.clientHeight * offsetPercentage) + target.offsetHeight / 2;
+    targetOffset -
+    container.clientHeight * offsetPercentage +
+    target.offsetHeight / 2;
 
   container.scrollTop = scrollTo;
 }
@@ -73,9 +74,7 @@ const NavItem = ({
       isActive ||
       (hasChildren &&
         item.children?.some((child) =>
-          currentPath?.startsWith(
-            `/${language}/${child.path}`
-          )
+          currentPath?.startsWith(`/${language}/${child.path}`),
         ))
     );
   }
@@ -110,7 +109,7 @@ const NavItem = ({
     if (isActive) {
       const toscroll = myRef.current || myRef2.current;
       if (toscroll) {
-        const container = document.getElementById("sidebar-scroll-container");
+        const container = document.getElementById('sidebar-scroll-container');
         if (container && !isElementInScrollContainerView(toscroll, container)) {
           scrollIntoContainerViewCenter(toscroll, container);
         }
@@ -119,7 +118,7 @@ const NavItem = ({
   }, [isActive]);
 
   return (
-    <li className={"my-0 py-0.5"}>
+    <li className={'my-0 py-0.5'}>
       {hasChildren ? (
         <details
           {...(isOpen ? { open: true } : {})}
@@ -129,13 +128,13 @@ const NavItem = ({
         >
           <summary
             ref={myRef2}
-            className={`rounded-md py-0 ${isActive ? styles.menu_active : ""}`}
+            className={`rounded-md py-0 ${isActive ? 'bg-[var(--menu-active-bg)] text-[var(--menu-active-fg)] bg-[length:auto,calc(var(--noise)*100%)] bg-[image:none,var(--fx-noise)] outline-none shadow-[0_2px_calc(var(--depth)*3px)_-2px_var(--menu-active-bg)]' : ''}`}
             onClick={(e) => {
               setIsOpen(!isOpen);
               e.preventDefault();
             }}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+              if (e.key === 'Enter' || e.key === ' ') {
                 setIsOpen(!isOpen);
                 e.preventDefault();
               }
@@ -152,7 +151,7 @@ const NavItem = ({
               <Link
                 href={fullPath}
                 className={`block py-1 rounded-md text-sm transition-colors
-            ${level === 0 ? "font-medium" : ""}
+            ${level === 0 ? 'font-medium' : ''}
           `}
               >
                 {item.name}
@@ -179,8 +178,8 @@ const NavItem = ({
           ref={myRef}
           href={fullPath}
           className={`block py-1 rounded-md text-sm transition-colors ${
-            level === 0 ? "font-medium" : ""
-          } ${isActive ? "menu-active" : ""}`}
+            level === 0 ? 'font-medium' : ''
+          } ${isActive ? 'bg-[var(--menu-active-bg)] text-[var(--menu-active-fg)] bg-[length:auto,calc(var(--noise)*100%)] bg-[image:none,var(--fx-noise)] outline-none shadow-[0_2px_calc(var(--depth)*3px)_-2px_var(--menu-active-bg)]' : ''}`}
         >
           {item.name}
         </Link>
@@ -214,8 +213,8 @@ export default function Sidebar({ items, language }: SidebarProps) {
               strokeWidth={2}
               d={
                 isMobileMenuOpen
-                  ? "M6 18L18 6M6 6l12 12"
-                  : "M4 6h16M4 12h16M4 18h16"
+                  ? 'M6 18L18 6M6 6l12 12'
+                  : 'M4 6h16M4 12h16M4 18h16'
               }
             />
           </svg>
@@ -229,19 +228,15 @@ export default function Sidebar({ items, language }: SidebarProps) {
         lg:block 
         ${
           isMobileMenuOpen
-            ? "block overflow-y-auto h-[calc(100vh-4rem)]"
-            : "hidden"
+            ? 'block overflow-y-auto h-[calc(100vh-4rem)]'
+            : 'hidden'
         }       
       `}
       >
         <nav>
           <ul className="space-y-2 menu w-full">
             {items.map((item) => (
-              <NavItem
-                key={item.path}
-                item={item}
-                language={language}
-              />
+              <NavItem key={item.path} item={item} language={language} />
             ))}
           </ul>
         </nav>

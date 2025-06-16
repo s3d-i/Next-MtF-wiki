@@ -1,5 +1,4 @@
 import { LocalImage } from '../LocalImage';
-import styles from './css/DoctorImage.module.css';
 import type { ShortCodeCompProps } from './types';
 import { getLocalImagePathFromMdContext } from './utils';
 
@@ -11,6 +10,10 @@ export default function DoctorImage({ attrs, mdContext }: ShortCodeCompProps) {
   const imagePath = getLocalImagePathFromMdContext(src, mdContext);
 
   return (
-    <LocalImage src={imagePath} alt="医生照片" className={styles.doctorImage} />
+    <LocalImage
+      src={imagePath}
+      alt="医生照片"
+      className="max-w-[300px] max-h-[300px] object-cover rounded-lg shadow-md"
+    />
   );
 }

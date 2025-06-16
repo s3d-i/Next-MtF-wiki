@@ -7,6 +7,9 @@ const config = {
             'postcss-preset-env',
             {
               // Optionally add plugin options
+              // features: {
+              //   'cascade-layers': false // 最好能关掉，开了 css module 会不正常
+              // }
             },
           ],
         ]

@@ -1,12 +1,11 @@
 import { LocalImage } from '@/components/LocalImage';
-import styles from '../css/OnimaiZh.module.css';
 
 export default function OnimaiZh() {
   return (
     <div>
       <LocalImage
         src="/hugo-static/images/meme/onimai.png"
-        className={styles.doctorStory}
+        className="!inline h-24 align-middle"
         alt="onimai meme"
       />
       <b>

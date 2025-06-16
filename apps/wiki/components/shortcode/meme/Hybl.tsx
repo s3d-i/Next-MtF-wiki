@@ -1,12 +1,11 @@
 import { LocalImage } from '@/components/LocalImage';
-import styles from '../css/OnimaiZh.module.css';
 
 export default function Hybl() {
   return (
     <>
       <LocalImage
         src="/hugo-static/images/meme/hybl.jpg"
-        className={styles.doctorStory}
+        className="!inline h-24 align-middle"
         aria-hidden="true"
         alt=""
       />{' '}

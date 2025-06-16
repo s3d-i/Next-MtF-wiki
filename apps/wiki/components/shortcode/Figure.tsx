@@ -1,5 +1,4 @@
 import { LocalImage } from '../LocalImage';
-import styles from './css/Figure.module.css';
 import type { ShortCodeCompProps } from './types';
 import { getLocalImagePathFromMdContext } from './utils';
 
@@ -100,7 +99,7 @@ export default function Figure({ attrs, mdContext }: ShortCodeCompProps) {
   );
 
   return (
-    <figure className={`${styles.figure} ${figureProps.class || ''}`}>
+    <figure className={`my-4 text-center ${figureProps.class || ''}`}>
       {figureProps.link ? (
         <a
           href={figureProps.link}
@@ -113,10 +112,14 @@ export default function Figure({ attrs, mdContext }: ShortCodeCompProps) {
         imageElement
       )}
       {(figureProps.title || figureProps.caption || figureProps.attr) && (
-        <figcaption>
-          {figureProps.title && <h4>{figureProps.title}</h4>}
+        <figcaption className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-center">
+          {figureProps.title && (
+            <h4 className="my-0 mb-1 text-base font-semibold">
+              {figureProps.title}
+            </h4>
+          )}
           {(figureProps.caption || figureProps.attr) && (
-            <p>
+            <p className="m-0">
               {figureProps.caption}
               {figureProps.attr && (
                 <>

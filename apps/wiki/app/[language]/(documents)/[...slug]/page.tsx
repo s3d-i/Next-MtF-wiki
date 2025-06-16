@@ -24,7 +24,7 @@ import remarkCsvToTable from './remarkCsvToTable';
 import remarkHtmlContent from './remarkHtmlContent';
 import { remarkHugoShortcode } from './remarkHugoShortcode';
 import type { Frontmatter } from './types';
-import { getContentGitRootDir } from './utils';
+import { getContentDir, getContentGitRootDir } from './utils';
 
 interface DocParams {
   language: string;
@@ -146,10 +146,15 @@ export default async function DocPage({
   const pageTitle =
     frontmatter?.title || slugArray[slugArray.length - 1] || '文档';
 
+  const realCurrentSlug = navItem.realPath
+    ? path.relative(`${getContentDir()}/${language}`, navItem.realPath)
+    : slugPath;
+
   const hugoRemarkOptions = {
     currentLanguage: language,
     navigationItems: navigationItemRoot.children ?? [],
     currentSlug: slugPath,
+    realCurrentSlug,
     isCurrentSlugIndex: isIndexPage,
   };
 
@@ -202,6 +207,7 @@ export default async function DocPage({
         mdContext={{
           currentLanguage: language,
           currentSlug: slugPath,
+          realCurrentSlug,
           isCurrentSlugIndex: isIndexPage,
         }}
       />

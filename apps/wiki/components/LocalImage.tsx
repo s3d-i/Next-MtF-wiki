@@ -76,13 +76,19 @@ export async function LocalImage({
         : null;
   // console.log('src', src, 'dimensions', dimensions);
 
+  const classN = className || '';
+
+  const hasObjectFit =
+    classN && /\bobject-(contain|cover|fill|none|scale-down)\b/.test(classN);
+  const finalClassName = hasObjectFit ? classN : `${classN} object-scale-down`;
+
   return dimensions ? (
     <LocalImageClient
       src={src}
       alt={alt}
       width={dimensions.width}
       height={dimensions.height}
-      className={className}
+      className={finalClassName}
       loadFailedText={
         language ? sT('local-image-load-failed-text', language) : null
       }
@@ -95,7 +101,7 @@ export async function LocalImage({
     <img
       src={src}
       alt={alt}
-      className={className}
+      className={finalClassName}
       width={width}
       height={height}
       loading={loading || 'lazy'}

@@ -23,6 +23,13 @@
   .browser-upgrade-banner {
     display: none;
   }
+
+  @layer utilities {
+    .prose
+      :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+      @apply my-0;
+    }
+  }
 }
 
 :root {
