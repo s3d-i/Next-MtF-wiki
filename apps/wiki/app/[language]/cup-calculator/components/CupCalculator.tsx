@@ -1,22 +1,23 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { Calculator, Clock, RotateCcw } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import {
+  addHistoryRecordAtom,
+  historyAtom,
   measurementsAtom,
   resultAtom,
-  addHistoryRecordAtom,
   showHistoryAtom,
-  historyAtom
 } from '../lib/atoms';
-import { calculateCupSize, isAllMeasurementsComplete, validateInput } from '../lib/utils';
-import { HistoryPanel } from './HistoryPanel';
 import {
-  Calculator,
-  RotateCcw,
-  Clock
-} from 'lucide-react';
+  calculateCupSize,
+  calculateInternationalSizes,
+  isAllMeasurementsComplete,
+  validateInput,
+} from '../lib/utils';
+import { HistoryPanel } from './HistoryPanel';
 
 export function CupCalculator() {
   const [measurements, setMeasurements] = useAtom(measurementsAtom);
@@ -42,11 +43,14 @@ export function CupCalculator() {
     }
   }, [measurements, setResult]);
 
-  const handleMeasurementChange = (stepId: keyof typeof measurements, value: string) => {
+  const handleMeasurementChange = (
+    stepId: keyof typeof measurements,
+    value: string,
+  ) => {
     const validation = validateInput(value);
     setMeasurements({
       ...measurements,
-      [stepId]: validation.isValid ? validation.numValue : null
+      [stepId]: validation.isValid ? validation.numValue : null,
     });
   };
 
@@ -70,7 +74,7 @@ export function CupCalculator() {
     if (calculatedResult.isValid) {
       addHistoryRecord({
         measurements,
-        result: calculatedResult
+        result: calculatedResult,
       });
     }
   };
@@ -79,7 +83,7 @@ export function CupCalculator() {
     if (result && measurements) {
       addHistoryRecord({
         measurements,
-        result
+        result,
       });
     }
   };
@@ -113,11 +117,15 @@ export function CupCalculator() {
       >
         <ol className="space-y-3 md:space-y-4">
           <li className="flex items-center gap-4">
-            <span className="text-lg font-semibold text-base-content/60">1.</span>
+            <span className="text-lg font-semibold text-base-content/60">
+              1.
+            </span>
             <div className="flex-1">
               <span className="text-base-content">
                 请直立，放松，用软尺贴合乳房下缘
-                <span className="mx-1 text-pink-500 font-bold underline">⊙⊙</span>
+                <span className="mx-1 text-pink-500 font-bold underline">
+                  ⊙⊙
+                </span>
                 ，水平绕身体一圈：
               </span>
             </div>
@@ -125,7 +133,9 @@ export function CupCalculator() {
               <input
                 type="number"
                 value={measurements.underBustRelaxed?.toString() || ''}
-                onChange={(e) => handleMeasurementChange('underBustRelaxed', e.target.value)}
+                onChange={(e) =>
+                  handleMeasurementChange('underBustRelaxed', e.target.value)
+                }
                 className="input input-bordered w-20 text-center"
                 placeholder="0"
                 min="0"
@@ -137,7 +147,9 @@ export function CupCalculator() {
           </li>
 
           <li className="flex items-center gap-4">
-            <span className="text-lg font-semibold text-base-content/60">2.</span>
+            <span className="text-lg font-semibold text-base-content/60">
+              2.
+            </span>
             <div className="flex-1">
               <span className="text-base-content">请呼气：</span>
             </div>
@@ -145,7 +157,9 @@ export function CupCalculator() {
               <input
                 type="number"
                 value={measurements.underBustExhale?.toString() || ''}
-                onChange={(e) => handleMeasurementChange('underBustExhale', e.target.value)}
+                onChange={(e) =>
+                  handleMeasurementChange('underBustExhale', e.target.value)
+                }
                 className="input input-bordered w-20 text-center"
                 placeholder="0"
                 min="0"
@@ -157,11 +171,15 @@ export function CupCalculator() {
           </li>
 
           <li className="flex items-center gap-4">
-            <span className="text-lg font-semibold text-base-content/60">3.</span>
+            <span className="text-lg font-semibold text-base-content/60">
+              3.
+            </span>
             <div className="flex-1">
               <span className="text-base-content">
                 请直立，放松，用软尺经过乳头
-                <span className="mx-1 text-pink-500 font-bold line-through">⊙⊙</span>
+                <span className="mx-1 text-pink-500 font-bold line-through">
+                  ⊙⊙
+                </span>
                 ，绕身体一圈：
               </span>
             </div>
@@ -169,7 +187,9 @@ export function CupCalculator() {
               <input
                 type="number"
                 value={measurements.bustRelaxed?.toString() || ''}
-                onChange={(e) => handleMeasurementChange('bustRelaxed', e.target.value)}
+                onChange={(e) =>
+                  handleMeasurementChange('bustRelaxed', e.target.value)
+                }
                 className="input input-bordered w-20 text-center"
                 placeholder="0"
                 min="0"
@@ -181,7 +201,9 @@ export function CupCalculator() {
           </li>
 
           <li className="flex items-center gap-4">
-            <span className="text-lg font-semibold text-base-content/60">4.</span>
+            <span className="text-lg font-semibold text-base-content/60">
+              4.
+            </span>
             <div className="flex-1">
               <span className="text-base-content">请俯身 45 度：</span>
             </div>
@@ -189,7 +211,9 @@ export function CupCalculator() {
               <input
                 type="number"
                 value={measurements.bustBend45?.toString() || ''}
-                onChange={(e) => handleMeasurementChange('bustBend45', e.target.value)}
+                onChange={(e) =>
+                  handleMeasurementChange('bustBend45', e.target.value)
+                }
                 className="input input-bordered w-20 text-center"
                 placeholder="0"
                 min="0"
@@ -201,7 +225,9 @@ export function CupCalculator() {
           </li>
 
           <li className="flex items-center gap-4">
-            <span className="text-lg font-semibold text-base-content/60">5.</span>
+            <span className="text-lg font-semibold text-base-content/60">
+              5.
+            </span>
             <div className="flex-1">
               <span className="text-base-content">请鞠躬 90 度：</span>
             </div>
@@ -209,7 +235,9 @@ export function CupCalculator() {
               <input
                 type="number"
                 value={measurements.bustBend90?.toString() || ''}
-                onChange={(e) => handleMeasurementChange('bustBend90', e.target.value)}
+                onChange={(e) =>
+                  handleMeasurementChange('bustBend90', e.target.value)
+                }
                 className="input input-bordered w-20 text-center"
                 placeholder="0"
                 min="0"
@@ -248,19 +276,47 @@ export function CupCalculator() {
         >
           <div className="text-center">
             <h3 className="text-xl font-semibold mb-3 md:mb-4">计算结果</h3>
-            <div className={`text-2xl font-bold ${
-              result.isValid ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'
-            }`}>
+            <div
+              className={`text-2xl font-bold ${
+                result.isValid
+                  ? 'text-green-600 dark:text-green-400'
+                  : 'text-yellow-600 dark:text-yellow-400'
+              }`}
+            >
               {result.message}
             </div>
 
             {result.isValid && result.fullSize && (
               <div className="mt-4 text-sm text-base-content/70">
-                胸下围：{result.underBust?.toFixed(1)} cm |
-                罩杯差值：{result.cupDifference?.toFixed(1)} cm |
-                罩杯：{result.cupSize}
+                胸下围：{result.underBust?.toFixed(1)} cm | 罩杯差值：
+                {result.cupDifference?.toFixed(1)} cm | 罩杯：{result.cupSize}
               </div>
             )}
+
+            {/* 欧洲尺码标准 */}
+            {result.isValid &&
+              result.underBust &&
+              result.cupDifference &&
+              (() => {
+                const internationalSizes = calculateInternationalSizes(
+                  result.underBust,
+                  result.cupDifference,
+                );
+                return (
+                  internationalSizes && (
+                    <div className="mt-6 pt-4 border-t border-base-300/30">
+                      <h4 className="text-sm font-medium text-base-content/80 mb-3 text-center">
+                        欧洲尺码标准
+                      </h4>
+                      <div className="text-center text-sm text-base-content/70">
+                        <span className="font-mono text-base font-semibold">
+                          {internationalSizes.europe}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                );
+              })()}
           </div>
         </motion.div>
       )}
@@ -280,7 +336,9 @@ export function CupCalculator() {
           <Clock className="w-4 h-4" />
           查看历史记录
           {history.length > 0 && (
-            <span className="badge badge-primary badge-sm">{history.length}</span>
+            <span className="badge badge-primary badge-sm">
+              {history.length}
+            </span>
           )}
         </button>
         <button

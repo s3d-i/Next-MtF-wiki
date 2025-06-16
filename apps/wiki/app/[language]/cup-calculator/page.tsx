@@ -78,9 +78,9 @@ export default function CupCalculatorPage() {
             <div className="border-t border-base-300/30 pt-3">
               <p>
                 <strong>免责声明：</strong>
-                本计算器基于通用的罩杯计算方法，结果仅供参考。
+                计算结果仅供参考。
                 由于个体差异和品牌差异，建议在购买内衣时进行试穿确认。
-                如有特殊需求，请咨询专业的内衣顾问。
+                如有特殊需求，请咨询商家或专业人士。
               </p>
             </div>
 

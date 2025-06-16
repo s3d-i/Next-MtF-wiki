@@ -1,18 +1,24 @@
-import type { MeasurementData, CupResult } from './types';
 import { CUP_SIZES } from './constants';
+import type { CupResult, InternationalBraSize, MeasurementData } from './types';
 
 /**
  * 计算罩杯尺寸
  */
 export function calculateCupSize(measurements: MeasurementData): CupResult {
-  const { underBustRelaxed, underBustExhale, bustRelaxed, bustBend45, bustBend90 } = measurements;
+  const {
+    underBustRelaxed,
+    underBustExhale,
+    bustRelaxed,
+    bustBend45,
+    bustBend90,
+  } = measurements;
 
   // 检查所有必需的测量数据是否存在
   if (
-    underBustRelaxed === null || 
-    underBustExhale === null || 
-    bustRelaxed === null || 
-    bustBend45 === null || 
+    underBustRelaxed === null ||
+    underBustExhale === null ||
+    bustRelaxed === null ||
+    bustBend45 === null ||
     bustBend90 === null
   ) {
     return {
@@ -22,17 +28,17 @@ export function calculateCupSize(measurements: MeasurementData): CupResult {
       cupSize: null,
       bandSize: null,
       fullSize: null,
-      message: '请完成所有测量步骤'
+      message: '请完成所有测量步骤',
     };
   }
 
   // 检查数据有效性
   if (
-    isNaN(underBustRelaxed) || 
-    isNaN(underBustExhale) || 
-    isNaN(bustRelaxed) || 
-    isNaN(bustBend45) || 
-    isNaN(bustBend90) ||
+    Number.isNaN(underBustRelaxed) ||
+    Number.isNaN(underBustExhale) ||
+    Number.isNaN(bustRelaxed) ||
+    Number.isNaN(bustBend45) ||
+    Number.isNaN(bustBend90) ||
     underBustRelaxed <= 0 ||
     underBustExhale <= 0 ||
     bustRelaxed <= 0 ||
@@ -46,13 +52,25 @@ export function calculateCupSize(measurements: MeasurementData): CupResult {
       cupSize: null,
       bandSize: null,
       fullSize: null,
-      message: '数值错误，请检查输入的数据'
+      message: '数值错误，请检查输入的数据',
     };
   }
 
   // 按照原算法计算
   const underBust = (underBustRelaxed + underBustExhale) / 2;
   const cupDifference = (bustRelaxed + bustBend45 + bustBend90) / 3 - underBust;
+
+  if (cupDifference < 0) {
+    return {
+      isValid: false,
+      underBust: underBust,
+      cupDifference: cupDifference,
+      cupSize: null,
+      bandSize: null,
+      fullSize: null,
+      message: '请检查测量数据',
+    };
+  }
 
   // 按照原版逻辑判断罩杯尺寸（使用 <= 判断）
   let cupInfo = null;
@@ -74,9 +92,13 @@ export function calculateCupSize(measurements: MeasurementData): CupResult {
       cupSize: null,
       bandSize: null,
       fullSize: null,
-      message: '计算结果超出预设范围'
+      message: '计算结果超出预设范围',
     };
   }
+
+  // 计算胸围尺寸（向上取整到最近的5的倍数）
+  const bandSize = Math.ceil(underBust / 5) * 5;
+  const fullSize = `${bandSize}${cupInfo.size}`;
 
   // 如果有特殊消息，直接返回
   if (cupInfo.message) {
@@ -85,15 +107,11 @@ export function calculateCupSize(measurements: MeasurementData): CupResult {
       underBust,
       cupDifference,
       cupSize: cupInfo.size,
-      bandSize: null,
-      fullSize: null,
-      message: cupInfo.message
+      bandSize,
+      fullSize,
+      message: cupInfo.message,
     };
   }
-
-  // 计算胸围尺寸（向上取整到最近的5的倍数）
-  const bandSize = Math.ceil(underBust / 5) * 5;
-  const fullSize = `${bandSize}${cupInfo.size}`;
 
   return {
     isValid: true,
@@ -102,7 +120,7 @@ export function calculateCupSize(measurements: MeasurementData): CupResult {
     cupSize: cupInfo.size,
     bandSize,
     fullSize,
-    message: `您的内衣尺寸是：${fullSize}`
+    message: `您的内衣尺寸是：${fullSize}`,
   };
 }
 
@@ -117,24 +135,31 @@ export function formatValue(value: number | null): string {
 /**
  * 验证输入值
  */
-export function validateInput(value: string): { isValid: boolean; numValue: number | null } {
+export function validateInput(value: string): {
+  isValid: boolean;
+  numValue: number | null;
+} {
   if (!value.trim()) {
     return { isValid: false, numValue: null };
   }
-  
-  const numValue = parseFloat(value);
-  if (isNaN(numValue) || numValue <= 0 || numValue > 200) {
+
+  const numValue = Number.parseFloat(value);
+  if (Number.isNaN(numValue) || numValue <= 0 || numValue > 200) {
     return { isValid: false, numValue: null };
   }
-  
+
   return { isValid: true, numValue };
 }
 
 /**
  * 检查是否所有测量都已完成
  */
-export function isAllMeasurementsComplete(measurements: MeasurementData): boolean {
-  return Object.values(measurements).every(value => value !== null && !isNaN(value));
+export function isAllMeasurementsComplete(
+  measurements: MeasurementData,
+): boolean {
+  return Object.values(measurements).every(
+    (value) => value !== null && !Number.isNaN(value),
+  );
 }
 
 /**
@@ -147,6 +172,40 @@ export function formatTimestamp(timestamp: number): string {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
+}
+
+/**
+ * 根据胸下围和罩杯差值计算国际尺码标准
+ * 基于维基百科的胸罩尺码标准，直接从测量数据计算各国尺码
+ * 参考: https://en.wikipedia.org/wiki/Bra_size
+ */
+export function calculateInternationalSizes(
+  underBust: number,
+  cupDifference: number,
+): InternationalBraSize | null {
+  if (!underBust || !cupDifference || underBust <= 0 || cupDifference <= 0) {
+    return null;
+  }
+
+  // 欧盟标准罩杯字母 (不同的差值范围)
+  let europeCupLetter: string;
+  if (cupDifference < 10) europeCupLetter = 'AA以下';
+  else if (cupDifference <= 12) europeCupLetter = 'AA';
+  else if (cupDifference <= 14) europeCupLetter = 'A';
+  else if (cupDifference <= 16) europeCupLetter = 'B';
+  else if (cupDifference <= 18) europeCupLetter = 'C';
+  else if (cupDifference <= 20) europeCupLetter = 'D';
+  else if (cupDifference <= 22) europeCupLetter = 'E';
+  else if (cupDifference <= 24) europeCupLetter = 'F';
+  else if (cupDifference <= 26) europeCupLetter = 'G';
+  else if (cupDifference <= 28) europeCupLetter = 'H';
+  else europeCupLetter = 'I+';
+
+  const europeBand = Math.ceil(underBust / 5) * 5;
+
+  return {
+    europe: `${europeBand}${europeCupLetter}`,
+  };
 }

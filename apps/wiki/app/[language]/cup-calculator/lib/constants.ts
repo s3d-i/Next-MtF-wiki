@@ -8,7 +8,9 @@ export const CUP_SIZES: CupSizeInfo[] = [
   { threshold: 15, size: 'C', message: '' },
   { threshold: 17.5, size: 'D', message: '' },
   { threshold: 20, size: 'E', message: '' },
-  { threshold: Infinity, size: 'E+', message: '你胸大你说了算（罩杯超出 MtF.wiki 预设）' }
+  {
+    threshold: Number.POSITIVE_INFINITY,
+    size: 'E+',
+    message: '你胸大你说了算（罩杯超出 MtF.wiki 预设）',
+  },
 ];
-
-
