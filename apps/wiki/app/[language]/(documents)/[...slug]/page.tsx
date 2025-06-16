@@ -252,7 +252,7 @@ export default async function DocPage({
       <div className="p-6 rounded-xl bg-base-100/30 backdrop-blur-sm border border-base-300/30 shadow-sm flex-1">
         <article
           id="markdown-content"
-          className="prose max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-strong:text-base-content prose-code:text-primary prose-pre:bg-base-200 prose-pre:border prose-pre:border-base-300"
+          className="prose max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-strong:text-base-content prose-code:text-primary prose-pre:bg-base-200 prose-pre:border prose-pre:border-base-300 wrap-break-word"
         >
           <header>
             <h1>{pageTitle}</h1>
