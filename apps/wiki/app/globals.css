@@ -5,6 +5,11 @@
   themes: cupcake --default, sunset --prefersdark;
 }
 
+@plugin "daisyui/theme" {
+  name: "cupcake";
+  --color-primary: oklch(75.461% 0.183 346.812);
+}
+
 @theme {
   --breakpoint-xs: 30rem;
 }

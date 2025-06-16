@@ -5,7 +5,7 @@ export default function OnimaiZh() {
     <div>
       <LocalImage
         src="/hugo-static/images/meme/onimai.png"
-        className="!inline h-24 align-middle"
+        className="h-24 align-middle"
         alt="onimai meme"
       />
       <b>

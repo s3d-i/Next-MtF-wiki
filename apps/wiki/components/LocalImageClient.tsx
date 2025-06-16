@@ -7,6 +7,7 @@ interface LocalImageClientProps
   extends React.ImgHTMLAttributes<HTMLImageElement> {
   loadFailedText: string | null;
   loadingText: string | null;
+  containerClassName?: string;
 }
 
 export default function LocalImageClient({
@@ -19,6 +20,7 @@ export default function LocalImageClient({
   className = '',
   loadFailedText,
   loadingText,
+  containerClassName,
   ...props
 }: LocalImageClientProps) {
   const [loadingState, setLoadingState] = useState<
@@ -34,7 +36,7 @@ export default function LocalImageClient({
     height >= 100;
 
   return (
-    <span className="relative block max-w-fit">
+    <span className={`relative block max-w-fit ${containerClassName}`}>
       {/* 骨架屏占位 - 在加载时显示 */}
       {loadingState === 'loading' && (
         <span

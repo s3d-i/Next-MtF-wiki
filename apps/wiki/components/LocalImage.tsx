@@ -54,6 +54,7 @@ async function getImageDimensions(
 
 interface LocalImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   language?: string;
+  containerClassName?: string;
 }
 
 export async function LocalImage({
