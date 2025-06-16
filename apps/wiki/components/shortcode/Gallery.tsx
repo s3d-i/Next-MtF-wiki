@@ -33,6 +33,7 @@ export default function Gallery({ attrs, mdContext }: GalleryProps) {
           alt={image.alt || `Gallery image ${image.name}`}
           language={currentLanguage || undefined}
           className="rounded-2xl"
+          containerClassName="shrink-0"
         />
       ))}
     </section>

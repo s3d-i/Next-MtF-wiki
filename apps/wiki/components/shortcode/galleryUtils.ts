@@ -19,7 +19,7 @@ export function getGalleryImages(
     const contentDir = getContentDir();
     const docDir = path.dirname(path.join(contentDir, language, slug));
 
-    console.log('docDir: ', docDir);
+    // console.log('docDir: ', docDir);
 
     // 如果目录不存在，返回空数组
     if (!fs.existsSync(docDir)) {

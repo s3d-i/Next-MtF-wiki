@@ -20,7 +20,7 @@ export default function LocalImageClient({
   className = '',
   loadFailedText,
   loadingText,
-  containerClassName,
+  containerClassName = '',
   ...props
 }: LocalImageClientProps) {
   const [loadingState, setLoadingState] = useState<

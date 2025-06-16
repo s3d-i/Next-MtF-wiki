@@ -4,6 +4,7 @@ import {
 } from '@/service/directory-service';
 import { getLocalImagePath } from '@/service/directory-service';
 import type {
+  Heading,
   Html,
   Image,
   Link,
@@ -210,6 +211,10 @@ export interface RemarkHugoShortcodeOptions {
   realCurrentSlug?: string;
 
   isCurrentSlugIndex?: boolean;
+
+  uniqueId?: boolean;
+
+  reservedIds?: string[];
 }
 
 export function transformHugoShortcodeLinks(tree: Root): void {
@@ -350,6 +355,12 @@ export function transformHugoShortcode(
     navigationItems,
     isCurrentSlugIndex = false,
     realCurrentSlug,
+    uniqueId = true,
+    reservedIds = [
+      'sidebar-scroll-container',
+      'markdown-content',
+      'theme-color',
+    ],
   } = options;
   // 1. 转换Hugo shortcodes为MDX JSX
   visit(tree, (node: Node, index?: number, parent?: Parent) => {
@@ -382,6 +393,38 @@ export function transformHugoShortcode(
           node.url as string,
           isCurrentSlugIndex,
         ) || node.url;
+    });
+  }
+
+  if (uniqueId) {
+    const idSet = new Set<string>();
+    for (const id of reservedIds) {
+      idSet.add(id);
+    }
+    function getHeadingId(node: Heading) {
+      if ((node as any).data.hProperties.id) {
+        return (node as any).data.hProperties.id;
+      }
+      return null;
+    }
+    visit(tree, 'heading', (node: Heading) => {
+      const id = getHeadingId(node);
+      if (id) {
+        if (idSet.has(id)) {
+          let newId = id;
+          while (true) {
+            newId = `${newId}_1`;
+            if (!idSet.has(newId)) {
+              break;
+            }
+          }
+          (node as any).data.id = newId;
+          (node as any).data.hProperties.id = newId;
+          // console.log('newId: ', newId);
+        } else {
+          idSet.add(id);
+        }
+      }
     });
   }
 }
@@ -462,7 +505,9 @@ export function remarkHugoShortcode(
   toMarkdownExtensions.push(hugoShortcodeToMarkdown());
 
   return (tree: Root) => {
+    // console.log('tree: ', JSON.stringify(tree, null, 2));
     transformHugoShortcode(tree, settings);
+    // console.log('tree: ', JSON.stringify(tree, null, 2));
   };
 }
 
