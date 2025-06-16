@@ -56,11 +56,18 @@
     "en": "Close"
   },
   "last-modified-time": {
-    "zh-cn": "最近更新于 ",
-    "zh-hant": "最近更新於 ",
-    "ja": "最近更新於 ",
+    "zh-cn": "最近更新于",
+    "zh-hant": "最近更新於",
+    "ja": "最近更新於",
     "es": "Última modificación ",
     "en": "Last Modified "
+  },
+  "edit-this-page": {
+    "zh-cn": "在 GitHub 上编辑",
+    "zh-hant": "在 GitHub 上編輯",
+    "ja": "GitHub で編集する",
+    "es": "Editar en GitHub",
+    "en": "Edit on GitHub"
   },
   "home-page-title": {
     "zh-cn": "MtF.wiki",

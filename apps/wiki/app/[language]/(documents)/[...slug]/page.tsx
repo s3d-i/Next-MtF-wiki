@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import Heading from '@/components/ControlledHeading';
 import { LocalImage } from '@/components/LocalImage';
 import { Link } from '@/components/progress';
@@ -12,6 +13,7 @@ import {
   getDocsNavigationMap,
 } from '@/service/directory-service';
 import { getFileLastModifiedTime } from '@/service/path-utils';
+import { ChevronLeft, ChevronRight, Edit } from 'lucide-react';
 import { type MDXComponents, MDXRemote } from 'next-mdx-remote-client/rsc';
 import { getFrontmatter } from 'next-mdx-remote-client/utils';
 import type { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
@@ -22,6 +24,7 @@ import remarkCsvToTable from './remarkCsvToTable';
 import remarkHtmlContent from './remarkHtmlContent';
 import { remarkHugoShortcode } from './remarkHugoShortcode';
 import type { Frontmatter } from './types';
+import { getContentGitRootDir } from './utils';
 
 interface DocParams {
   language: string;
@@ -255,6 +258,14 @@ export default async function DocPage({
   // 获取文件的最近修改时间
   const lastModifiedTime = await getFileLastModifiedTime(navItem.realPath);
 
+  // 生成GitHub编辑链接
+  const editLinkGithubUrl = process.env.EDIT_LINK_GITHUB_URL;
+  const editLink = editLinkGithubUrl
+    ? `${editLinkGithubUrl}${path
+        .relative(getContentGitRootDir(), navItem.realPath)
+        .replace(/\\/g, '/')}`
+    : null;
+
   return (
     <div className="flex flex-col">
       {/* 文档内容 */}
@@ -285,17 +296,37 @@ export default async function DocPage({
             }}
           />
 
-          {/* 最近更新时间 */}
-          {lastModifiedTime && (
-            <div className="mt-8 text-right">
-              <span className="text-xs text-base-content/40 font-mono">
-                {sT('last-modified-time', language)}
-                {lastModifiedTime.toLocaleDateString(language, {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </span>
+          {/* 编辑链接和最近更新时间 */}
+          {(editLink || lastModifiedTime) && (
+            <div className="mt-8 gap-4 flex justify-between items-center">
+              {/* 左侧：编辑链接 */}
+              <div className="flex-1">
+                {editLink && (
+                  <a
+                    href={editLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-base-content/40 hover:text-primary transition-colors"
+                  >
+                    <Edit className="w-3 h-3" />
+                    {sT('edit-this-page', language)}
+                  </a>
+                )}
+              </div>
+
+              {/* 右侧：最近更新时间 */}
+              <div className="flex-1 text-right">
+                {lastModifiedTime && (
+                  <span className="text-xs text-base-content/40 font-mono">
+                    {sT('last-modified-time', language)}
+                    {lastModifiedTime.toLocaleDateString(language, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </span>
+                )}
+              </div>
             </div>
           )}
         </article>
@@ -331,20 +362,7 @@ export default async function DocPage({
                 href={`/${language}/${previousPage.displayPath}`}
                 className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
               >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
+                <ChevronLeft className="w-4 h-4 mr-2" />
                 <div>
                   <div className="text-xs text-base-content/50">
                     {t('previousPage', language)}
@@ -369,20 +387,7 @@ export default async function DocPage({
                   </div>
                   <div className="font-medium">{nextPage.metadata.title}</div>
                 </div>
-                <svg
-                  className="w-4 h-4 ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                <ChevronRight className="w-4 h-4 ml-2" />
               </Link>
             )}
           </div>
