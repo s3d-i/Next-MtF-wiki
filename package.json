@@ -11,7 +11,8 @@
     "cleanup": "rm -rf apps/wiki/.next && rm -rf .turbo",
     "lint": "biome check",
     "format": "biome format",
-    "prepare": "simple-git-hooks install"
+    "prepare": "simple-git-hooks install",
+    "update-source": "git submodule update --remote source"
   },
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {

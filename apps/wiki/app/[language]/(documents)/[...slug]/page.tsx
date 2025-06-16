@@ -12,7 +12,6 @@ import {
 import { getFileLastModifiedTime } from '@/service/path-utils';
 import { type MDXComponents, MDXRemote } from 'next-mdx-remote-client/rsc';
 import { getFrontmatter } from 'next-mdx-remote-client/utils';
-import { notFound } from 'next/navigation';
 import type { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
 import remarkGfm from 'remark-gfm';
 import remarkHeadingId from 'remark-heading-id';
@@ -94,10 +93,7 @@ export async function generateMetadata({
   const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
 
   if (!navItem) {
-    return {
-      title: `${t('notFound', language)} - ${t('mtfwiki', language)}`,
-      description: t('notFound', language),
-    };
+    throw new Error('Nav item not found');
   }
 
   const ogBaseUrl = process.env.NEXT_PUBLIC_OG_BASE_URL || 'https://mtf.wiki/';
@@ -133,7 +129,7 @@ export default async function DocPage({
   const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
 
   if (!navItem) {
-    return notFound();
+    throw new Error('Nav item not found');
   }
 
   const isIndexPage = navItem.isIndex;

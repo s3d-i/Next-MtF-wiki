@@ -128,22 +128,22 @@ export const siteConfig: SiteConfig = {
     },
     {
       code: 'zh-hant',
-      subfolders: ['docs'],
+      subfolders: ['docs', 'about'],
       noMarkdown: getGlobalNoMarkdown(),
     },
     {
       code: 'ja',
-      subfolders: ['docs'],
+      subfolders: ['docs', 'about'],
       noMarkdown: getGlobalNoMarkdown(),
     },
     {
       code: 'en',
-      subfolders: ['docs'],
+      subfolders: ['docs', 'about'],
       noMarkdown: getGlobalNoMarkdown(),
     },
     {
       code: 'es',
-      subfolders: ['docs'],
+      subfolders: ['docs', 'about'],
       noMarkdown: getGlobalNoMarkdown(),
     },
   ],
@@ -151,7 +151,9 @@ export const siteConfig: SiteConfig = {
 
 // 获取导航项配置
 export function getNavigationItems(language: string): NavigationItem[] {
-  return siteConfig.navigation.filter(item => item.locale ? item.locale.includes(language) : true).sort((a, b) => a.weight - b.weight);
+  return siteConfig.navigation
+    .filter((item) => (item.locale ? item.locale.includes(language) : true))
+    .sort((a, b) => a.weight - b.weight);
 }
 
 // 获取主题配置
@@ -170,8 +172,10 @@ export function getLanguageConfigs(): LanguageConfig[] {
 }
 
 // 获取特定语言的配置
-export function getLanguageConfig(languageCode: string): LanguageConfig | undefined {
-  return siteConfig.languages.find(lang => lang.code === languageCode);
+export function getLanguageConfig(
+  languageCode: string,
+): LanguageConfig | undefined {
+  return siteConfig.languages.find((lang) => lang.code === languageCode);
 }
 
 // 获取SEO配置
@@ -182,4 +186,3 @@ export function getSEOConfig(): SEOConfig {
     includeSitemap: process.env.INCLUDE_SITEMAP === 'true',
   };
 }
-

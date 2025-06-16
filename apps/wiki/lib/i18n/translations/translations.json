@@ -90,13 +90,6 @@
     "es": "MtF.wiki",
     "en": "MtF.wiki"
   },
-  "notFound": {
-    "zh-cn": "404 - 页面未找到",
-    "zh-hant": "404 - 頁面未找到",
-    "ja": "404 - ページが見つかりません",
-    "es": "404 - Página no encontrada",
-    "en": "404 - Page not found"
-  },
   "themeSettings": {
     "zh-cn": "主题设置",
     "zh-hant": "主題設置",

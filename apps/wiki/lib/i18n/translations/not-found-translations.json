@@ -1,0 +1,30 @@
+{
+  "notFoundDescription": {
+    "zh-cn": "抱歉，您访问的页面不存在。",
+    "zh-hant": "抱歉，您訪問的頁面不存在。",
+    "ja": "申し訳ございませんが、お探しのページは見つかりませんでした。",
+    "es": "Lo sentimos, la página que buscas no existe.",
+    "en": "Sorry, the page you are looking for does not exist."
+  },
+  "backToHome": {
+    "zh-cn": "返回首页",
+    "zh-hant": "返回首頁",
+    "ja": "ホームに戻る",
+    "es": "Volver al inicio",
+    "en": "Back to Home"
+  },
+  "notFound": {
+    "zh-cn": "404 - 页面未找到",
+    "zh-hant": "404 - 頁面未找到",
+    "ja": "404 - ページが見つかりません",
+    "es": "404 - Página no encontrada",
+    "en": "404 - Page not found"
+  },
+  "path": {
+    "zh-cn": "路径",
+    "zh-hant": "路徑",
+    "ja": "パス",
+    "es": "Ruta",
+    "en": "Path"
+  }
+}
