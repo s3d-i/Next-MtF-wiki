@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import Heading from '@/components/ControlledHeading';
 import { LocalImage } from '@/components/LocalImage';
 import { Link } from '@/components/progress';
 import { ShortCodeComp } from '@/components/shortcode';
@@ -157,9 +158,15 @@ export default async function DocPage({
     return remarkCsvToTable(hugoRemarkOptions);
   }
 
+  function remarkHeadingIdPlugin() {
+    return remarkHeadingId({
+      defaults: true,
+    });
+  }
+
   const mdxRawContent: string = strippedSource;
   const remarkPlugins = [
-    remarkHeadingId,
+    remarkHeadingIdPlugin,
     remarkCsvToTablePlugin,
     remarkHugoShortcodePlugin,
     remarkGfm,
@@ -198,6 +205,12 @@ export default async function DocPage({
     ),
     Link,
     img: ImageComponent,
+    h1: (props) => <Heading level={1} {...props} />,
+    h2: (props) => <Heading level={2} {...props} />,
+    h3: (props) => <Heading level={3} {...props} />,
+    h4: (props) => <Heading level={4} {...props} />,
+    h5: (props) => <Heading level={5} {...props} />,
+    h6: (props) => <Heading level={6} {...props} />,
   };
 
   const ErrorContent = ({ error }: { error: Error }) => {

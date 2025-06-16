@@ -2,6 +2,7 @@ import BottomBanner from '@/components/BottomBanner';
 import BrowserUpgradeBanner from '@/components/BrowserUpgradeBanner';
 import DropdownLink from '@/components/DropdownLink';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { ObservedHeader } from '@/components/ObservedHeader';
 import ThemeToggle from '@/components/ThemeToggle';
 import SearchBox from '@/components/searchbox/SearchBox';
 import { getLanguageName, t } from '@/lib/i18n/client';
@@ -42,7 +43,7 @@ export default async function LanguageLayout({
       <BrowserUpgradeBanner />
 
       {/* 顶部导航栏 */}
-      <header className="lg:sticky lg:top-0 z-49 border-b bg-base-100/80 backdrop-blur-xl border-base-300/50 shadow-sm">
+      <ObservedHeader className="lg:sticky lg:top-0 z-49 border-b bg-base-100/80 backdrop-blur-xl border-base-300/50 shadow-sm">
         <div className="container flex items-center justify-between px-4 py-3 md:px-6 md:py-4 mx-auto">
           <div className="flex items-center space-x-8">
             <Link href={`/${language}`} className="flex items-center group">
@@ -138,7 +139,7 @@ export default async function LanguageLayout({
           {/* 右侧渐变遮罩，提示可以滚动 */}
           <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-base-100 to-transparent pointer-events-none" />
         </div>
-      </header>
+      </ObservedHeader>
 
       {/* 主要内容区域 */}
       <main className="flex-1">{children}</main>

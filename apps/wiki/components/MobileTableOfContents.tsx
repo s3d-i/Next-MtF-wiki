@@ -7,11 +7,11 @@ import { SquareMenu, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
-interface TocItem {
-  id: string;
-  text: string;
-  level: number;
-}
+import {
+  type TocItem,
+  extractHeadings,
+  scrollToHeading,
+} from './tableOfContentsUtils';
 
 interface MobileTableOfContentsProps {
   language: string;
@@ -27,40 +27,17 @@ export default function MobileTableOfContents({
 
   useEffect(() => {
     // 提取页面中main元素内的标题
-    const extractHeadings = () => {
-      const mainElement = document.getElementById('markdown-content');
-      if (!mainElement) {
-        setTocItems([]);
-        return;
-      }
-
-      const headings = mainElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      const items: TocItem[] = [];
-
-      headings.forEach((heading, index) => {
-        const level = Number.parseInt(heading.tagName.charAt(1));
-        const text = heading.textContent?.trim() || '';
-
-        // 如果标题没有 id，创建一个
-        let id = heading.id;
-        if (!id) {
-          id = `heading-${index}`;
-          heading.id = id;
-        }
-
-        if (text) {
-          items.push({ id, text, level });
-        }
-      });
+    const extractHeadingsLocal = () => {
+      const items = extractHeadings();
 
       setTocItems(items);
     };
 
-    extractHeadings();
+    extractHeadingsLocal();
 
     // 监听页面内容变化
     const observer = new MutationObserver(() => {
-      extractHeadings();
+      extractHeadingsLocal();
     });
 
     // 开始观察main元素变化
@@ -111,17 +88,6 @@ export default function MobileTableOfContents({
       window.removeEventListener('scroll', handleScroll);
     };
   }, [tocItems]);
-
-  const scrollToHeading = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-      setIsOpen(false); // 滚动后关闭弹窗
-    }
-  };
 
   // 防止背景滚动
   useEffect(() => {
@@ -198,7 +164,7 @@ export default function MobileTableOfContents({
                   type="button"
                   onClick={() => setIsOpen(false)}
                   className="p-2 rounded-lg hover:bg-base-300/50 transition-colors"
-                  aria-label="关闭目录"
+                  aria-label="close"
                 >
                   <X className="w-5 h-5" />
                 </button>
