@@ -5,6 +5,10 @@
   themes: cupcake --default, sunset --prefersdark;
 }
 
+@theme {
+  --breakpoint-xs: 30rem;
+}
+
 @supports not (selector(:where(*))) {
   [hidden]:not(#\#):not(#\#):not(#\#) {
     display: block !important;

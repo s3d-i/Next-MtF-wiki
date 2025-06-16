@@ -1,12 +1,12 @@
 'use client';
 import NextLink from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import React, { startTransition, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useProgress } from './context';
 import { formatUrl } from './format-url';
 import { useSkeleton } from './skeleton';
 
-interface LinkProps extends React.ComponentProps<typeof NextLink> {
+export interface LinkProps extends React.ComponentProps<typeof NextLink> {
   showSkeletonImmediately?: boolean;
 }
 /**

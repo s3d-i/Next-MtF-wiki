@@ -1,5 +1,6 @@
 import BottomBanner from '@/components/BottomBanner';
 import BrowserUpgradeBanner from '@/components/BrowserUpgradeBanner';
+import DropdownLink from '@/components/DropdownLink';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
 import SearchBox from '@/components/searchbox/SearchBox';
@@ -7,6 +8,7 @@ import { getLanguageName, t } from '@/lib/i18n/client';
 import { sT } from '@/lib/i18n/server';
 import { getNavigationItems } from '@/lib/site-config';
 import { getAvailableLanguages } from '@/service/directory-service';
+import { ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 import { Link } from '../../components/progress';
 
@@ -41,7 +43,7 @@ export default async function LanguageLayout({
 
       {/* 顶部导航栏 */}
       <header className="lg:sticky lg:top-0 z-49 border-b bg-base-100/80 backdrop-blur-xl border-base-300/50 shadow-sm">
-        <div className="container flex items-center justify-between px-6 py-4 mx-auto">
+        <div className="container flex items-center justify-between px-4 py-3 md:px-6 md:py-4 mx-auto">
           <div className="flex items-center space-x-8">
             <Link href={`/${language}`} className="flex items-center group">
               <Image
@@ -53,7 +55,7 @@ export default async function LanguageLayout({
               />
             </Link>
 
-            <nav className="hidden space-x-8 md:flex">
+            <nav className="hidden space-x-4 lg:space-x-8 md:flex">
               {navigationItems.map((item) => (
                 <Link
                   key={item.key}
@@ -65,7 +67,7 @@ export default async function LanguageLayout({
               ))}
             </nav>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <div className="h-6 border-l border-base-300" />
             {/* 搜索框 */}
             <div className="hidden xl:block">
@@ -91,18 +93,49 @@ export default async function LanguageLayout({
         </div>
 
         {/* 移动端导航菜单 */}
-        <div className="border-t md:hidden border-base-300/50">
-          <nav className="flex px-6 py-3 space-x-6 overflow-x-auto">
+        {/* 小屏幕下拉菜单 (< xs) */}
+        <div className="border-t xs:hidden border-base-300/50">
+          <div className="dropdown dropdown-end w-full">
+            <div
+              // biome-ignore lint/a11y/useSemanticElements: https://bugs.webkit.org/show_bug.cgi?id=22261
+              role="button"
+              tabIndex={0}
+              className="btn btn-ghost w-full justify-between px-4 py-2 rounded-none"
+            >
+              <span className="text-sm font-medium">导航</span>
+              <ChevronDown className="w-4 h-4 transition-transform duration-200" />
+            </div>
+            <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg border border-base-300/50">
+              {navigationItems.map((item) => (
+                <li key={item.key}>
+                  <DropdownLink
+                    href={`/${language}${item.href}`}
+                    className="px-4 py-3 text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10"
+                  >
+                    {t(item.translationKey as any, language)}
+                  </DropdownLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* 中等屏幕水平滚动菜单 (xs - md) */}
+        <div className="border-t hidden xs:block md:hidden border-base-300/50 relative">
+          <nav className="flex px-3 py-2 space-x-2 overflow-x-auto">
+            <div className="px-3" />
             {navigationItems.map((item) => (
               <Link
                 key={item.key}
                 href={`/${language}${item.href}`}
-                className="px-3 py-2 text-sm font-medium transition-colors rounded-lg text-base-content hover:text-primary hover:bg-primary/10 whitespace-nowrap"
+                className="px-3 py-2 text-sm font-medium transition-colors rounded-lg text-base-content hover:text-primary hover:bg-primary/10 whitespace-nowrap flex-shrink-0"
               >
                 {t(item.translationKey as any, language)}
               </Link>
             ))}
           </nav>
+          {/* 右侧渐变遮罩，提示可以滚动 */}
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-base-100 to-transparent pointer-events-none" />
         </div>
       </header>
 
