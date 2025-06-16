@@ -1,13 +1,14 @@
-import { Link } from "../../components/progress";
-import Image from "next/image";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
-import ThemeToggle from "@/components/ThemeToggle";
-import SearchBox from "@/components/searchbox/SearchBox";
-import { getAvailableLanguages } from "@/service/directory-service";
-import { t, getLanguageName } from "@/lib/i18n/client";
-import { sT } from "@/lib/i18n/server";
-import { getNavigationItems } from "@/lib/site-config";
-import BottomBanner from "@/components/BottomBanner";
+import BottomBanner from '@/components/BottomBanner';
+import BrowserUpgradeBanner from '@/components/BrowserUpgradeBanner';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import ThemeToggle from '@/components/ThemeToggle';
+import SearchBox from '@/components/searchbox/SearchBox';
+import { getLanguageName, t } from '@/lib/i18n/client';
+import { sT } from '@/lib/i18n/server';
+import { getNavigationItems } from '@/lib/site-config';
+import { getAvailableLanguages } from '@/service/directory-service';
+import Image from 'next/image';
+import { Link } from '../../components/progress';
 
 export default async function LanguageLayout({
   children,
@@ -35,6 +36,9 @@ export default async function LanguageLayout({
       className="flex flex-col min-h-screen bg-gradient-to-br from-base-100 to-base-200"
       lang={language}
     >
+      {/* 浏览器升级横幅 - 只在不支持 :where() 的浏览器中显示 */}
+      <BrowserUpgradeBanner />
+
       {/* 顶部导航栏 */}
       <header className="lg:sticky lg:top-0 z-49 border-b bg-base-100/80 backdrop-blur-xl border-base-300/50 shadow-sm">
         <div className="container flex items-center justify-between px-6 py-4 mx-auto">
@@ -67,13 +71,13 @@ export default async function LanguageLayout({
             <div className="hidden xl:block">
               <SearchBox
                 language={language}
-                placeholder={sT("search-documents-placeholder", language)}
+                placeholder={sT('search-documents-placeholder', language)}
               />
             </div>
             <div className="xl:hidden">
               <SearchBox
                 language={language}
-                placeholder={sT("search-documents-placeholder", language)}
+                placeholder={sT('search-documents-placeholder', language)}
                 compact={true}
               />
             </div>
@@ -116,19 +120,19 @@ export default async function LanguageLayout({
               className="h-8 w-auto"
             />
             <blockquote className="text-sm border-l-4 border-primary/30 pl-4 pr-4 italic text-base-content/70 bg-base-100/50 py-2 rounded-r">
-              {sT("footer-quote", language)}
+              {sT('footer-quote', language)}
             </blockquote>
           </aside>
 
           <nav>
-            <h6 className="footer-title">{sT("project", language)}</h6>
+            <h6 className="footer-title">{sT('project', language)}</h6>
             <Link
               href="https://github.com/project-trans/MtF-wiki"
               className="link link-hover"
               target="_blank"
               rel="noreferrer"
             >
-              {sT("content-source", language)}
+              {sT('content-source', language)}
             </Link>
             <Link
               href="https://github.com/project-trans/Next-MtF-wiki"
@@ -136,7 +140,7 @@ export default async function LanguageLayout({
               target="_blank"
               rel="noreferrer"
             >
-              {sT("website-source", language)}
+              {sT('website-source', language)}
             </Link>
             <Link
               href="https://2345.lgbt"
@@ -144,19 +148,19 @@ export default async function LanguageLayout({
               target="_blank"
               rel="noreferrer"
             >
-              {sT("navigation-site", language)}
+              {sT('navigation-site', language)}
             </Link>
           </nav>
 
           <nav>
-            <h6 className="footer-title">{sT("updates", language)}</h6>
+            <h6 className="footer-title">{sT('updates', language)}</h6>
             <Link
               href="https://x.com/MtFwiki"
               className="link link-hover"
               target="_blank"
               rel="noreferrer"
             >
-              {sT("twitter", language)}
+              {sT('twitter', language)}
             </Link>
             <Link
               href="https://t.me/MtFwiki"
@@ -164,18 +168,18 @@ export default async function LanguageLayout({
               target="_blank"
               rel="noreferrer"
             >
-              {sT("telegram-channel", language)}
+              {sT('telegram-channel', language)}
             </Link>
           </nav>
 
           <nav>
-            <h6 className="footer-title">{sT("contact", language)}</h6>
-            {language.startsWith("zh") && (
+            <h6 className="footer-title">{sT('contact', language)}</h6>
+            {language.startsWith('zh') && (
               <Link
                 href={`/${language}/docs/contributor-guide/`}
                 className="link link-hover"
               >
-                {sT("contributor-guide", language)}
+                {sT('contributor-guide', language)}
               </Link>
             )}
             <Link
@@ -184,13 +188,13 @@ export default async function LanguageLayout({
               target="_blank"
               rel="noreferrer"
             >
-              {sT("github", language)}
+              {sT('github', language)}
             </Link>
             <Link
               href="mailto:mtfwiki@project-trans.org"
               className="link link-hover"
             >
-              {sT("email", language)}
+              {sT('email', language)}
             </Link>
           </nav>
         </div>
@@ -203,7 +207,7 @@ export default async function LanguageLayout({
                 MtF.wiki
               </Link>
               <span className="ml-1">
-                {sT("all-rights-reserved", language)}
+                {sT('all-rights-reserved', language)}
               </span>
               <Link
                 href="https://project-trans.org/"
@@ -226,25 +230,25 @@ export default async function LanguageLayout({
       <BottomBanner
         text={sT(
           (process.env.NEXT_PUBLIC_BANNER_TEXT as any) ||
-            "banner-text-disclaimer",
-          language
+            'banner-text-disclaimer',
+          language,
         )}
         buttonText={sT(
           (process.env.NEXT_PUBLIC_BANNER_BUTTON_TEXT as any) ||
-            "banner-button-text-disclaimer",
-          language
+            'banner-button-text-disclaimer',
+          language,
         )}
         buttonLink={
           sT(
             (process.env.NEXT_PUBLIC_BANNER_BUTTON_LINK as any) ||
-              "banner-button-link-disclaimer",
-            language
+              'banner-button-link-disclaimer',
+            language,
           ) || null
         }
         closeButtonText={sT(
           (process.env.NEXT_PUBLIC_BANNER_CLOSE_BUTTON_TEXT as any) ||
-            "banner-button-text-close",
-          language
+            'banner-button-text-close',
+          language,
         )}
         language={language}
       />

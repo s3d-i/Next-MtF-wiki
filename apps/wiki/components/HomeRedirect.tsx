@@ -1,6 +1,6 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+'use client';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function HomeRedirect({
   languageConfigs,
@@ -15,7 +15,7 @@ export default function HomeRedirect({
         const userLanguages = navigator.languages || [navigator.language];
 
         // 默认语言（如果没有匹配到任何语言）
-        let targetLanguage = "zh-cn";
+        let targetLanguage = 'zh-cn';
 
         // 遍历用户的语言偏好，找到第一个匹配的语言
         for (const userLang of userLanguages) {
@@ -31,29 +31,29 @@ export default function HomeRedirect({
           }
 
           // 处理特殊的语言映射
-          if (normalizedLang.startsWith("zh")) {
+          if (normalizedLang.startsWith('zh')) {
             if (
-              normalizedLang.includes("tw") ||
-              normalizedLang.includes("hk") ||
-              normalizedLang.includes("hant")
+              normalizedLang.includes('tw') ||
+              normalizedLang.includes('hk') ||
+              normalizedLang.includes('hant')
             ) {
-              if (languageConfigs.some((config) => config.code === "zh-hant")) {
-                targetLanguage = "zh-hant";
+              if (languageConfigs.some((config) => config.code === 'zh-hant')) {
+                targetLanguage = 'zh-hant';
                 break;
               }
             } else if (
-              normalizedLang.includes("cn") ||
-              normalizedLang.includes("hans")
+              normalizedLang.includes('cn') ||
+              normalizedLang.includes('hans')
             ) {
-              if (languageConfigs.some((config) => config.code === "zh-cn")) {
-                targetLanguage = "zh-cn";
+              if (languageConfigs.some((config) => config.code === 'zh-cn')) {
+                targetLanguage = 'zh-cn';
                 break;
               }
             }
           }
 
           // 处理主要语言代码（取前两位）
-          const mainLang = normalizedLang.split("-")[0];
+          const mainLang = normalizedLang.split('-')[0];
           if (languageConfigs.some((config) => config.code === mainLang)) {
             targetLanguage = mainLang;
             break;
@@ -63,9 +63,16 @@ export default function HomeRedirect({
         // 重定向到检测到的语言页面
         router.replace(`/${targetLanguage}`);
       } catch (error) {
-        console.error("语言检测失败，重定向到默认语言:", error);
+        console.error('语言检测失败，重定向到默认语言:', error);
         // 发生错误时重定向到默认语言
-        router.replace("/zh-cn");
+        router.replace('/zh-cn');
+      } finally {
+        if (typeof window !== 'undefined') {
+          if ((window as any).HomeRedirectWikiRedirectTimeout) {
+            clearTimeout((window as any).HomeRedirectWikiRedirectTimeout);
+            (window as any).HomeRedirectWikiRedirectTimeout = null;
+          }
+        }
       }
     };
 
@@ -144,6 +151,17 @@ export default function HomeRedirect({
           </div>
         </footer>
       </div>
+      <script
+        // biome-ignore lint/security/noDangerouslySetInnerHtml:
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.HomeRedirectWikiRedirectTimeout = window.HomeRedirectWikiRedirectTimeout || window.setTimeout(() => {
+              window.HomeRedirectWikiRedirectTimeout = null;      
+              window.location.href = '/zh-cn';
+            }, 5000);
+          `,
+        }}
+      />
 
       {/* JavaScript 不可用时显示的 fallback 页面 */}
       <noscript>
