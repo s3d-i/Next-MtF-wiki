@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { HelpCircle, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 
 export function HelpTooltip() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +36,7 @@ export function HelpTooltip() {
                 <X className="w-3 h-3" />
               </button>
             </div>
-            
+
             <div className="space-y-3 text-sm text-base-content/80">
               <div>
                 <h4 className="font-medium text-base-content mb-1">基本操作</h4>
@@ -47,18 +47,11 @@ export function HelpTooltip() {
                   <li>• 点击复制按钮复制结果</li>
                 </ul>
               </div>
-              
-              <div>
-                <h4 className="font-medium text-base-content mb-1">快捷键</h4>
-                <ul className="space-y-1 text-xs">
-                  <li>• <kbd className="kbd kbd-xs">H</kbd> 查看历史记录</li>
-                </ul>
-              </div>
-              
+
               <div>
                 <h4 className="font-medium text-base-content mb-1">范围提示</h4>
                 <p className="text-xs">
-                  转换结果会显示颜色标识，表示数值是否在正常范围内。
+                  转换结果有时会显示颜色标识，表示数值是否属于特定的参考范围。
                   请注意这些范围仅供参考，具体请咨询医生。
                 </p>
               </div>
