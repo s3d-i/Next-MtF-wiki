@@ -5,11 +5,6 @@
   themes: cupcake --default, sunset --prefersdark;
 }
 
-@plugin "daisyui/theme" {
-  name: "cupcake";
-  --color-primary: oklch(75.461% 0.183 346.812);
-}
-
 @theme {
   --breakpoint-xs: 30rem;
 }
@@ -33,6 +28,11 @@
     .prose
       :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
       @apply my-0;
+    }
+
+    .prose-code\:text-primary
+      :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+      @apply text-base-content;
     }
   }
 }

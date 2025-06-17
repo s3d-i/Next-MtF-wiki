@@ -107,7 +107,7 @@ export default function TableOfContents({ language }: TableOfContentsProps) {
               ${item.level >= 5 ? 'pl-8' : ''}
               ${
                 activeId === item.id
-                  ? 'text-primary font-medium'
+                  ? 'bg-secondary text-secondary-content font-medium'
                   : 'text-base-content/70 hover:text-base-content'
               }
               py-1 px-2 rounded hover:bg-base-200/50
