@@ -15,7 +15,12 @@ export function ObservedHeader({ children, ...props }: ObservedHeaderProps) {
   useEffect(() => {
     const updateHeight = () => {
       if (headerRef.current) {
-        setHeaderHeight(headerRef.current.offsetHeight);
+        const style = window.getComputedStyle(headerRef.current);
+        if (style.position === 'sticky') {
+          setHeaderHeight(headerRef.current.offsetHeight);
+        } else {
+          setHeaderHeight(0);
+        }
       } else {
         setHeaderHeight(0);
       }
