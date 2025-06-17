@@ -215,5 +215,12 @@
     "ja": "画像を表示",
     "es": "Mostrar imagen",
     "en": "Show image"
+  },
+  "header-navigation": {
+    "zh-cn": "板块",
+    "zh-hant": "板塊",
+    "ja": "板塊",
+    "es": "División",
+    "en": "Division"
   }
 }

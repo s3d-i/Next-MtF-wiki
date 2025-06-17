@@ -103,7 +103,7 @@ export default async function LanguageLayout({
               className="btn btn-ghost w-full justify-between px-4 py-2 rounded-md group"
             >
               <span className="text-sm font-medium">
-                {t('navigation', language)}
+                {sT('header-navigation', language)}
               </span>
               <ChevronDown className="w-4 h-4 transition-transform duration-200 group-focus:rotate-180" />
             </div>
