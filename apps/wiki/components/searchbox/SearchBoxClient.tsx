@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Search, X, FileText } from "lucide-react";
-import MiniSearch, { type SearchResult } from "minisearch";
-import { Link } from "../progress";
-import { cache } from "react";
+import { FileText, Search, X } from 'lucide-react';
+import MiniSearch, { type SearchResult } from 'minisearch';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { cache } from 'react';
+import { Link } from '../progress';
 
 interface SearchBoxProps {
   language: string;
@@ -21,10 +21,10 @@ const loadSearchIndex = cache(
     const deployTime = process.env.NEXT_PUBLIC_DEPLOY_TIME;
     const url = new URL(
       `/api/search-index/${language}`,
-      window.location.origin
+      window.location.origin,
     );
     if (deployTime) {
-      url.searchParams.set("deployTime", deployTime);
+      url.searchParams.set('deployTime', deployTime);
     }
 
     const response = await fetch(url.toString());
@@ -40,34 +40,34 @@ const loadSearchIndex = cache(
     if (serverBuildIndex) {
       // 服务端构建索引：从序列化的索引重建 MiniSearch 实例
       if (!data.index) {
-        console.warn("No search index found");
+        console.warn('No search index found');
         return;
       }
 
       searchInstance = MiniSearch.loadJSON(data.index, {
-        fields: ["title", "content", "description"], // 搜索字段
-        storeFields: ["title", "url", "description", "section"], // 存储字段
+        fields: ['title', 'content', 'description'], // 搜索字段
+        storeFields: ['title', 'url', 'description', 'section'], // 存储字段
       });
 
       console.log(
-        `Search index loaded from server with ${data.totalCount} documents`
+        `Search index loaded from server with ${data.totalCount} documents`,
       );
       return searchInstance;
     } else {
       // 客户端构建索引：从文档数据构建索引
       if (!data.documents || data.documents.length === 0) {
-        console.warn("No documents found in search index");
+        console.warn('No documents found in search index');
         return;
       }
 
       searchInstance = new MiniSearch({
-        fields: ["title", "content", "description"], // 搜索字段
-        storeFields: ["title", "url", "description", "section"], // 存储字段
+        fields: ['title', 'content', 'description'], // 搜索字段
+        storeFields: ['title', 'url', 'description', 'section'], // 存储字段
         searchOptions: {
           boost: { title: 2, description: 1.5 }, // 标题权重更高
           fuzzy: 0.2, // 模糊搜索
           prefix: true, // 前缀匹配
-          combineWith: "AND", // 组合方式
+          combineWith: 'AND', // 组合方式
         },
       });
 
@@ -75,11 +75,11 @@ const loadSearchIndex = cache(
       searchInstance.addAll(data.documents);
 
       console.log(
-        `Search index built on client with ${data.documents.length} documents`
+        `Search index built on client with ${data.documents.length} documents`,
       );
       return searchInstance;
     }
-  }
+  },
 );
 
 export default function SearchBoxClient({
@@ -91,7 +91,7 @@ export default function SearchBoxClient({
   compact = false,
 }: SearchBoxProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [miniSearch, setMiniSearch] = useState<MiniSearch | null>(null);
@@ -110,12 +110,12 @@ export default function SearchBoxClient({
 
       const searchInstance = await loadSearchIndex(language, serverBuildIndex);
       if (!searchInstance) {
-        throw new Error("Failed to load search index");
+        throw new Error('Failed to load search index');
       }
       setMiniSearch(searchInstance);
       setIsInitialized(true);
     } catch (error) {
-      console.error("Failed to initialize search:", error);
+      console.error('Failed to initialize search:', error);
     } finally {
       setIsLoading(false);
     }
@@ -134,11 +134,11 @@ export default function SearchBoxClient({
 
         setResults(searchResults);
       } catch (error) {
-        console.error("Search error:", error);
+        console.error('Search error:', error);
         setResults([]);
       }
     },
-    [miniSearch]
+    [miniSearch],
   );
 
   // 处理搜索输入
@@ -163,22 +163,42 @@ export default function SearchBoxClient({
 
   const closeResultPanel = useCallback(() => {
     setIsOpen(false);
-    setQuery("");
+    setQuery('');
     setResults(null);
     if (compact && modalRef.current) {
       modalRef.current.close();
     }
   }, [compact]);
 
+  const handleResultClick = () => {
+    setIsOpen(false);
+    setQuery('');
+    setResults([]);
+    if (compact && modalRef.current) {
+      modalRef.current.close();
+    }
+  };
+
+  const handleSearchButtonClick = useCallback(() => {
+    if (compact && modalRef.current) {
+      modalRef.current.showModal();
+      setIsOpen(true);
+      // 延迟聚焦，确保modal已渲染
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [compact]);
+
   // 处理键盘事件
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         closeResultPanel();
       }
 
       // Ctrl/Cmd + K 聚焦到搜索框
-      if ((event.ctrlKey || event.metaKey) && event.key === "k") {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
         event.preventDefault();
         if (compact) {
           handleSearchButtonClick();
@@ -189,9 +209,9 @@ export default function SearchBoxClient({
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [compact, closeResultPanel]);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [compact, closeResultPanel, handleSearchButtonClick]);
 
   // 处理点击外部关闭 (只在非compact模式下使用)
   useEffect(() => {
@@ -206,8 +226,8 @@ export default function SearchBoxClient({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [compact, closeResultPanel]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,37 +236,17 @@ export default function SearchBoxClient({
   };
 
   const handleClear = () => {
-    setQuery("");
+    setQuery('');
     setResults([]);
     inputRef.current?.focus();
-  };
-
-  const handleResultClick = () => {
-    setIsOpen(false);
-    setQuery("");
-    setResults([]);
-    if (compact && modalRef.current) {
-      modalRef.current.close();
-    }
-  };
-
-  const handleSearchButtonClick = () => {
-    if (compact && modalRef.current) {
-      modalRef.current.showModal();
-      setIsOpen(true);
-      // 延迟聚焦，确保modal已渲染
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-    }
   };
 
   const highlightMatch = (text: string, query: string) => {
     if (!query.trim()) return text;
 
     const regex = new RegExp(
-      `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
-      "gi"
+      `(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
+      'gi',
     );
     const parts = text.split(regex);
 
@@ -261,7 +261,7 @@ export default function SearchBoxClient({
         </mark>
       ) : (
         part
-      )
+      ),
     );
   };
 
@@ -288,7 +288,7 @@ export default function SearchBoxClient({
   );
 
   const isShowSkeleton =
-    isLoading || !isInitialized || !results || query === "";
+    isLoading || !isInitialized || !results || query === '';
 
   // 紧凑模式：显示搜索按钮
   if (compact) {
@@ -304,10 +304,10 @@ export default function SearchBoxClient({
         </button>
 
         {/* 全局搜索对话框 */}
-        <dialog ref={modalRef} className="modal">
+        <dialog ref={modalRef} className="modal h-screen w-screen">
           <div className="modal-box w-11/12 max-w-2xl p-0">
             {/* 搜索框区域 */}
-            <div className="p-6 border-b border-base-300">
+            <div className="p-3 border-b border-base-300">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Search className="h-5 w-5" />
@@ -324,6 +324,7 @@ export default function SearchBoxClient({
                   type="button"
                   onClick={closeResultPanel}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-primary transition-colors"
+                  aria-label="Close"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -388,7 +389,12 @@ export default function SearchBoxClient({
 
           {/* 点击背景关闭 */}
           <form method="dialog" className="modal-backdrop">
-            <button type="button">close</button>
+            <button
+              tabIndex={-1}
+              aria-hidden="true"
+              type="button"
+              onClick={closeResultPanel}
+            />
           </form>
         </dialog>
       </div>
