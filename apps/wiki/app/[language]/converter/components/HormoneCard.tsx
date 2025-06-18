@@ -1,13 +1,25 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { motion } from "motion/react";
-import { useState, useEffect } from "react";
-import { conversionStateAtom, addHistoryRecordAtom } from "../lib/atoms";
-import { performConversion, formatValue, getHormoneById } from "../lib/utils";
-import { RangeIndicator } from "./RangeIndicator";
-import { ArrowUpDown, Copy, Check, Calculator, X } from "lucide-react";
-import type { HormoneType } from "../lib/types";
+import { useAtom } from 'jotai';
+import { ArrowUpDown, Calculator, Check, Copy, Info, X } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { addHistoryRecordAtom, conversionStateAtom } from '../lib/atoms';
+import type { HormoneType } from '../lib/types';
+import { formatValue, performConversion } from '../lib/utils';
+import { isIUStandard } from '../lib/utils';
+import { RangeIndicator } from './RangeIndicator';
+import { UnitSelector } from './UnitSelector';
+
+/**
+ * 判断是否为IU和质量单位之间的换算
+ */
+function isIUToMassConversion(fromUnit: string, toUnit: string): boolean {
+  const fromIsIU = isIUStandard(fromUnit);
+  const toIsIU = isIUStandard(toUnit);
+
+  return fromIsIU !== toIsIU;
+}
 
 interface HormoneCardProps {
   hormone: HormoneType;
@@ -18,6 +30,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
   const [, addHistoryRecord] = useAtom(addHistoryRecordAtom);
   const [isConverting, setIsConverting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const isSelected = state.selectedHormone === hormone.id;
 
@@ -25,7 +38,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
   useEffect(() => {
     if (isSelected && state.fromUnit && state.toUnit) {
       const fromUnitExists = hormone.units.some(
-        (u) => u.symbol === state.fromUnit
+        (u) => u.symbol === state.fromUnit,
       );
       const toUnitExists = hormone.units.some((u) => u.symbol === state.toUnit);
 
@@ -42,11 +55,25 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
 
   // 当激素类型、单位或输入值改变时重新计算结果
   useEffect(() => {
-    if (
-      isSelected &&
-      state.inputValue.trim() &&
-      !Number.isNaN(Number.parseFloat(state.inputValue))
-    ) {
+    if (!isSelected) return;
+
+    const trimmedInput = state.inputValue.trim();
+
+    function setErrorState() {
+      // 输入不为空但无效（包含汉字等），设置无效结果
+      setState((prev) => ({
+        ...prev,
+        result: {
+          value: 0,
+          unit: state.toUnit,
+          isValid: false,
+        },
+      }));
+    }
+    if (trimmedInput && !inputRef.current?.checkValidity()) {
+      setErrorState();
+    } else if (trimmedInput && !Number.isNaN(Number.parseFloat(trimmedInput))) {
+      // 输入有效，进行转换
       setIsConverting(true);
 
       // 添加轻微延迟以显示动画效果
@@ -55,16 +82,15 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
           state.inputValue,
           state.fromUnit,
           state.toUnit,
-          hormone.id
+          hormone.id,
         );
         setState((prev) => ({ ...prev, result }));
         setIsConverting(false);
       }, 300);
-    } else if (
-      isSelected &&
-      (!state.inputValue.trim() ||
-        Number.isNaN(Number.parseFloat(state.inputValue)))
-    ) {
+    } else if (trimmedInput) {
+      setErrorState();
+    } else {
+      // 输入为空，清除结果
       setState((prev) => ({ ...prev, result: null }));
     }
   }, [
@@ -81,10 +107,10 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
     // 转换计算现在由useEffect处理，避免重复计算
   };
 
-  const handleUnitChange = (type: "from" | "to", unit: string) => {
+  const handleUnitChange = (type: 'from' | 'to', unit: string) => {
     setState((prev) => ({
       ...prev,
-      [type === "from" ? "fromUnit" : "toUnit"]: unit,
+      [type === 'from' ? 'fromUnit' : 'toUnit']: unit,
     }));
     // 转换计算现在由useEffect处理，避免重复计算
   };
@@ -94,7 +120,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
     const newToUnit = state.fromUnit;
     const newInputValue = state.result?.isValid
       ? formatValue(state.result.value)
-      : "";
+      : '';
 
     setState((prev) => ({
       ...prev,
@@ -112,7 +138,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
           newInputValue,
           newFromUnit,
           newToUnit,
-          hormone.id
+          hormone.id,
         );
         setState((prev) => ({ ...prev, result }));
         setIsConverting(false);
@@ -128,7 +154,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000);
       } catch (err) {
-        console.error("Failed to copy:", err);
+        console.error('Failed to copy:', err);
       }
     }
   };
@@ -152,7 +178,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
   const clearInput = () => {
     setState((prev) => ({
       ...prev,
-      inputValue: "",
+      inputValue: '',
       result: null,
     }));
   };
@@ -164,16 +190,18 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
       className="bg-base-100 rounded-xl shadow-lg border border-base-300/30 overflow-hidden hover:shadow-xl transition-shadow duration-300"
     >
       <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-4 md:p-6 border-b border-base-300/30">
         <h3 className="text-xl font-semibold text-base-content">
           {hormone.name}
         </h3>
-        {/* <p className="text-sm text-base-content/60 mt-1">
-          支持 {hormone.units.map(u => u.symbol).join('、')} 单位互转
-        </p> */}
+        {/* {hormone.description && (
+          <p className="text-sm text-base-content/60 mt-1">
+            {hormone.description}
+          </p>
+        )} */}
       </div>
 
       <div className="p-4 md:p-6">
@@ -187,9 +215,10 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input
+                  ref={inputRef}
                   type="text"
                   inputMode="numeric"
-                  pattern="[0-9]*"
+                  pattern="[0-9.]*"
                   value={state.inputValue}
                   onChange={(e) => handleInputChange(e.target.value)}
                   placeholder="请输入数值"
@@ -208,17 +237,12 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
                   </motion.button>
                 )}
               </div>
-              <select
+              <UnitSelector
                 value={state.fromUnit}
-                onChange={(e) => handleUnitChange("from", e.target.value)}
-                className="select select-bordered w-24"
-              >
-                {hormone.units.map((unit) => (
-                  <option key={unit.symbol} value={unit.symbol}>
-                    {unit.symbol}
-                  </option>
-                ))}
-              </select>
+                onChange={(unit) => handleUnitChange('from', unit)}
+                units={hormone.units}
+                className="w-36"
+              />
             </div>
           </div>
 
@@ -249,29 +273,18 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
                     transition={{
                       duration: 1,
                       repeat: Number.POSITIVE_INFINITY,
-                      ease: "linear",
+                      ease: 'linear',
                     }}
                     className="loading loading-spinner loading-md mx-auto"
                   />
                 ) : (
-                  <span className="font-mono text-2xl font-semibold text-base-content">
+                  <span className="font-mono text-2xl font-semibold text-base-content break-all">
                     {state.result?.isValid
                       ? formatValue(state.result.value)
-                      : "—"}
+                      : '—'}
                   </span>
                 )}
               </div>
-              <select
-                value={state.toUnit}
-                onChange={(e) => handleUnitChange("to", e.target.value)}
-                className="select select-bordered w-24"
-              >
-                {hormone.units.map((unit) => (
-                  <option key={unit.symbol} value={unit.symbol}>
-                    {unit.symbol}
-                  </option>
-                ))}
-              </select>
               {state.result?.isValid && (
                 <motion.button
                   onClick={copyResult}
@@ -287,7 +300,23 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
                   )}
                 </motion.button>
               )}
+              <UnitSelector
+                value={state.toUnit}
+                onChange={(unit) => handleUnitChange('to', unit)}
+                units={hormone.units}
+                className="w-36"
+              />
             </div>
+
+            {/* IU和质量单位换算提示 */}
+            {isIUToMassConversion(state.fromUnit, state.toUnit) && (
+              <div className="alert alert-info">
+                <Info className="w-6 h-6" />
+                <span className="text-sm">
+                  IU 和质量单位之间的换算结果仅供参考。
+                </span>
+              </div>
+            )}
           </div>
 
           {/* 操作按钮 */}

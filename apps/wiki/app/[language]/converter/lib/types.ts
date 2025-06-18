@@ -2,6 +2,7 @@ export interface HormoneUnit {
   name: string;
   symbol: string;
   multiplier: number; // 转换为基础单位的乘数
+  category?: 'common' | 'uncommon'; // 单位分类
 }
 
 export interface HormoneType {
@@ -20,11 +21,19 @@ export interface HormoneRange {
   unit: string;
   description: string;
   color: 'success' | 'warning' | 'error' | 'info';
-  iconType?: 'male' | 'female' | 'target' | 'success' | 'warning' | 'error' | 'info';
+  iconType?:
+    | 'male'
+    | 'female'
+    | 'target'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info';
   source: {
     name: string; // 数据来源名称
-    url: string;  // 数据来源链接
-  };
+    url: string; // 数据来源链接
+  } | null;
+  isVisible?: boolean;
 }
 
 export interface ConversionResult {

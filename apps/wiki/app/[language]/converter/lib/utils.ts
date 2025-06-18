@@ -1,18 +1,26 @@
-import type { HormoneType, HormoneUnit, ConversionResult, HormoneRange } from './types';
+import { format } from 'd3-format';
 import { HORMONES } from './constants';
-
+import type {
+  ConversionResult,
+  HormoneRange,
+  HormoneType,
+  HormoneUnit,
+} from './types';
 /**
  * 获取激素类型
  */
 export function getHormoneById(id: string): HormoneType | undefined {
-  return HORMONES.find(hormone => hormone.id === id);
+  return HORMONES.find((hormone) => hormone.id === id);
 }
 
 /**
  * 获取单位信息
  */
-export function getUnitBySymbol(hormone: HormoneType, symbol: string): HormoneUnit | undefined {
-  return hormone.units.find(unit => unit.symbol === symbol);
+export function getUnitBySymbol(
+  hormone: HormoneType,
+  symbol: string,
+): HormoneUnit | undefined {
+  return hormone.units.find((unit) => unit.symbol === symbol);
 }
 
 /**
@@ -22,21 +30,21 @@ export function convertHormoneValue(
   value: number,
   fromUnit: string,
   toUnit: string,
-  hormone: HormoneType
+  hormone: HormoneType,
 ): number {
   const fromUnitInfo = getUnitBySymbol(hormone, fromUnit);
   const toUnitInfo = getUnitBySymbol(hormone, toUnit);
-  
+
   if (!fromUnitInfo || !toUnitInfo) {
     throw new Error('Invalid unit');
   }
-  
+
   // 转换为基础单位
   const baseValue = value * fromUnitInfo.multiplier;
-  
+
   // 从基础单位转换为目标单位
   const result = baseValue / toUnitInfo.multiplier;
-  
+
   return result;
 }
 
@@ -46,7 +54,7 @@ export function convertHormoneValue(
 export function checkValueRanges(
   value: number,
   unit: string,
-  hormone: HormoneType
+  hormone: HormoneType,
 ): HormoneRange[] {
   // 将值转换为基础单位进行比较
   const unitInfo = getUnitBySymbol(hormone, unit);
@@ -78,20 +86,25 @@ export function performConversion(
   inputValue: string,
   fromUnit: string,
   toUnit: string,
-  hormoneId: string
+  hormoneId: string,
 ): ConversionResult {
   const hormone = getHormoneById(hormoneId);
   if (!hormone) {
     return { value: 0, unit: toUnit, isValid: false };
   }
-  
-  const numValue = parseFloat(inputValue);
-  if (isNaN(numValue) || numValue < 0) {
+
+  const numValue = Number.parseFloat(inputValue);
+  if (Number.isNaN(numValue) || numValue < 0) {
     return { value: 0, unit: toUnit, isValid: false };
   }
-  
+
   try {
-    const convertedValue = convertHormoneValue(numValue, fromUnit, toUnit, hormone);
+    const convertedValue = convertHormoneValue(
+      numValue,
+      fromUnit,
+      toUnit,
+      hormone,
+    );
     const ranges = checkValueRanges(convertedValue, toUnit, hormone);
 
     return {
@@ -110,18 +123,81 @@ export function performConversion(
  */
 export function formatValue(value: number): string {
   if (value === 0) return '0';
-  
-  // 根据数值大小选择合适的精度
-  if (value >= 1000) {
-    return value.toFixed(0);
-  } else if (value >= 100) {
-    return value.toFixed(1);
-  } else if (value >= 10) {
-    return value.toFixed(2);
-  } else if (value >= 1) {
-    return value.toFixed(3);
+
+  return format('.4~r')(value);
+}
+
+/**
+ * 判断单位是否为IU（国际单位）标准
+ */
+export function isIUStandard(unit: string): boolean {
+  const iuUnits = ['mIU/mL', 'IU/L', 'mIU/L', 'μIU/mL', 'μIU/L'];
+  return iuUnits.includes(unit);
+}
+
+/**
+ * 检查两个单位是否等价（multiplier相同）
+ */
+export function areUnitsEquivalent(
+  hormone: HormoneType,
+  unit1: string,
+  unit2: string,
+): boolean {
+  const unit1Info = getUnitBySymbol(hormone, unit1);
+  const unit2Info = getUnitBySymbol(hormone, unit2);
+
+  if (!unit1Info || !unit2Info) return false;
+
+  // 比较multiplier值，考虑浮点数精度
+  return Math.abs(unit1Info.multiplier - unit2Info.multiplier) < 1e-10;
+}
+
+/**
+ * 将参考范围转换为指定单位
+ */
+export function convertRangeToUnit(
+  range: HormoneRange,
+  targetUnit: string,
+  hormone: HormoneType,
+): { min: number; max: number } | null {
+  try {
+    const convertedMin = convertHormoneValue(
+      range.min,
+      range.unit,
+      targetUnit,
+      hormone,
+    );
+    const convertedMax =
+      range.max === Number.POSITIVE_INFINITY
+        ? Number.POSITIVE_INFINITY
+        : convertHormoneValue(range.max, range.unit, targetUnit, hormone);
+
+    return { min: convertedMin, max: convertedMax };
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
+ * 格式化范围数值显示
+ */
+export function formatRangeValue(value: number): string {
+  if (value === Number.POSITIVE_INFINITY) return '∞';
+  if (value === 0) return '0';
+
+  return format('.4~r')(value);
+}
+
+/**
+ * 格式化参考范围显示文本
+ */
+export function formatRangeText(min: number, max: number): string {
+  if (min === 0 && max === Number.POSITIVE_INFINITY) {
+    return '> 0';
+  } else if (max === Number.POSITIVE_INFINITY) {
+    return `> ${formatRangeValue(min)}`;
   } else {
-    return value.toFixed(4);
+    return `${formatRangeValue(min)} - ${formatRangeValue(max)}`;
   }
 }
 
@@ -135,7 +211,7 @@ export function formatTimestamp(timestamp: number): string {
   const diffMins = Math.floor(diffMs / (1000 * 60));
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
+
   if (diffMins < 1) {
     return '刚刚';
   } else if (diffMins < 60) {
