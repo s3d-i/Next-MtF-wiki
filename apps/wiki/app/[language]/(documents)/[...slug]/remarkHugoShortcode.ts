@@ -3,6 +3,7 @@ import {
   getNavigationForOriginalSlug,
 } from '@/service/directory-service';
 import { getLocalImagePath } from '@/service/directory-service';
+import { transformFilesLink } from '@/service/path-utils';
 import type {
   Heading,
   Html,
@@ -217,6 +218,17 @@ export interface RemarkHugoShortcodeOptions {
   reservedIds?: string[];
 }
 
+function transformNormalLink(
+  tree: Root,
+  currentSlug: string | undefined,
+  language: string,
+) {
+  visit(tree, 'link', (node: Link, index, parent) => {
+    node.url = transformFilesLink(node.url, currentSlug, language);
+    // console.log('node.url: ', node.url, currentSlug, language);
+  });
+}
+
 export function transformHugoShortcodeLinks(tree: Root): void {
   visit(tree, (node: Node, index?: number, parent?: Parent) => {
     const hugoNode = node as any;
@@ -379,6 +391,8 @@ export function transformHugoShortcode(
       }
     }
   });
+
+  transformNormalLink(tree, realCurrentSlug, currentLanguage);
 
   // 处理Hugo短代码链接
   transformHugoShortcodeLinks(tree);

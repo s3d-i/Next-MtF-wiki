@@ -112,8 +112,14 @@ function main() {
   console.log('复制完成！');
 }
 
+// console.log('process.argv: ', import.meta.url, process.argv[1]);
+const scriptPath = process.argv[1].replaceAll('\\', '/');
+
 // 运行脚本
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (
+  import.meta.url === `file://${scriptPath}` ||
+  import.meta.url === `file:///${scriptPath}`
+) {
   main();
 }
 

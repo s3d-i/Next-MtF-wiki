@@ -1,5 +1,10 @@
+import fs from 'node:fs';
 import path from 'node:path';
-import { getContentGitRootDir } from '@/app/[language]/(documents)/[...slug]/utils';
+import {
+  getContentDir,
+  getContentGitRootDir,
+  getPublicDir,
+} from '@/app/[language]/(documents)/[...slug]/utils';
 import { simpleGit } from 'simple-git';
 
 export function getLocalImagePath(
@@ -32,6 +37,45 @@ export function getLocalImagePath(
     return `/hugo-files/${language}/${pathname}/${imagePath}`;
   }
   return null;
+}
+
+export function transformFilesLink(
+  link: string,
+  currentRealSlug: string | undefined,
+  language: string,
+) {
+  if (
+    link.startsWith('https://') ||
+    link.startsWith('http://') ||
+    link.startsWith('//')
+  ) {
+    return link;
+  }
+  const contentDir = getPublicDir();
+  if (link.startsWith('/')) {
+    const filePath = `/hugo-static${link}`;
+    if (fs.existsSync(path.join(contentDir, filePath))) {
+      return filePath;
+    }
+  }
+  if (currentRealSlug) {
+    // console.log(
+    //   'currentRealSlug: ',
+    //   currentRealSlug,
+    //   path.dirname(currentRealSlug),
+    // );
+    const hugoFilesPath = path.join(
+      `/hugo-files/${language}/${currentRealSlug}/`,
+      link,
+    );
+    // console.log('hugoFilesPath: ', hugoFilesPath);
+    const realHugoFilesPath = path.join(contentDir, hugoFilesPath);
+    // console.log('realHugoFilesPath: ', realHugoFilesPath);
+    if (fs.existsSync(realHugoFilesPath)) {
+      return hugoFilesPath.replaceAll('\\', '/');
+    }
+  }
+  return link;
 }
 
 /**
