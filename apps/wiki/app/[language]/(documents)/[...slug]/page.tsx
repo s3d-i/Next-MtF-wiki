@@ -1,6 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import Heading from '@/components/ControlledHeading';
+import {
+  ControlledAnchor,
+  ControlledHeading,
+  ControlledLink,
+} from '@/components/ControlledElement';
 import { LocalImage } from '@/components/LocalImage';
 import { Link } from '@/components/progress';
 import { ShortCodeComp } from '@/components/shortcode';
@@ -212,14 +216,15 @@ export default async function DocPage({
         }}
       />
     ),
-    Link,
+    Link: ControlledLink,
+    a: ControlledAnchor,
     img: ImageComponent,
-    h1: (props) => <Heading level={1} {...props} />,
-    h2: (props) => <Heading level={2} {...props} />,
-    h3: (props) => <Heading level={3} {...props} />,
-    h4: (props) => <Heading level={4} {...props} />,
-    h5: (props) => <Heading level={5} {...props} />,
-    h6: (props) => <Heading level={6} {...props} />,
+    h1: (props) => <ControlledHeading level={1} {...props} />,
+    h2: (props) => <ControlledHeading level={2} {...props} />,
+    h3: (props) => <ControlledHeading level={3} {...props} />,
+    h4: (props) => <ControlledHeading level={4} {...props} />,
+    h5: (props) => <ControlledHeading level={5} {...props} />,
+    h6: (props) => <ControlledHeading level={6} {...props} />,
   };
 
   const ErrorContent = ({ error }: { error: Error }) => {
