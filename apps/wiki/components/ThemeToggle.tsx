@@ -34,7 +34,6 @@ export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [themePreference, setThemePreference] = useAtom(themePreferenceAtom);
-  const [isMenuOpen, setIsMenuOpen] = useAtom(themeMenuOpenAtom);
   const params = useParams();
 
   // 获取当前语言
@@ -55,7 +54,6 @@ export default function ThemeToggle() {
   const handleThemeChange = (newTheme: string) => {
     setThemePreference(newTheme);
     setTheme(newTheme);
-    setIsMenuOpen(false);
   };
 
   const getCurrentThemeOption = () => {
@@ -87,12 +85,6 @@ export default function ThemeToggle() {
         className="btn btn-ghost btn-circle"
         aria-label={t('themeSettings', currentLanguage)}
         title={`${t('currentTheme', currentLanguage)}: ${t(currentOption.labelKey as any, currentLanguage)}`}
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            setIsMenuOpen(!isMenuOpen);
-          }
-        }}
       >
         <ThemeIcon icon={currentOption.icon} />
       </div>
@@ -109,7 +101,10 @@ export default function ThemeToggle() {
                 className={`flex items-center gap-3 ${
                   (theme || themePreference) === option.value ? 'active' : ''
                 }`}
-                onClick={() => handleThemeChange(option.value)}
+                onClick={() => {
+                  handleThemeChange(option.value);
+                  (document.activeElement as HTMLElement).blur();
+                }}
               >
                 <ThemeIcon icon={option.icon} className="w-4 h-4" />
                 <div className="flex flex-col items-start">
