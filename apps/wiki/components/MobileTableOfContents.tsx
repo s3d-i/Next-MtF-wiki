@@ -177,7 +177,10 @@ export default function MobileTableOfContents({
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => scrollToHeading(item.id)}
+                      onClick={() => {
+                        scrollToHeading(item.id);
+                        setIsOpen(false);
+                      }}
                       className={`
                       block w-full text-left text-sm transition-colors
                       ${item.level === 1 ? 'font-medium' : ''}
