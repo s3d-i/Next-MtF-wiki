@@ -316,33 +316,31 @@ export default async function DocPage({
           {(editLink || lastModifiedTime) && (
             <div className="mt-8 gap-4 flex justify-between items-center">
               {/* 左侧：编辑链接 */}
-              <div className="flex-1">
-                {editLink && (
-                  <a
-                    href={editLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-base-content/40 hover:text-primary transition-colors"
-                  >
-                    <Edit className="w-3 h-3" />
-                    {sT('edit-this-page', language)}
-                  </a>
-                )}
-              </div>
+              {editLink ? (
+                <a
+                  href={editLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-base-content/40 hover:text-primary transition-colors"
+                >
+                  <Edit className="w-3 h-3" />
+                  {sT('edit-this-page', language)}
+                </a>
+              ) : (
+                <span />
+              )}
 
               {/* 右侧：最近更新时间 */}
-              <div className="flex-1 text-right">
-                {lastModifiedTime && (
-                  <span className="text-xs text-base-content/40 font-mono">
-                    {sT('last-modified-time', language)}
-                    {lastModifiedTime.toLocaleDateString(language, {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </span>
-                )}
-              </div>
+              {lastModifiedTime && (
+                <span className="text-xs text-base-content/40 font-mono">
+                  {sT('last-modified-time', language)}
+                  {lastModifiedTime.toLocaleDateString(language, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </span>
+              )}
             </div>
           )}
         </article>
@@ -372,41 +370,37 @@ export default async function DocPage({
       {/* 上一页/下一页导航 */}
       {(previousPage || nextPage) && (
         <nav className="mt-8 flex justify-between items-center p-4 bg-base-100/30 rounded-lg border border-base-300/30 shadow-sm">
-          <div className="flex-1">
-            {previousPage && (
-              <Link
-                href={`/${language}/${previousPage.displayPath}`}
-                className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                <div>
-                  <div className="text-xs text-base-content/50">
-                    {t('previousPage', language)}
-                  </div>
-                  <div className="font-medium">
-                    {previousPage.metadata.title}
-                  </div>
+          {previousPage ? (
+            <Link
+              href={`/${language}/${previousPage.displayPath}`}
+              className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              <div>
+                <div className="text-xs text-base-content/50">
+                  {t('previousPage', language)}
                 </div>
-              </Link>
-            )}
-          </div>
+                <div className="font-medium">{previousPage.metadata.title}</div>
+              </div>
+            </Link>
+          ) : (
+            <span />
+          )}
 
-          <div className="flex-1 text-right">
-            {nextPage && (
-              <Link
-                href={`/${language}/${nextPage.displayPath}`}
-                className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
-              >
-                <div>
-                  <div className="text-xs text-base-content/50">
-                    {t('nextPage', language)}
-                  </div>
-                  <div className="font-medium">{nextPage.metadata.title}</div>
+          {nextPage && (
+            <Link
+              href={`/${language}/${nextPage.displayPath}`}
+              className="inline-flex items-center text-sm text-base-content/70 hover:text-primary transition-colors"
+            >
+              <div>
+                <div className="text-xs text-base-content/50">
+                  {t('nextPage', language)}
                 </div>
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Link>
-            )}
-          </div>
+                <div className="font-medium">{nextPage.metadata.title}</div>
+              </div>
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </Link>
+          )}
         </nav>
       )}
     </div>
