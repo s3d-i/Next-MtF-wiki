@@ -443,6 +443,24 @@ export function transformHugoShortcode(
   }
 }
 
+function processHugoRefShortCodeValue(
+  value: string,
+  currentLanguage: string,
+  navigationItems: DocItem[],
+) {
+  const index = value.indexOf('#');
+  if (index >= 0) {
+    const slug = value.substring(0, index);
+    const anchor = value.substring(index + 1);
+    return `${
+      getNavigationForOriginalSlug(currentLanguage, slug, navigationItems)
+        ?.displayPath
+    }#${anchor}`;
+  }
+  return getNavigationForOriginalSlug(currentLanguage, value, navigationItems)
+    ?.displayPath;
+}
+
 export function getRemarkHugoShortcodeOptions(
   options: RemarkHugoShortcodeOptions = {},
 ) {
@@ -462,16 +480,16 @@ export function getRemarkHugoShortcodeOptions(
                   (element.arguments[0].value as string) ||
                   element.arguments[0].name;
                 // console.log("href: ", href, JSON.stringify(element.arguments));
+                const hrefDisplayPath = processHugoRefShortCodeValue(
+                  href,
+                  options.currentLanguage!,
+                  options.navigationItems!,
+                );
                 return {
                   type: 'hugoShortcode-Link-Href',
-                  value:
-                    `/${options.currentLanguage}/${
-                      getNavigationForOriginalSlug(
-                        options.currentLanguage!,
-                        href,
-                        options.navigationItems!,
-                      )?.displayPath
-                    }` || '',
+                  value: hrefDisplayPath
+                    ? `/${options.currentLanguage}/${hrefDisplayPath}`
+                    : '',
                 } as unknown as Nodes;
               }
             }

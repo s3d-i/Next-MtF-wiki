@@ -31,12 +31,14 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 
           e.preventDefault();
 
-          start(url);
+          if (url) {
+            start(url);
 
-          if (showSkeletonImmediately) {
-            showSkeletonImmediatelyFn(url);
-          } else {
-            showSkeleton(url);
+            if (showSkeletonImmediately) {
+              showSkeletonImmediatelyFn(url);
+            } else {
+              showSkeleton(url);
+            }
           }
 
           if (replace) {
