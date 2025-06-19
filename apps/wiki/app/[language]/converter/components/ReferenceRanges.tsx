@@ -12,6 +12,7 @@ import {
   formatRangeText,
   isIUStandard,
 } from '../lib/utils';
+import { ConversionTooltip } from './ConversionTooltip';
 
 interface ReferenceRangesProps {
   hormone: HormoneType;
@@ -30,6 +31,27 @@ function shouldSkipUnitConversion(
   const toIsIU = isIUStandard(toUnit);
 
   if (rangeIsIU === fromIsIU && rangeIsIU === toIsIU) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * 判断是否应该显示转换tooltip
+ */
+function shouldShowConversionTooltip(
+  rangeUnit: string,
+  displayUnit: string,
+  hormone: HormoneType,
+): boolean {
+  // 如果单位相同，不需要tooltip
+  if (rangeUnit === displayUnit) {
+    return false;
+  }
+
+  // 如果单位等价，不需要tooltip
+  if (areUnitsEquivalent(hormone, rangeUnit, displayUnit)) {
     return false;
   }
 
@@ -104,6 +126,14 @@ export function ReferenceRanges({ hormone }: ReferenceRangesProps) {
                         range.hideMax,
                       )}{' '}
                       {fromUnit}
+                      <ConversionTooltip
+                        originalRange={range}
+                        isVisible={shouldShowConversionTooltip(
+                          range.unit,
+                          fromUnit,
+                          hormone,
+                        )}
+                      />
                     </>
                   ) : (
                     // 其他情况显示两种单位的范围
@@ -114,6 +144,14 @@ export function ReferenceRanges({ hormone }: ReferenceRangesProps) {
                         range.hideMax,
                       )}{' '}
                       {fromUnit}
+                      <ConversionTooltip
+                        originalRange={range}
+                        isVisible={shouldShowConversionTooltip(
+                          range.unit,
+                          fromUnit,
+                          hormone,
+                        )}
+                      />
                       <span className="text-base-content/50 mx-2">|</span>
                       {formatRangeText(
                         toUnitRange.min,
@@ -121,6 +159,14 @@ export function ReferenceRanges({ hormone }: ReferenceRangesProps) {
                         range.hideMax,
                       )}{' '}
                       {toUnit}
+                      <ConversionTooltip
+                        originalRange={range}
+                        isVisible={shouldShowConversionTooltip(
+                          range.unit,
+                          toUnit,
+                          hormone,
+                        )}
+                      />
                     </>
                   )}
                 </div>

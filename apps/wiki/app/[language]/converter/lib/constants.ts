@@ -281,9 +281,9 @@ export const HORMONES: HormoneType[] = [
     ranges: [
       {
         label: '男性参考范围',
-        min: 264,
-        max: 916,
-        unit: 'ng/dL',
+        min: 2.64,
+        max: 9.16,
+        unit: 'ng/mL',
         description: '',
         color: 'info',
         iconType: 'male',
@@ -294,9 +294,9 @@ export const HORMONES: HormoneType[] = [
       },
       {
         label: '女性参考范围',
-        min: 1,
-        max: 55,
-        unit: 'ng/dL',
+        min: 0.1,
+        max: 0.55,
+        unit: 'ng/mL',
         description: '',
         color: 'info',
         iconType: 'female',
@@ -308,8 +308,8 @@ export const HORMONES: HormoneType[] = [
       {
         label: '女性向 GAHT 目标范围',
         min: 0,
-        max: 55,
-        unit: 'ng/dL',
+        max: 0.55,
+        unit: 'ng/mL',
         description: '',
         color: 'success',
         iconType: 'target',
