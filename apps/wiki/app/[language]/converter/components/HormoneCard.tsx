@@ -331,19 +331,18 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
           </div>
 
           {/* 操作按钮 */}
-          {state.result?.isValid && (
-            <div className="flex justify-center">
-              <motion.button
-                onClick={saveToHistory}
-                className="btn btn-primary gap-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Calculator className="w-4 h-4" />
-                转换
-              </motion.button>
-            </div>
-          )}
+          <div className="flex justify-center">
+            <motion.button
+              disabled={!state.result?.isValid || isConverting}
+              onClick={saveToHistory}
+              className="btn btn-primary gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Calculator className="w-4 h-4" />
+              转换
+            </motion.button>
+          </div>
         </div>
 
         {/* 范围指示器 */}
