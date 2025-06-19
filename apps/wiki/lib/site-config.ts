@@ -181,8 +181,8 @@ export function getLanguageConfig(
 // 获取SEO配置
 export function getSEOConfig(): SEOConfig {
   return {
-    siteUrl: process.env.SITE_URL || 'https://mtf.wiki',
-    allowRobots: process.env.ROBOTS_ALLOW === 'true',
-    includeSitemap: process.env.INCLUDE_SITEMAP === 'true',
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://mtf.wiki',
+    allowRobots: process.env.NEXT_PUBLIC_ROBOTS_ALLOW === 'true',
+    includeSitemap: process.env.NEXT_PUBLIC_INCLUDE_SITEMAP === 'true',
   };
 }

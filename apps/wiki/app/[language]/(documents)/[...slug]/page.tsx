@@ -274,7 +274,7 @@ export default async function DocPage({
     : null;
 
   // 生成GitHub编辑链接
-  const editLinkGithubUrl = process.env.EDIT_LINK_GITHUB_URL;
+  const editLinkGithubUrl = process.env.NEXT_PUBLIC_EDIT_LINK_GITHUB_URL;
   const editLink =
     showEditAndLastModifiedTime && editLinkGithubUrl
       ? `${editLinkGithubUrl}${path

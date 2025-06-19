@@ -1,17 +1,17 @@
-import type { MetadataRoute } from 'next'
-import { getSEOConfig } from '@/lib/site-config'
+import { getSEOConfig } from '@/lib/site-config';
+import type { MetadataRoute } from 'next';
 
-export const dynamic = 'force-static'
+export const dynamic = 'force-static';
 
 export default function robots(): MetadataRoute.Robots {
-  const seoConfig = getSEOConfig()
+  const seoConfig = getSEOConfig();
 
-  // console.log('SEO Config:', seoConfig)
+  // console.log('SEO Config:', seoConfig);
   // console.log('Environment variables:', {
-  //   ROBOTS_ALLOW: process.env.ROBOTS_ALLOW,
-  //   INCLUDE_SITEMAP: process.env.INCLUDE_SITEMAP,
-  //   SITE_URL: process.env.SITE_URL
-  // })
+  //   NEXT_PUBLIC_ROBOTS_ALLOW: process.env.NEXT_PUBLIC_ROBOTS_ALLOW,
+  //   NEXT_PUBLIC_INCLUDE_SITEMAP: process.env.NEXT_PUBLIC_INCLUDE_SITEMAP,
+  //   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  // });
 
   if (!seoConfig.allowRobots) {
     return {
@@ -19,7 +19,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         disallow: '/',
       },
-    }
+    };
   }
 
   const rules: MetadataRoute.Robots['rules'] = [
@@ -34,15 +34,15 @@ export default function robots(): MetadataRoute.Robots {
         '/hugo-static/',
       ],
     },
-  ]
+  ];
 
   const robots: MetadataRoute.Robots = {
     rules,
-  }
+  };
 
   if (seoConfig.includeSitemap) {
-    robots.sitemap = `${seoConfig.siteUrl}/sitemap.xml`
+    robots.sitemap = `${seoConfig.siteUrl}sitemap.xml`;
   }
 
-  return robots
+  return robots;
 }
