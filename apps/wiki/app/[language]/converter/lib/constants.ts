@@ -346,18 +346,19 @@ export const HORMONES: HormoneType[] = [
       {
         label: '显著升高',
         min: 69.9,
-        max: 116.5, // 正常上限23.3的5倍
+        max: 698.99,
         unit: 'ng/mL',
         description: '需要注意',
-        color: 'error',
-        iconType: 'error',
+        color: 'warning',
+        iconType: 'warning',
         source: {
           name: '治疗期间的监测 - MtF.wiki',
           url: '/zh-cn/docs/medicine/monitoring',
         },
+        hideMax: true,
       },
       {
-        ...createMaxErrorRange(116.5, 'ng/mL'),
+        ...createMaxErrorRange(699, 'ng/mL'),
       },
     ],
   },

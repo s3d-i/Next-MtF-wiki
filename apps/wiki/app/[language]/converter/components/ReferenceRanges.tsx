@@ -93,20 +93,33 @@ export function ReferenceRanges({ hormone }: ReferenceRangesProps) {
                   shouldSkipUnitConversion(range.unit, fromUnit, toUnit) ? (
                     // 转换失败或需要跳过转换时，只显示原始单位
                     <>
-                      {formatRangeText(range.min, range.max)} {range.unit}
+                      {formatRangeText(range.min, range.max, range.hideMax)}{' '}
+                      {range.unit}
                     </>
                   ) : unitsAreEquivalent ? (
                     <>
-                      {formatRangeText(fromUnitRange.min, fromUnitRange.max)}{' '}
+                      {formatRangeText(
+                        fromUnitRange.min,
+                        fromUnitRange.max,
+                        range.hideMax,
+                      )}{' '}
                       {fromUnit}
                     </>
                   ) : (
                     // 其他情况显示两种单位的范围
                     <>
-                      {formatRangeText(fromUnitRange.min, fromUnitRange.max)}{' '}
+                      {formatRangeText(
+                        fromUnitRange.min,
+                        fromUnitRange.max,
+                        range.hideMax,
+                      )}{' '}
                       {fromUnit}
                       <span className="text-base-content/50 mx-2">|</span>
-                      {formatRangeText(toUnitRange.min, toUnitRange.max)}{' '}
+                      {formatRangeText(
+                        toUnitRange.min,
+                        toUnitRange.max,
+                        range.hideMax,
+                      )}{' '}
                       {toUnit}
                     </>
                   )}

@@ -34,6 +34,7 @@ export interface HormoneRange {
     url: string; // 数据来源链接
   } | null;
   isVisible?: boolean;
+  hideMax?: boolean;
 }
 
 export interface ConversionResult {

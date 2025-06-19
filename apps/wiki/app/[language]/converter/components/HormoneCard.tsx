@@ -34,6 +34,8 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
 
   const isSelected = state.selectedHormone === hormone.id;
 
+  const pendingResult = useRef<any>(null);
+
   // 当激素类型改变时，重置单位选择
   useEffect(() => {
     if (isSelected && state.fromUnit && state.toUnit) {
@@ -55,6 +57,11 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
 
   // 当激素类型、单位或输入值改变时重新计算结果
   useEffect(() => {
+    if (pendingResult.current) {
+      clearTimeout(pendingResult.current);
+      pendingResult.current = null;
+    }
+
     if (!isSelected) return;
 
     const trimmedInput = state.inputValue.trim();
@@ -69,6 +76,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
           isValid: false,
         },
       }));
+      setIsConverting(false);
     }
     if (trimmedInput && !inputRef.current?.checkValidity()) {
       setErrorState();
@@ -77,7 +85,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
       setIsConverting(true);
 
       // 添加轻微延迟以显示动画效果
-      setTimeout(() => {
+      pendingResult.current = setTimeout(() => {
         const result = performConversion(
           state.inputValue,
           state.fromUnit,
@@ -86,12 +94,14 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
         );
         setState((prev) => ({ ...prev, result }));
         setIsConverting(false);
-      }, 300);
+        pendingResult.current = null;
+      }, 200);
     } else if (trimmedInput) {
       setErrorState();
     } else {
       // 输入为空，清除结果
       setState((prev) => ({ ...prev, result: null }));
+      setIsConverting(false);
     }
   }, [
     hormone.id,
@@ -133,7 +143,8 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
     // 如果交换后有输入值，立即计算结果
     if (newInputValue && !Number.isNaN(Number.parseFloat(newInputValue))) {
       setIsConverting(true);
-      setTimeout(() => {
+      clearTimeout(pendingResult.current);
+      pendingResult.current = setTimeout(() => {
         const result = performConversion(
           newInputValue,
           newFromUnit,
@@ -142,7 +153,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
         );
         setState((prev) => ({ ...prev, result }));
         setIsConverting(false);
-      }, 300);
+      }, 200);
     }
   };
 
@@ -217,12 +228,12 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
                 <input
                   ref={inputRef}
                   type="text"
-                  inputMode="numeric"
+                  inputMode="decimal"
                   pattern="[0-9.]*"
                   value={state.inputValue}
                   onChange={(e) => handleInputChange(e.target.value)}
                   placeholder="请输入数值"
-                  className="input input-bordered w-full pr-10"
+                  className="input input-bordered w-full pr-10 text-base"
                   min="0"
                 />
                 {state.inputValue && (
@@ -241,7 +252,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
                 value={state.fromUnit}
                 onChange={(unit) => handleUnitChange('from', unit)}
                 units={hormone.units}
-                className="w-36"
+                className="w-fit"
               />
             </div>
           </div>
@@ -304,7 +315,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
                 value={state.toUnit}
                 onChange={(unit) => handleUnitChange('to', unit)}
                 units={hormone.units}
-                className="w-36"
+                className="w-fit"
               />
             </div>
 

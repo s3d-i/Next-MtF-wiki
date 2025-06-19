@@ -191,10 +191,12 @@ export function formatRangeValue(value: number): string {
 /**
  * 格式化参考范围显示文本
  */
-export function formatRangeText(min: number, max: number): string {
-  if (min === 0 && max === Number.POSITIVE_INFINITY) {
-    return '> 0';
-  } else if (max === Number.POSITIVE_INFINITY) {
+export function formatRangeText(
+  min: number,
+  max: number,
+  hideMax?: boolean,
+): string {
+  if (max === Number.POSITIVE_INFINITY || hideMax === true) {
     return `> ${formatRangeValue(min)}`;
   } else {
     return `${formatRangeValue(min)} - ${formatRangeValue(max)}`;
