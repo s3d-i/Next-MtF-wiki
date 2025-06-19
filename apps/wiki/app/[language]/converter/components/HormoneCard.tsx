@@ -321,7 +321,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
 
             {/* IU和质量单位换算提示 */}
             {isIUToMassConversion(state.fromUnit, state.toUnit) && (
-              <div className="alert alert-info">
+              <div className="alert alert-info alert-soft">
                 <Info className="w-6 h-6" />
                 <span className="text-sm">
                   IU 和质量单位之间的换算结果仅供参考。
