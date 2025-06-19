@@ -217,15 +217,15 @@ export const HORMONES: HormoneType[] = [
     ranges: [
       {
         label: '男性参考范围',
-        min: 14,
-        max: 55,
+        min: 8,
+        max: 35,
         unit: 'pg/mL',
         description: '',
         color: 'info',
         iconType: 'male',
         source: {
-          name: '雌二醇 - 维基百科，自由的百科全书',
-          url: 'https://zh.wikipedia.org/wiki/%E9%9B%8C%E4%BA%8C%E9%86%87#%E8%8C%83%E5%9B%B4',
+          name: '女性倾向跨性别者的激素治疗简介',
+          url: 'https://tfsci.mtf.wiki/zh-cn/articles/transfem-intro/#normal-hormone-levels',
         },
       },
       {

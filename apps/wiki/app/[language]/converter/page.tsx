@@ -20,10 +20,15 @@ export default function ConverterPage() {
         <header className="text-center mb-6 md:mb-8 relative">
           <div className="flex items-center justify-center gap-4 mb-4">
             <h1 className="text-4xl font-bold text-base-content">激素换算器</h1>
-            <HelpTooltip />
           </div>
+          <p className="text-sm">
+            有关单位转换的具体规则，请参见{' '}
+            <Link href="/zh-cn/converter/science-literacy" className="link">
+              单位科普
+            </Link>
+            {' 。'}
+          </p>
         </header>
-
         <HormoneConverter />
 
         <footer className="mt-8 md:mt-12 p-4 md:p-6 bg-base-200/50 rounded-xl">
