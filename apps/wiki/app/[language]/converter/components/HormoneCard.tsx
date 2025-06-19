@@ -276,8 +276,8 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
             <label className="block text-sm font-medium text-base-content">
               转换结果
             </label>
-            <div className="flex items-center gap-3">
-              <div className="flex-1 p-4 bg-base-200/50 rounded-lg border border-base-300/30 min-h-[60px] flex items-center">
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex-1 p-4 bg-base-200/50 rounded-lg border border-base-300/30 min-h-[60px] flex items-center max-w-full">
                 {isConverting ? (
                   <motion.div
                     animate={{ rotate: 360 }}
@@ -289,7 +289,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
                     className="loading loading-spinner loading-md mx-auto"
                   />
                 ) : (
-                  <span className="font-mono text-2xl font-semibold text-base-content break-all">
+                  <span className="font-mono text-2xl font-semibold text-base-content overflow-auto">
                     {state.result?.isValid
                       ? formatValue(state.result.value)
                       : '—'}
