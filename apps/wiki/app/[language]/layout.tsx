@@ -6,7 +6,7 @@ import { ObservedHeader } from '@/components/ObservedHeader';
 import ThemeToggle from '@/components/ThemeToggle';
 import SearchBox from '@/components/searchbox/SearchBox';
 import { getLanguageName, t } from '@/lib/i18n/client';
-import { sT } from '@/lib/i18n/server';
+import { sT, sTryT } from '@/lib/i18n/server';
 import { getNavigationItems } from '@/lib/site-config';
 import { getAvailableLanguages } from '@/service/directory-service';
 import { ChevronDown } from 'lucide-react';
@@ -274,7 +274,7 @@ export default async function LanguageLayout({
           language,
         )}
         buttonLink={
-          sT(
+          sTryT(
             (process.env.NEXT_PUBLIC_BANNER_BUTTON_LINK as any) ||
               'banner-button-link-disclaimer',
             language,
