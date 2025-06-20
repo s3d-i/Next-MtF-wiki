@@ -1,19 +1,23 @@
 function isClient() {
-  return typeof window !== "undefined";
+  return typeof window !== 'undefined';
 }
 
-function isElementInViewport (el: HTMLElement) {
+function isElementInViewport(el: HTMLElement) {
   const rect = el.getBoundingClientRect();
 
   return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && 
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
 }
 
-function isElementInScrollContainerView(el: HTMLElement, container: HTMLElement) {
+function isElementInScrollContainerView(
+  el: HTMLElement,
+  container: HTMLElement,
+) {
   const elRect = el.getBoundingClientRect();
   const containerRect = container.getBoundingClientRect();
 
@@ -25,4 +29,14 @@ function isElementInScrollContainerView(el: HTMLElement, container: HTMLElement)
   );
 }
 
-export { isClient, isElementInViewport, isElementInScrollContainerView };
+function getUrlWithoutHash(url: string) {
+  const index = url.indexOf('#');
+  return index >= 0 ? url.substring(0, index) : url;
+}
+
+export {
+  isClient,
+  isElementInViewport,
+  isElementInScrollContainerView,
+  getUrlWithoutHash,
+};

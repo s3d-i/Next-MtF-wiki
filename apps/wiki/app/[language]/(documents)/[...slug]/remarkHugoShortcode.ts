@@ -449,16 +449,20 @@ function processHugoRefShortCodeValue(
   navigationItems: DocItem[],
 ) {
   const index = value.indexOf('#');
-  if (index >= 0) {
+  if (index === 0) {
+    return value;
+  } else if (index > 0) {
     const slug = value.substring(0, index);
     const anchor = value.substring(index + 1);
-    return `${
+    return `${currentLanguage}/${
       getNavigationForOriginalSlug(currentLanguage, slug, navigationItems)
         ?.displayPath
     }#${anchor}`;
   }
-  return getNavigationForOriginalSlug(currentLanguage, value, navigationItems)
-    ?.displayPath;
+  return `${currentLanguage}/${
+    getNavigationForOriginalSlug(currentLanguage, value, navigationItems)
+      ?.displayPath
+  }`;
 }
 
 export function getRemarkHugoShortcodeOptions(
@@ -487,9 +491,7 @@ export function getRemarkHugoShortcodeOptions(
                 );
                 return {
                   type: 'hugoShortcode-Link-Href',
-                  value: hrefDisplayPath
-                    ? `/${options.currentLanguage}/${hrefDisplayPath}`
-                    : '',
+                  value: hrefDisplayPath,
                 } as unknown as Nodes;
               }
             }

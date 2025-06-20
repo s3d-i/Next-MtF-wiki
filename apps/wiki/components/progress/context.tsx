@@ -1,4 +1,5 @@
 'use client';
+import { getUrlWithoutHash } from '@/lib/utils';
 import {
   LazyMotion,
   domAnimation,
@@ -152,8 +153,9 @@ export function useProgressInternal() {
    * Start the progress.
    */
   const start = (path: string) => {
-    // console.log("start() 开始进度条", prevPathname.current, pathname);
-    if (path === pathname) {
+    // console.log("start() 开始进度条", prevPathname.current, pathname);\
+    const npath = getUrlWithoutHash(path);
+    if (!npath || npath === pathname) {
       return;
     }
 

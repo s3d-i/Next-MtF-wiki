@@ -1,4 +1,5 @@
 'use client';
+import { getUrlWithoutHash } from '@/lib/utils';
 import { LazyMotion, domAnimation, m } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import React, { useCallback, useRef } from 'react';
@@ -68,7 +69,9 @@ export function useSkeletonInternal() {
    */
   function show(path: string, wait: number = 700) {
     // console.log("show() 开始显示骨架屏");
-    if (path === pathname) {
+    const npath = getUrlWithoutHash(path);
+    // console.log('show() 路径变化: ', npath, pathname);
+    if (!npath || npath === pathname) {
       return;
     }
 
