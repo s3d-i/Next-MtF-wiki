@@ -5,6 +5,7 @@ import {
   getContentGitRootDir,
   getPublicDir,
 } from '@/app/[language]/(documents)/[...slug]/utils';
+import { cache } from 'react';
 import { simpleGit } from 'simple-git';
 
 export function getLocalImagePath(
@@ -83,7 +84,7 @@ export function transformFilesLink(
  * @param filePath 文件路径（相对于 git 仓库根目录）
  * @returns Promise<Date | null> 返回文件的最近修改时间，如果获取失败则返回 null
  */
-export async function getFileLastModifiedTime(
+export async function getFileLastModifiedTimeUncached(
   filePath: string,
 ): Promise<Date | null> {
   try {
@@ -110,3 +111,7 @@ export async function getFileLastModifiedTime(
     return null;
   }
 }
+
+export const getFileLastModifiedTime = cache(async (filePath: string) => {
+  return getFileLastModifiedTimeUncached(filePath);
+});
