@@ -5,6 +5,7 @@ import {
   ControlledHeading,
   ControlledLink,
 } from '@/components/ControlledElement';
+import { LanguageAlternate } from '@/components/LanguageAlternate';
 import { LocalImage } from '@/components/LocalImage';
 import { Link } from '@/components/progress';
 import { ShortCodeComp } from '@/components/shortcode';
@@ -12,6 +13,8 @@ import { t } from '@/lib/i18n/client';
 import { sT } from '@/lib/i18n/server';
 import { getLanguageConfigs } from '@/lib/site-config';
 import {
+  type DocItem,
+  checkSubFolderExists,
   generateAllStaticParams,
   getDocItemByNavigationMap,
   getDocsNavigationMap,
@@ -21,6 +24,7 @@ import { ChevronLeft, ChevronRight, Edit } from 'lucide-react';
 import { type MDXComponents, MDXRemote } from 'next-mdx-remote-client/rsc';
 import { getFrontmatter } from 'next-mdx-remote-client/utils';
 import type { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
+import { cache } from 'react';
 import remarkGfm from 'remark-gfm';
 import remarkHeadingId from 'remark-heading-id';
 import remarkMath from 'remark-math';
@@ -28,7 +32,11 @@ import remarkCsvToTable from './remarkCsvToTable';
 import remarkHtmlContent from './remarkHtmlContent';
 import { remarkHugoShortcode } from './remarkHugoShortcode';
 import type { Frontmatter } from './types';
-import { getContentDir, getContentGitRootDir } from './utils';
+import {
+  getAvailableLanguages,
+  getContentDir,
+  getContentGitRootDir,
+} from './utils';
 
 interface DocParams {
   language: string;
@@ -86,6 +94,44 @@ export async function generateStaticParams() {
   return uniqueParams;
 }
 
+interface LanguageAlternateDocItemInfo {
+  language: string;
+  docItem: DocItem;
+}
+
+const getLanguageAlternateDocItem = cache(
+  async (
+    language: string,
+    slug: string[],
+  ): Promise<LanguageAlternateDocItemInfo[]> => {
+    const languages = await getAvailableLanguages();
+    const languageAlternateDocItem: LanguageAlternateDocItemInfo[] = [];
+    for (const lang of languages) {
+      if (lang !== language && slug.length > 0) {
+        const subfolderExists = await checkSubFolderExists(lang, slug[0]);
+        if (!subfolderExists) {
+          continue;
+        }
+        const { root: navigationItemRoot, map: navigationItemMap } =
+          await getDocsNavigationMap(lang, slug[0]);
+
+        const navItem = getDocItemByNavigationMap(
+          navigationItemMap,
+          slug.join('/'),
+        );
+
+        if (navItem) {
+          languageAlternateDocItem.push({
+            language: lang,
+            docItem: navItem,
+          });
+        }
+      }
+    }
+    return languageAlternateDocItem;
+  },
+);
+
 export async function generateMetadata({
   params,
 }: {
@@ -107,9 +153,22 @@ export async function generateMetadata({
 
   const ogBaseUrl = process.env.NEXT_PUBLIC_OG_BASE_URL || 'https://mtf.wiki/';
 
+  const languageAlternateDocItem = await getLanguageAlternateDocItem(
+    language,
+    slug,
+  );
+
   return {
     title: `${navItem.metadata.title} - ${t('mtfwiki', language)}`,
     description: navItem.metadata.description || null,
+    alternates: {
+      languages: Object.fromEntries(
+        languageAlternateDocItem.map((item) => [
+          item.language,
+          `${ogBaseUrl}${item.language}/${item.docItem.displayPath}`,
+        ]),
+      ),
+    },
     openGraph: {
       title: navItem.metadata.title,
       siteName: t('mtfwiki', language),
@@ -269,7 +328,7 @@ export default async function DocPage({
   const nextPage =
     currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
 
-  const showEditAndLastModifiedTime = strippedSource.length > 0;
+  const showEditAndLastModifiedTime = strippedSource.trim().length > 0;
 
   // 获取文件的最近修改时间
   const lastModifiedTime = showEditAndLastModifiedTime
@@ -284,6 +343,8 @@ export default async function DocPage({
           .relative(getContentGitRootDir(), navItem.realPath)
           .replace(/\\/g, '/')}`
       : null;
+
+  const languageAlternate = await getLanguageAlternateDocItem(language, slug);
 
   return (
     <div className="flex flex-col">
@@ -348,6 +409,17 @@ export default async function DocPage({
           )}
         </article>
       </div>
+
+      <LanguageAlternate
+        languageAlternate={
+          new Map(
+            languageAlternate.map((item) => [
+              item.language,
+              item.docItem.displayPath,
+            ]),
+          )
+        }
+      />
 
       {/* 子页面列表 */}
       {navItem.children && navItem.children.length > 0 && (

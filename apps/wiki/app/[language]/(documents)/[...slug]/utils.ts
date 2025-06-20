@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-export { getLanguagesInfo } from '@/service/directory-service';
+export { getAvailableLanguages } from '@/service/directory-service';
 
 export function getContentDir() {
   return path.join(process.cwd(), '../../source', 'content');

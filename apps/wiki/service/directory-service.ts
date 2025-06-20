@@ -202,84 +202,10 @@ async function getDirectoryStructure(
   return result;
 }
 
-// 获取所有可用的语言信息
-export const getLanguagesInfo = cache(async (): Promise<LanguageInfo[]> => {
-  const contentDir = getContentDir();
-  const languagesInfo: LanguageInfo[] = [];
-
-  try {
-    const entries = await fs.readdir(contentDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      if (entry.isDirectory()) {
-        const langDir = path.join(contentDir, entry.name);
-        const docsDir = path.join(langDir, 'docs');
-
-        // 检查是否有 docs 目录
-        let hasDocsDir = false;
-        try {
-          const docsStat = await fs.stat(docsDir);
-          hasDocsDir = docsStat.isDirectory();
-        } catch (error) {
-          hasDocsDir = false;
-        }
-
-        // 获取该语言下的所有文档路径
-        let docsPaths: string[] = [];
-        if (hasDocsDir) {
-          const allFiles = await getDocsNavigationRoot(entry.name, 'docs');
-
-          docsPaths =
-            allFiles.children?.reduce((acc: string[], child) => {
-              const collectPaths = (item: DocItem): string[] => {
-                const paths = [];
-                if (item.slug) {
-                  paths.push(item.displayPath);
-                }
-                if (item.children) {
-                  for (const c of item.children) {
-                    paths.push(...collectPaths(c));
-                  }
-                }
-                return paths;
-              };
-              acc.push(...collectPaths(child));
-              return acc;
-            }, []) || [];
-
-          // for (const docPath of docsPaths) {
-          //   console.log("docPath: ", docPath);
-          // }
-        }
-
-        languagesInfo.push({
-          code: entry.name,
-          hasDocsDir,
-          docsPaths,
-        });
-      }
-    }
-
-    return languagesInfo;
-  } catch (error) {
-    console.error('Error getting languages info:', error);
-    // 返回默认语言列表
-    const defaultLanguages: LanguageInfo[] = [
-      { code: 'zh-cn', hasDocsDir: false, docsPaths: [] },
-      { code: 'zh-hant', hasDocsDir: false, docsPaths: [] },
-      { code: 'ja', hasDocsDir: false, docsPaths: [] },
-      { code: 'es', hasDocsDir: false, docsPaths: [] },
-      { code: 'en', hasDocsDir: false, docsPaths: [] },
-    ];
-
-    return defaultLanguages;
-  }
-});
-
-// 获取所有可用的语言代码（向后兼容）
+// 获取所有可用的语言代码
 export async function getAvailableLanguages(): Promise<string[]> {
-  const languagesInfo = await getLanguagesInfo();
-  return languagesInfo.map((info) => info.code);
+  const languageConfigs = getLanguageConfigs();
+  return languageConfigs.map((config) => config.code);
 }
 
 const getDocsNavigationRootInner = cache(
@@ -294,6 +220,16 @@ const getDocsNavigationRootInner = cache(
     );
 
     return rootItem;
+  },
+);
+
+export const checkSubFolderExists = cache(
+  async (language: string, subfolder: string): Promise<boolean> => {
+    const contentDir = path.join(getContentDir(), language, subfolder);
+    return await fs
+      .access(contentDir)
+      .then(() => true)
+      .catch(() => false);
   },
 );
 

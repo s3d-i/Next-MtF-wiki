@@ -1,7 +1,9 @@
 'use client';
 
+import { useAtom } from 'jotai';
 import { ChevronDown, Languages } from 'lucide-react';
 import DropdownLink from './DropdownLink';
+import { languageAlternateAtom } from './LanguageAlternate';
 
 interface LanguageOption {
   code: string;
@@ -17,6 +19,44 @@ export default function LanguageSwitcher({
   currentLanguage,
   availableLanguages,
 }: LanguageSwitcherProps) {
+  const [globalLanguageAlternate, setGlobalLanguageAlternate] = useAtom(
+    languageAlternateAtom,
+  );
+
+  // 判断语言是否在可用的替代语言中
+  const isLanguageAvailable = (langCode: string) => {
+    if (!globalLanguageAlternate) return true; // 如果为null，所有语言都可用
+    return globalLanguageAlternate.has(langCode);
+  };
+
+  // 获取语言的链接地址
+  const getLanguageHref = (langCode: string) => {
+    if (!globalLanguageAlternate || !globalLanguageAlternate.has(langCode)) {
+      // 如果globalLanguageAlternate为null或不包含该语言，导航到首页
+      return `/${langCode}`;
+    }
+    // 如果包含该语言，导航到对应的路径
+    return `/${langCode}/${globalLanguageAlternate.get(langCode)}`;
+  };
+
+  // 获取语言项的样式类名
+  const getLanguageClassName = (lang: LanguageOption) => {
+    const baseClassName = 'w-full text-left px-4 py-2 text-sm inline-flex';
+    const isAvailable = isLanguageAvailable(lang.code);
+
+    if (lang.code === currentLanguage) {
+      return `${baseClassName} bg-primary text-primary-content`;
+    }
+
+    const baseClassNameForNonCurrentLanguage = `${baseClassName} hover:bg-base-200`;
+
+    if (!isAvailable) {
+      return `${baseClassNameForNonCurrentLanguage} text-base-content/50`; // 灰色显示不可用的语言
+    }
+
+    return baseClassNameForNonCurrentLanguage;
+  };
+
   return (
     <div className="dropdown dropdown-end">
       <div
@@ -33,14 +73,8 @@ export default function LanguageSwitcher({
           {availableLanguages.map((lang) => (
             <li key={lang.code}>
               <DropdownLink
-                // todo: 检查目标语言是否有对应的路径
-                // todo: 如果路径存在，导航到该路径；否则导航到目标语言的首页
-                href={`/${lang.code}`}
-                className={`w-full text-left px-4 py-2 text-sm hover:bg-base-200 inline-flex ${
-                  lang.code === currentLanguage
-                    ? 'bg-primary text-primary-content'
-                    : ''
-                }`}
+                href={getLanguageHref(lang.code)}
+                className={getLanguageClassName(lang)}
               >
                 {lang.name}
               </DropdownLink>
