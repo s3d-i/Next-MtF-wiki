@@ -190,7 +190,7 @@ export default function MobileTableOfContents({
                       ${item.level >= 5 ? 'pl-12' : ''}
                       ${
                         activeId === item.id
-                          ? 'text-primary font-medium bg-primary/10'
+                          ? 'bg-secondary text-secondary-content font-medium'
                           : 'text-base-content/80 hover:text-base-content hover:bg-base-200/50'
                       }
                       py-2 px-3 rounded-lg

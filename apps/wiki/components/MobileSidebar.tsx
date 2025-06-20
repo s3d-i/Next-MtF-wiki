@@ -63,7 +63,7 @@ const MobileNavItem = ({
               className={`
                 flex-1 block py-2 px-3 rounded-lg text-sm transition-colors
                 ${level === 0 ? 'font-medium text-base-content' : 'text-base-content/80'}
-                ${isActive ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200'}
+                ${isActive ? 'bg-primary text-primary-content font-medium' : 'hover:bg-base-200'}
               `}
             >
               {item.name}
@@ -106,7 +106,7 @@ const MobileNavItem = ({
           className={`
             block py-2 px-3 rounded-lg text-sm transition-colors
             ${level === 0 ? 'font-medium text-base-content' : 'text-base-content/80'}
-            ${isActive ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200'}
+            ${isActive ? 'bg-primary text-primary-content font-medium' : 'hover:bg-base-200'}
           `}
         >
           {item.name}
@@ -222,7 +222,7 @@ export default function MobileSidebar({
               </div>
 
               {/* 导航内容 */}
-              <div className="overflow-y-auto h-[calc(100vh-5rem)] p-4">
+              <div className="overflow-y-auto h-[calc(100dvh-5rem)] p-4">
                 <nav>
                   <div className="space-y-1">
                     {navigationItems.map((item) => (
