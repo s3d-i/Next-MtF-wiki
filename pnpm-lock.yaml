@@ -152,6 +152,9 @@ importers:
       '@types/d3-format':
         specifier: ^3.0.4
         version: 3.0.4
+      '@types/hast':
+        specifier: ^3.0.4
+        version: 3.0.4
       '@types/mdx':
         specifier: ^2.0.13
         version: 2.0.13
