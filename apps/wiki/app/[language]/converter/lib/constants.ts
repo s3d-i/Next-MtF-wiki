@@ -224,8 +224,8 @@ export const HORMONES: HormoneType[] = [
         color: 'info',
         iconType: 'male',
         source: {
-          name: '女性倾向跨性别者的激素治疗简介',
-          url: 'https://tfsci.mtf.wiki/zh-cn/articles/transfem-intro/#normal-hormone-levels',
+          name: 'HRT 综述 - MtF.wiki',
+          url: '/zh-cn/docs/medicine/overview',
         },
       },
       {
