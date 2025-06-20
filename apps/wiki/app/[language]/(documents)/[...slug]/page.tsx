@@ -116,6 +116,9 @@ export async function generateMetadata({
       type: 'article',
       url: `${ogBaseUrl}${language}/${navItem.displayPath}`,
       locale: language,
+      modifiedTime: (
+        await getFileLastModifiedTime(navItem.realPath)
+      )?.toISOString(),
     },
   };
 }
