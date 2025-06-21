@@ -1,7 +1,7 @@
 'use client';
 
 import { CircleX } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface LocalImageClientProps
   extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -26,7 +26,7 @@ export default function LocalImageClient({
   const [loadingState, setLoadingState] = useState<
     'loading' | 'loaded' | 'error'
   >('loading');
-
+  const imgRef = useRef<HTMLImageElement>(null);
   const largeEnough =
     width &&
     height &&
@@ -34,6 +34,14 @@ export default function LocalImageClient({
     typeof height === 'number' &&
     width >= 100 &&
     height >= 100;
+
+  useEffect(() => {
+    if (imgRef.current) {
+      if (imgRef.current.complete) {
+        setLoadingState('loaded');
+      }
+    }
+  }, []);
 
   return (
     <span className={`relative block max-w-fit ${containerClassName}`}>
@@ -62,6 +70,7 @@ export default function LocalImageClient({
       {/* 实际图片 - 始终在DOM中 */}
       <img
         src={src || ''}
+        ref={imgRef}
         // src="aaa"
         alt={alt}
         width={width}
