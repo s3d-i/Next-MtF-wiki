@@ -454,12 +454,12 @@ function processHugoRefShortCodeValue(
   } else if (index > 0) {
     const slug = value.substring(0, index);
     const anchor = value.substring(index + 1);
-    return `${currentLanguage}/${
+    return `/${currentLanguage}/${
       getNavigationForOriginalSlug(currentLanguage, slug, navigationItems)
         ?.displayPath
     }#${anchor}`;
   }
-  return `${currentLanguage}/${
+  return `/${currentLanguage}/${
     getNavigationForOriginalSlug(currentLanguage, value, navigationItems)
       ?.displayPath
   }`;
