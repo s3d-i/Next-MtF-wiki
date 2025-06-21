@@ -30,12 +30,13 @@ export function getLocalImagePath(
   if (realCurrentSlug && language) {
     // console.log(
     //   'realCurrentSlug: ',
-    //   path.dirname(realCurrentSlug),
+    //   realCurrentSlug,
     //   'isCurrentSlugIndex: ',
     //   isCurrentSlugIndex,
     // );
     const pathname = path.dirname(realCurrentSlug);
-    return `/hugo-files/${language}/${pathname}/${imagePath}`;
+    const currentPath = `/hugo-files/${language}/${pathname}/`;
+    return path.join(currentPath, imagePath);
   }
   return null;
 }
@@ -71,10 +72,7 @@ export function transformFilesLink(
     //   path.dirname(currentRealSlug),
     // );
     const currentPath = `/hugo-files/${language}/${currentRealSlug}/`;
-    const hugoFilesPath = path.join(
-      isCurrentSlugIndex ? path.dirname(currentPath) : currentPath,
-      link,
-    );
+    const hugoFilesPath = path.join(path.dirname(currentPath), link);
     // console.log('hugoFilesPath: ', hugoFilesPath);
     const realHugoFilesPath = path.join(contentDir, hugoFilesPath);
     // console.log('realHugoFilesPath: ', realHugoFilesPath);

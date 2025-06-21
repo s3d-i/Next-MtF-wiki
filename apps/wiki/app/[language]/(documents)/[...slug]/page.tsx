@@ -203,7 +203,7 @@ export default async function DocPage({
     throw new Error('Nav item not found');
   }
 
-  const isIndexPage = navItem.isIndex;
+  const isIndexPage = !!navItem.isIndex;
   // console.log('isIndexPage: ', isIndexPage);
 
   const fileContents = await fs.readFile(navItem.realPath, 'utf-8');
@@ -274,7 +274,7 @@ export default async function DocPage({
         mdContext={{
           currentLanguage: language,
           currentSlug: slugPath,
-          realCurrentSlug,
+          realCurrentSlug: realCurrentSlug,
           isCurrentSlugIndex: isIndexPage,
         }}
       />
