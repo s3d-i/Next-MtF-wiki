@@ -14,48 +14,21 @@ export function getLocalImagePath(
   imagePath: string,
   isCurrentSlugIndex: boolean,
 ): string | null {
-  if (imagePath.startsWith('/images/')) {
-    return imagePath.replace(/^\/images\//, '/hugo-static/images/');
-  }
-  if (
-    imagePath?.startsWith('http://') ||
-    imagePath?.startsWith('https://') ||
-    imagePath?.startsWith('//')
-  ) {
-    return imagePath;
-  }
-  if (imagePath?.startsWith('/')) {
-    return `/hugo-files${imagePath}`;
-  }
-  if (realCurrentSlug && language) {
-    // console.log(
-    //   'realCurrentSlug: ',
-    //   realCurrentSlug,
-    //   'isCurrentSlugIndex: ',
-    //   isCurrentSlugIndex,
-    // );
-    const pathname = path.dirname(realCurrentSlug);
-    const currentPath = `/hugo-files/${language}/${pathname}/`;
-    return path.join(currentPath, imagePath);
-  }
-  return null;
+  return transformFilesLink(
+    imagePath,
+    realCurrentSlug,
+    language,
+    isCurrentSlugIndex,
+  );
 }
 
 export function transformFilesLink(
   link: string,
-  currentRealSlug: string | undefined,
-  language: string,
+  currentRealSlug: string | undefined | null,
+  language: string | null,
   isCurrentSlugIndex: boolean,
 ) {
-  if (
-    link.startsWith('https://') ||
-    link.startsWith('http://') ||
-    link.startsWith('//') ||
-    link.startsWith('#') ||
-    link.startsWith('mailto:') ||
-    link.startsWith('tel:') ||
-    link.startsWith('weixin:')
-  ) {
+  if (link.startsWith('//') || link.includes(':') || link.includes('#')) {
     return link;
   }
   const contentDir = getPublicDir();
@@ -65,19 +38,38 @@ export function transformFilesLink(
       return filePath;
     }
   }
-  if (currentRealSlug) {
+  if (currentRealSlug && language) {
     // console.log(
     //   'currentRealSlug: ',
     //   currentRealSlug,
     //   path.dirname(currentRealSlug),
     // );
-    const currentPath = `/hugo-files/${language}/${currentRealSlug}/`;
-    const hugoFilesPath = path.join(path.dirname(currentPath), link);
-    // console.log('hugoFilesPath: ', hugoFilesPath);
-    const realHugoFilesPath = path.join(contentDir, hugoFilesPath);
-    // console.log('realHugoFilesPath: ', realHugoFilesPath);
-    if (fs.existsSync(realHugoFilesPath)) {
-      return hugoFilesPath.replaceAll('\\', '/');
+    function getFilesRelativePath(
+      currentRealSlug: string,
+      link: string,
+    ): string | null {
+      const currentPath = `/hugo-files/${language}/${currentRealSlug}`;
+      const hugoFilesPath = path.join(path.dirname(currentPath), link);
+      // console.log('hugoFilesPath: ', hugoFilesPath);
+      const realHugoFilesPath = path.join(contentDir, hugoFilesPath);
+      // console.log('realHugoFilesPath: ', realHugoFilesPath);
+      if (fs.existsSync(realHugoFilesPath)) {
+        return hugoFilesPath.replaceAll('\\', '/');
+      }
+      return null;
+    }
+    if (!isCurrentSlugIndex) {
+      const relativePath = getFilesRelativePath(
+        `${currentRealSlug}/index.md`,
+        link,
+      );
+      if (relativePath) {
+        return relativePath;
+      }
+    }
+    const relativePath = getFilesRelativePath(currentRealSlug, link);
+    if (relativePath) {
+      return relativePath;
     }
   }
   return link;
