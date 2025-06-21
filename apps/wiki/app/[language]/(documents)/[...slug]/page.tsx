@@ -9,6 +9,7 @@ import { LanguageAlternate } from '@/components/LanguageAlternate';
 import { LocalImage } from '@/components/LocalImage';
 import { Link } from '@/components/progress';
 import { ShortCodeComp } from '@/components/shortcode';
+import { cache } from '@/lib/cache';
 import { t } from '@/lib/i18n/client';
 import { sT } from '@/lib/i18n/server';
 import { getLanguageConfigs } from '@/lib/site-config';
@@ -24,10 +25,10 @@ import { ChevronLeft, ChevronRight, Edit } from 'lucide-react';
 import { type MDXComponents, MDXRemote } from 'next-mdx-remote-client/rsc';
 import { getFrontmatter } from 'next-mdx-remote-client/utils';
 import type { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
-import { cache } from 'react';
 import remarkGfm from 'remark-gfm';
 import remarkHeadingId from 'remark-heading-id';
 import remarkMath from 'remark-math';
+import RedirectClient from '../components/RedirectClient';
 import remarkCsvToTable from './remarkCsvToTable';
 import remarkHtmlContent from './remarkHtmlContent';
 import { remarkHugoShortcode } from './remarkHugoShortcode';
@@ -90,6 +91,57 @@ export async function generateStaticParams() {
     }
   }
 
+  // 处理aliases - 为每个语言和子文件夹添加redirectMap中的路径
+  const redirectParamPromises = languageConfigs.flatMap((langConfig) =>
+    langConfig.subfolders.map(async (subfolder) => {
+      try {
+        const { redirectMap } = await getDocsNavigationMap(
+          langConfig.code,
+          subfolder,
+        );
+        const redirectParams: DocParams[] = [];
+
+        // 遍历 redirectMap
+        for (const [displayPath, redirectItem] of redirectMap.entries()) {
+          const slugParts = displayPath
+            .split('/')
+            .filter((part) => part !== '');
+          const key = `${langConfig.code}\r${displayPath}`;
+
+          const noMarkdownSet = noMarkdownMap.get(langConfig.code);
+          if (noMarkdownSet?.has(displayPath)) {
+            continue;
+          }
+
+          // 避免重复添加
+          if (!uniqueParamsSet.has(key)) {
+            uniqueParamsSet.add(key);
+            redirectParams.push({
+              language: langConfig.code,
+              slug: slugParts,
+            });
+            // console.log('redirectParams: ', redirectParams);
+          }
+        }
+
+        return redirectParams;
+      } catch (error) {
+        console.warn(
+          `Failed to get redirectMap for ${langConfig.code}/${subfolder}:`,
+          error,
+        );
+        return [];
+      }
+    }),
+  );
+
+  const redirectParamsArrays = await Promise.all(redirectParamPromises);
+
+  // 将redirect参数添加到uniqueParams中
+  for (const redirectParams of redirectParamsArrays) {
+    uniqueParams.push(...redirectParams);
+  }
+
   // console.log("uniqueParams: ", uniqueParams);
   return uniqueParams;
 }
@@ -148,7 +200,7 @@ export async function generateMetadata({
   const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
 
   if (!navItem) {
-    throw new Error('Nav item not found');
+    return null;
   }
 
   const ogBaseUrl = process.env.NEXT_PUBLIC_OG_BASE_URL || 'https://mtf.wiki/';
@@ -194,12 +246,27 @@ export default async function DocPage({
 
   const slugPath = slugArray.join('/');
 
-  const { root: navigationItemRoot, map: navigationItemMap } =
-    await getDocsNavigationMap(language, slugArray[0]);
+  const {
+    root: navigationItemRoot,
+    map: navigationItemMap,
+    redirectMap,
+  } = await getDocsNavigationMap(language, slugArray[0]);
 
   const navItem = getDocItemByNavigationMap(navigationItemMap, slugPath);
 
   if (!navItem) {
+    // console.log('redirectMap: ', redirectMap, slugPath);
+    if (redirectMap.has(slugPath)) {
+      const redirectItem = redirectMap.get(slugPath);
+      if (redirectItem) {
+        return (
+          <RedirectClient
+            href={`/${language}/${redirectItem.redirectTo}`}
+            altText={sT('redirect-client-text', language)}
+          />
+        );
+      }
+    }
     throw new Error('Nav item not found');
   }
 
@@ -291,7 +358,7 @@ export default async function DocPage({
   };
 
   const ErrorContent = ({ error }: { error: Error }) => {
-    console.log('⚠️ Compile Error: ', {
+    console.error('⚠️ Compile Error: ', {
       displayPath: navItem.displayPath,
       error,
     });

@@ -222,5 +222,12 @@
     "ja": "板塊",
     "es": "División",
     "en": "Division"
+  },
+  "redirect-client-text": {
+    "zh-cn": "如果您的浏览器没有自动跳转，请点击此处",
+    "zh-hant": "如果您的瀏覽器沒有自動跳轉，請點擊此處",
+    "ja": "ブラウザーが自動的にリダイレクトされない場合は、ここをクリックしてください",
+    "es": "Si el navegador no redirige automáticamente, haga clic aquí",
+    "en": "If the browser does not redirect automatically, click here"
   }
 }

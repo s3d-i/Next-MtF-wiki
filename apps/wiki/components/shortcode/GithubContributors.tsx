@@ -1,4 +1,4 @@
-import { cache } from 'react';
+import { cache } from '@/lib/cache';
 import type { ShortCodeCompProps } from './types';
 
 interface Contributor {

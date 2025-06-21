@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { cache } from '@/lib/cache';
 import { getLanguageConfig, getLanguageConfigs } from '@/lib/site-config';
 import { getFrontmatter } from 'next-mdx-remote-client/utils';
-import { cache } from 'react';
 import type { Frontmatter } from '../app/[language]/(documents)/[...slug]/types';
 import {
   getContentDir,
@@ -11,16 +11,10 @@ import {
 import type {
   DocItem,
   DocItemForClient,
+  DocItemRedirectItem,
   DocMetadata,
 } from './directory-service-client';
 import { getLocalImagePath } from './path-utils';
-
-// 语言信息接口
-export interface LanguageInfo {
-  code: string;
-  hasDocsDir: boolean;
-  docsPaths: string[]; // 该语言下所有文档路径
-}
 
 export { getLocalImagePath };
 
@@ -52,12 +46,23 @@ async function getDocMetadata(
   frontmatter: Frontmatter | null,
 ): Promise<DocMetadata> {
   const preferredSlug = frontmatter?.slug;
+  const aliases = frontmatter?.aliases || null;
+  const aliasesArray: string[] = [];
+  if (aliases) {
+    // console.log('aliases: ', aliases);
+    if (typeof aliases === 'string') {
+      aliasesArray.push(aliases);
+    } else if (Array.isArray(aliases)) {
+      aliasesArray.push(...aliases);
+    }
+  }
   return {
     title: await getDocTitleFromFrontmatter(filePath, frontmatter),
     description: frontmatter?.description?.toString() || null,
     draft: Boolean(frontmatter?.draft),
     order: Number(frontmatter?.weight) || null,
     preferredSlug: preferredSlug?.toString() || null,
+    aliases: aliasesArray,
   };
 }
 
@@ -239,18 +244,73 @@ export async function getDocsNavigationRoot(
 ): Promise<DocItem> {
   return await getDocsNavigationRootInner(language, subfolder);
 }
-
 const getDocsNavigationRootWithMapInner = cache(
   async (
     language: string,
     subfolder: string,
-  ): Promise<{ root: DocItem; map: Map<string, DocItem> }> => {
+  ): Promise<{
+    root: DocItem;
+    map: Map<string, DocItem>;
+    redirectMap: Map<string, DocItemRedirectItem>;
+  }> => {
+    function addRedirectItem(
+      item: DocItem,
+      redirectMap: Map<string, DocItemRedirectItem>,
+    ): void {
+      if (item.metadata.aliases) {
+        for (const alias of item.metadata.aliases) {
+          function getAliasDisplayPath(alias: string): string | null {
+            if (alias.startsWith('/')) {
+              const aliasParts = alias.split('/').filter((part) => part !== '');
+              if (
+                aliasParts.length >= 2 &&
+                aliasParts[0] === language &&
+                aliasParts[1] === subfolder
+              ) {
+                return aliasParts.slice(1).join('/');
+              } else {
+                // console.warn(
+                //   `Alias ${alias} starts with /, but not in ${language}/${subfolder}, skipping`,
+                // );
+                return null;
+              }
+            }
+            const displayPath = path
+              .join(path.dirname(item.displayPath), alias)
+              .replaceAll('\\', '/');
+            if (displayPath.startsWith(`${subfolder}/`)) {
+              return displayPath
+                .split('/')
+                .filter((part) => part !== '')
+                .join('/');
+            } else {
+              // console.warn(
+              //   `Alias ${alias} locate in ${displayPath}, but not in ${language}/${subfolder}, skipping`,
+              // );
+              return null;
+            }
+          }
+          const displayPath = getAliasDisplayPath(alias);
+          if (displayPath) {
+            // console.log('displayPath: ', displayPath);
+            redirectMap.set(displayPath, {
+              slug: alias,
+              displayPath: displayPath,
+              redirectTo: item.displayPath,
+            });
+          }
+        }
+      }
+    }
+
     const rootItem = await getDocsNavigationRootInner(language, subfolder);
     const map = new Map<string, DocItem>();
+    const redirectMap = new Map<string, DocItemRedirectItem>();
     map.set(rootItem.displayPath, rootItem);
     function collectPaths(item: DocItem): void {
       if (item.slug) {
         map.set(item.displayPath, item);
+        addRedirectItem(item, redirectMap);
       }
       if (item.children) {
         for (const c of item.children) {
@@ -259,19 +319,23 @@ const getDocsNavigationRootWithMapInner = cache(
       }
     }
     collectPaths(rootItem);
-    return { root: rootItem, map: map };
+    return { root: rootItem, map: map, redirectMap: redirectMap };
   },
 );
 
 export async function getDocsNavigationMap(
   language: string,
   subfolder: string,
-): Promise<{ root: DocItem; map: Map<string, DocItem> }> {
-  const { root, map } = await getDocsNavigationRootWithMapInner(
+): Promise<{
+  root: DocItem;
+  map: Map<string, DocItem>;
+  redirectMap: Map<string, DocItemRedirectItem>;
+}> {
+  const { root, map, redirectMap } = await getDocsNavigationRootWithMapInner(
     language,
     subfolder,
   );
-  return { root, map };
+  return { root, map, redirectMap };
 }
 
 const getDocsNavigationForClientInner = cache(
@@ -496,13 +560,19 @@ export async function generateAllStaticParams(
   language: string,
   subfolder: string,
 ): Promise<Array<{ language: string; slug?: string[] }>> {
-  const allParams: Array<{ language: string; slug?: string[] }> = [];
+  const allParams: Array<{
+    language: string;
+    slug?: string[];
+    redirectTo?: string[];
+  }> = [];
 
   // 使用指定的subfolder获取导航根节点
   const rootItem = await getDocsNavigationRoot(language, subfolder);
 
-  // 添加文档根路径
-  allParams.push({ language: language, slug: [subfolder] });
+  if (rootItem.isIndex) {
+    // 添加文档根路径
+    allParams.push({ language: language, slug: [subfolder] });
+  }
 
   // 递归收集所有路径
   function collectPaths(item: DocItem): void {

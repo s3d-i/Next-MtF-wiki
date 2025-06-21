@@ -116,18 +116,22 @@ function transform(tree: Parent | Root, config: TagsConfig): void {
     }
 
     // --- Case 1: Handle split tag pairs like `<s>...</s>` ---
-    const startTagMatch = node.value.trim().match(/^<([a-zA-Z0-9]+)>$/i);
+    const startTagMatch = node.value.trim().match(/^<([a-zA-Z0-9]+)\s*>$/i);
     if (startTagMatch) {
       const tagName = startTagMatch[1].toLowerCase();
-      const endTag = `</${tagName}>`;
-      const endTagAlt = `<${tagName}/>`;
 
       let endIndex = -1;
       for (let j = index + 1; j < parent.children.length; j++) {
         const potentialEndNode = parent.children[j];
         if (potentialEndNode.type === 'html') {
-          const endValue = potentialEndNode.value.trim().toLowerCase();
-          if (endValue === endTag || endValue === endTagAlt) {
+          const endValue = potentialEndNode.value.trim();
+          const endTagMatch = endValue.match(/^<\/([a-zA-Z0-9]+)\s*>$/i);
+          const selfClosingMatch = endValue.match(/^<([a-zA-Z0-9]+)\s*\/>$/i);
+
+          if (
+            (endTagMatch && endTagMatch[1].toLowerCase() === tagName) ||
+            (selfClosingMatch && selfClosingMatch[1].toLowerCase() === tagName)
+          ) {
             endIndex = j;
             break;
           }

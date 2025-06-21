@@ -5,7 +5,7 @@ import {
   getContentGitRootDir,
   getPublicDir,
 } from '@/app/[language]/(documents)/[...slug]/utils';
-import { cache } from 'react';
+import { cache } from '@/lib/cache';
 import { simpleGit } from 'simple-git';
 
 export function getLocalImagePath(
@@ -72,6 +72,7 @@ export function transformFilesLink(
       return relativePath;
     }
   }
+  // console.warn(`Link ${link} not found in ${currentRealSlug} ${language}`);
   return link;
 }
 

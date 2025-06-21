@@ -1,9 +1,9 @@
 'use client';
 
+import { cache } from '@/lib/cache';
 import { FileText, Search, X } from 'lucide-react';
 import MiniSearch, { type SearchResult } from 'minisearch';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { cache } from 'react';
 import { Link } from '../progress';
 
 interface SearchBoxProps {
