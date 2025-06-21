@@ -25,7 +25,7 @@ export default function NotFound() {
   // 如果检测到语言，使用该语言的翻译
   if (language) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200 flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="mb-8">
             <h1 className="text-6xl font-bold text-primary mb-4">404</h1>
