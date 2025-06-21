@@ -1,20 +1,24 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { motion, AnimatePresence } from 'motion/react';
-import { selectedHormoneAtom, showHistoryAtom, historyAtom } from '../lib/atoms';
+import { Beaker, Clock } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import {
+  historyAtom,
+  selectedHormoneAtom,
+  showHistoryAtom,
+} from '../lib/atoms';
 import { HORMONES } from '../lib/constants';
-import { HormoneCard } from './HormoneCard';
 import { HistoryPanel } from './HistoryPanel';
+import { HormoneCard } from './HormoneCard';
 import { ReferenceRanges } from './ReferenceRanges';
-import { Clock, Beaker } from 'lucide-react';
 
 export function HormoneConverter() {
   const [selectedHormone, setSelectedHormone] = useAtom(selectedHormoneAtom);
   const [, setShowHistory] = useAtom(showHistoryAtom);
   const [history] = useAtom(historyAtom);
 
-  const selectedHormoneData = HORMONES.find(h => h.id === selectedHormone);
+  const selectedHormoneData = HORMONES.find((h) => h.id === selectedHormone);
 
   return (
     <div className="space-y-8">
@@ -58,7 +62,9 @@ export function HormoneConverter() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="font-medium text-base-content text-sm">{hormone.name}</div>
+              <div className="font-medium text-base-content text-sm">
+                {hormone.name}
+              </div>
               <div className="text-xs text-base-content/60 mt-1">
                 {hormone.units.length} 种单位
               </div>
@@ -74,7 +80,10 @@ export function HormoneConverter() {
           {/* 换算器界面 */}
           <AnimatePresence>
             {selectedHormoneData && (
-              <HormoneCard key={selectedHormone} hormone={selectedHormoneData} />
+              <HormoneCard
+                key={selectedHormone}
+                hormone={selectedHormoneData}
+              />
             )}
           </AnimatePresence>
 
@@ -93,7 +102,9 @@ export function HormoneConverter() {
               <Clock className="w-4 h-4" />
               查看历史
               {history.length > 0 && (
-                <span className="badge badge-primary badge-sm">{history.length}</span>
+                <span className="badge badge-primary badge-sm">
+                  {history.length}
+                </span>
               )}
             </button>
           </motion.div>
@@ -103,7 +114,10 @@ export function HormoneConverter() {
         <div className="lg:col-span-3">
           <AnimatePresence>
             {selectedHormoneData && (
-              <ReferenceRanges key={selectedHormone} hormone={selectedHormoneData} />
+              <ReferenceRanges
+                key={selectedHormone}
+                hormone={selectedHormoneData}
+              />
             )}
           </AnimatePresence>
         </div>

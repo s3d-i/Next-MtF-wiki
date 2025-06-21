@@ -77,7 +77,7 @@ export function ReferenceRanges({ hormone }: ReferenceRangesProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="bg-base-100/30 backdrop-blur-sm rounded-xl p-6 border border-base-300/30 h-fit"
+      className="bg-base-100/30 backdrop-blur-sm rounded-xl p-6 border border-base-300/30 h-fit overflow-x-clip"
     >
       <div className="flex items-center gap-2 mb-4">
         <Calculator className="w-5 h-5 text-info" />

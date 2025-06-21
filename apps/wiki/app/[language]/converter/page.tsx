@@ -36,7 +36,7 @@ export default function ConverterPage() {
             <p>
               <strong>注意：</strong>部分医院可能使用
               <Link
-                href="https://zh.wikipedia.org/zh-hans/%E5%9B%BD%E9%99%85%E5%8D%95%E4%BD%8D"
+                href="https://zh.wikipedia.org/wiki/%E5%9B%BD%E9%99%85%E5%8D%95%E4%BD%8D"
                 target="_blank"
                 className="link"
               >
