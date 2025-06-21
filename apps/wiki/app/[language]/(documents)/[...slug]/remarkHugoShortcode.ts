@@ -222,9 +222,15 @@ function transformNormalLink(
   tree: Root,
   currentSlug: string | undefined,
   language: string,
+  isCurrentSlugIndex: boolean,
 ) {
   visit(tree, 'link', (node: Link, index, parent) => {
-    node.url = transformFilesLink(node.url, currentSlug, language);
+    node.url = transformFilesLink(
+      node.url,
+      currentSlug,
+      language,
+      isCurrentSlugIndex,
+    );
     // console.log('node.url: ', node.url, currentSlug, language);
   });
 }
@@ -392,7 +398,12 @@ export function transformHugoShortcode(
     }
   });
 
-  transformNormalLink(tree, realCurrentSlug, currentLanguage);
+  transformNormalLink(
+    tree,
+    realCurrentSlug,
+    currentLanguage,
+    isCurrentSlugIndex,
+  );
 
   // 处理Hugo短代码链接
   transformHugoShortcodeLinks(tree);

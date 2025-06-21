@@ -204,6 +204,7 @@ export default async function DocPage({
   }
 
   const isIndexPage = navItem.isIndex;
+  // console.log('isIndexPage: ', isIndexPage);
 
   const fileContents = await fs.readFile(navItem.realPath, 'utf-8');
 

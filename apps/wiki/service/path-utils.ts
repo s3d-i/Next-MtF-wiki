@@ -44,11 +44,16 @@ export function transformFilesLink(
   link: string,
   currentRealSlug: string | undefined,
   language: string,
+  isCurrentSlugIndex: boolean,
 ) {
   if (
     link.startsWith('https://') ||
     link.startsWith('http://') ||
-    link.startsWith('//')
+    link.startsWith('//') ||
+    link.startsWith('#') ||
+    link.startsWith('mailto:') ||
+    link.startsWith('tel:') ||
+    link.startsWith('weixin:')
   ) {
     return link;
   }
@@ -65,8 +70,9 @@ export function transformFilesLink(
     //   currentRealSlug,
     //   path.dirname(currentRealSlug),
     // );
+    const currentPath = `/hugo-files/${language}/${currentRealSlug}/`;
     const hugoFilesPath = path.join(
-      `/hugo-files/${language}/${currentRealSlug}/`,
+      isCurrentSlugIndex ? path.dirname(currentPath) : currentPath,
       link,
     );
     // console.log('hugoFilesPath: ', hugoFilesPath);
