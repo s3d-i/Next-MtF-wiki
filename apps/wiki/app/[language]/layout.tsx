@@ -35,10 +35,7 @@ export default async function LanguageLayout({
   const navigationItems = getNavigationItems(language);
 
   return (
-    <div
-      className="flex flex-col min-h-screen bg-gradient-to-br from-base-100 to-base-200"
-      lang={language}
-    >
+    <div className="flex flex-col min-h-screen" lang={language}>
       {/* 浏览器升级横幅 - 只在不支持 :where() 的浏览器中显示 */}
       <BrowserUpgradeBanner />
 
