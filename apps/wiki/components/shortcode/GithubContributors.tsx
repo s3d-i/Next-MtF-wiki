@@ -8,8 +8,46 @@ interface Contributor {
   contributions: number;
 }
 
+// 延迟函数
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// 带重试的fetch函数
+const fetchWithRetry = async (
+  url: string,
+  maxRetries = 5,
+  delayMs = 5000,
+): Promise<Response> => {
+  let lastError: Error = new Error('Unknown error');
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response;
+    } catch (error) {
+      lastError = error as Error;
+      console.warn(
+        `GitHub API request failed (attempt ${attempt} of ${maxRetries}):`,
+        error,
+      );
+
+      // 如果不是最后一次尝试，等待后重试
+      if (attempt < maxRetries) {
+        console.log(`Waiting ${delayMs / 1000} seconds before retrying...`);
+        await delay(delayMs);
+      }
+    }
+  }
+
+  throw new Error(
+    `GitHub API request failed, retried ${maxRetries} times: ${lastError.message}`,
+  );
+};
+
 const getGithubContributors = cache(async () => {
-  const response = await fetch(
+  const response = await fetchWithRetry(
     'https://api.github.com/repos/project-trans/mtf-wiki/contributors?per_page=100',
   );
   const data: Contributor[] = await response.json();
