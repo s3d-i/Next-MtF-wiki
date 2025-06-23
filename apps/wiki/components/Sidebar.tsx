@@ -140,23 +140,18 @@ const NavItem = ({
               }
             }}
           >
-            {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-            <div
-              className="flex items-center p-0"
+            <Link
+              href={fullPath}
               onClick={(e) => {
                 setIsOpen(true);
-                e.preventDefault();
+                e.stopPropagation();
               }}
-            >
-              <Link
-                href={fullPath}
-                className={`block py-1 rounded-md text-sm transition-colors
+              className={`block py-1 rounded-md text-sm w-full
             ${level === 0 ? 'font-medium' : ''}
           `}
-              >
-                {item.name}
-              </Link>
-            </div>
+            >
+              {item.name}
+            </Link>
           </summary>
           <ul
             className={`pl-${
