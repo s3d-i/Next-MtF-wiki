@@ -6,6 +6,7 @@ import { Link } from './progress';
 
 import { isElementInScrollContainerView } from '@/lib/utils';
 import type { DocItemForClient } from '@/service/directory-service-client';
+import { ChevronDownIcon } from 'lucide-react';
 
 interface SidebarProps {
   items: DocItemForClient[];
@@ -128,7 +129,7 @@ const NavItem = ({
         >
           <summary
             ref={myRef2}
-            className={`rounded-md py-0 ${isActive ? 'bg-[var(--menu-active-bg)] text-[var(--menu-active-fg)] bg-[length:auto,calc(var(--noise)*100%)] bg-[image:none,var(--fx-noise)] outline-none shadow-[0_2px_calc(var(--depth)*3px)_-2px_var(--menu-active-bg)]' : ''}`}
+            className={'rounded-md cursor-default p-0 flex gap-1'}
             onClick={(e) => {
               setIsOpen(!isOpen);
               e.preventDefault();
@@ -146,12 +147,18 @@ const NavItem = ({
                 setIsOpen(true);
                 e.stopPropagation();
               }}
-              className={`block py-1 rounded-md text-sm w-full
-            ${level === 0 ? 'font-medium' : ''}
+              className={`block py-1 px-3 rounded-md text-sm w-full
+            ${level === 0 ? 'font-medium' : ''} ${isActive ? 'desktop-sidebar-menu-item-active' : 'hover:desktop-sidebar-menu-item-hover focus:desktop-sidebar-menu-item-focus active:desktop-sidebar-menu-item-active'}
           `}
             >
               {item.name}
             </Link>
+            <button
+              type="button"
+              className="px-1.5 py-1.5 hover:desktop-sidebar-menu-item-hover active:desktop-sidebar-menu-item-active rounded-md"
+            >
+              <ChevronDownIcon className="w-4 h-4 desktop-sidebar-menu-item-icon" />
+            </button>
           </summary>
           <ul
             className={`pl-${
@@ -172,9 +179,9 @@ const NavItem = ({
         <Link
           ref={myRef}
           href={fullPath}
-          className={`block py-1 rounded-md text-sm transition-colors ${
+          className={`block py-1 px-3 rounded-md text-sm transition-colors ${
             level === 0 ? 'font-medium' : ''
-          } ${isActive ? 'bg-[var(--menu-active-bg)] text-[var(--menu-active-fg)] bg-[length:auto,calc(var(--noise)*100%)] bg-[image:none,var(--fx-noise)] outline-none shadow-[0_2px_calc(var(--depth)*3px)_-2px_var(--menu-active-bg)]' : ''}`}
+          } ${isActive ? 'desktop-sidebar-menu-item-active' : 'hover:desktop-sidebar-menu-item-hover focus:desktop-sidebar-menu-item-focus active:desktop-sidebar-menu-item-active'}`}
         >
           {item.name}
         </Link>
@@ -184,58 +191,13 @@ const NavItem = ({
 };
 
 export default function Sidebar({ items, language }: SidebarProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   return (
-    <div className="sidebar">
-      {/* 移动端菜单按钮 */}
-      <div className="p-4 border-b lg:hidden border-base-300">
-        <button
-          type="button"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="btn btn-sm btn-ghost"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d={
-                isMobileMenuOpen
-                  ? 'M6 18L18 6M6 6l12 12'
-                  : 'M4 6h16M4 12h16M4 18h16'
-              }
-            />
-          </svg>
-          <span className="ml-2">导航菜单</span>
-        </button>
-      </div>
-
-      {/* 侧边栏内容 */}
-      <div
-        className={`
-        lg:block 
-        ${
-          isMobileMenuOpen
-            ? 'block overflow-y-auto h-[calc(100vh-4rem)]'
-            : 'hidden'
-        }       
-      `}
-      >
-        <nav>
-          <ul className="space-y-2 menu w-full">
-            {items.map((item) => (
-              <NavItem key={item.path} item={item} language={language} />
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </div>
+    <nav>
+      <ul className="space-y-2 desktop-sidebar-menu w-full">
+        {items.map((item) => (
+          <NavItem key={item.path} item={item} language={language} />
+        ))}
+      </ul>
+    </nav>
   );
 }
