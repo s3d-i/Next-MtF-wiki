@@ -32,6 +32,7 @@ import RedirectClient from '../components/RedirectClient';
 import remarkCsvToTable from './remarkCsvToTable';
 import remarkHtmlContent from './remarkHtmlContent';
 import { remarkHugoShortcode } from './remarkHugoShortcode';
+import remarkQrCode from './remarkHugoShortcode';
 import type { Frontmatter } from './types';
 import {
   getAvailableLanguages,
@@ -314,6 +315,7 @@ export default async function DocPage({
     remarkGfm,
     remarkMath,
     remarkHtmlContent,
+    remarkQrCode,
   ];
 
   async function ImageComponent(

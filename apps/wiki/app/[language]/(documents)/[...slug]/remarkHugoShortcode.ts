@@ -5,6 +5,7 @@ import {
 import { getLocalImagePath } from '@/service/directory-service';
 import { transformFilesLink } from '@/service/path-utils';
 import type {
+  Code,
   Heading,
   Html,
   Image,
@@ -116,6 +117,13 @@ function convertHugoShortcodeToMdxJsx(
     'hugoShortcodeFlowElement';
   const targetType = isFlow ? 'mdxJsxFlowElement' : 'mdxJsxTextElement';
 
+  return createMdxJsxElement(node, targetType);
+}
+
+function createMdxJsxElement(
+  node: HugoShortcodeElement,
+  targetType: 'mdxJsxFlowElement' | 'mdxJsxTextElement',
+) {
   // 构建 attrs 数组：[["key","value"],["key","value"]]，位置参数的 key 为 null
   const attrsArray = node.arguments.map((arg) => {
     if (arg.type === 'hugoShortcodeArgumentPositional') {
@@ -559,4 +567,33 @@ export function remarkHugoShortcode(
 // 导出默认配置的插件函数
 export function remarkHugoShortcodeDefault() {
   return remarkHugoShortcode();
+}
+
+export default function remarkQrCode() {
+  return (tree: Root) => {
+    visit(tree, 'code', (node: Code, index, parent) => {
+      if (node.lang === 'qrcode') {
+        const hugoShortcodeNode = {
+          type: 'hugoShortcodeFlowElement',
+          name: 'qrcode',
+          arguments: [
+            {
+              type: 'hugoShortcodeArgumentPositional',
+              value: node.value,
+            },
+          ],
+          notation: 'standard',
+          children: [],
+        } as unknown as HugoShortcodeElement;
+        const mdxJsxElement = createMdxJsxElement(
+          hugoShortcodeNode,
+          'mdxJsxFlowElement',
+        );
+        if (parent && typeof index === 'number' && 'children' in parent) {
+          (parent as Parent).children[index] =
+            mdxJsxElement as unknown as RootContent;
+        }
+      }
+    });
+  };
 }

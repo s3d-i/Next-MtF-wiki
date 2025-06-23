@@ -180,8 +180,7 @@ function transform(tree: Parent | Root, config: TagsConfig): void {
       }
     }
 
-    // If nothing was produced, remove the original html node.
-    parent.children.splice(index, 1);
+    parent.children.splice(index, 1); // If nothing was produced, remove the original html node.
     return [SKIP, index];
   });
 }
