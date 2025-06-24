@@ -26,7 +26,7 @@ export function HormoneConverter() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-base-100/50 backdrop-blur-sm rounded-xl p-6 border border-base-300/30"
+        className="bg-base-100/50 rounded-xl p-6 border border-base-300/30 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-4">
           <Beaker className="w-5 h-5 text-primary" />
@@ -56,7 +56,7 @@ export function HormoneConverter() {
               onClick={() => setSelectedHormone(hormone.id)}
               className={`p-3 rounded-lg border-2 transition-all text-left relative ${
                 selectedHormone === hormone.id
-                  ? 'border-primary bg-primary/10 shadow-lg'
+                  ? 'border-primary bg-primary/10 shadow-sm'
                   : 'border-base-300 hover:border-primary/50 hover:bg-base-200/50'
               }`}
               whileHover={{ scale: 1.02 }}

@@ -202,7 +202,7 @@ export function HormoneCard({ hormone }: HormoneCardProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="bg-base-100 rounded-xl shadow-lg border border-base-300/30 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      className="bg-base-100 rounded-xl border border-base-300/30 overflow-hidden shadow-sm"
     >
       <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-4 md:p-6 border-b border-base-300/30">
         <h3 className="text-xl font-semibold text-base-content">

@@ -88,7 +88,7 @@ export default function TableOfContents({ language }: TableOfContentsProps) {
   }
 
   return (
-    <div className="p-4 rounded-xl bg-base-100/30 backdrop-blur-sm border border-base-300/30">
+    <div className="p-4 rounded-xl bg-base-100/30 border border-base-300/30">
       <h3 className="mb-3 text-sm font-semibold text-base-content">
         {t('tableOfContents', language)}
       </h3>

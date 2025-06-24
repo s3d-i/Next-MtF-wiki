@@ -38,7 +38,7 @@ export default function LayoutComponent({
               id="sidebar-scroll-container"
               className="sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto"
             >
-              <div className="p-4 rounded-xl bg-base-100/50 backdrop-blur-sm border border-base-300/50 shadow-sm">
+              <div className="p-4 rounded-xl bg-base-100/50 border border-base-300/50 shadow-sm">
                 <Sidebar items={items} language={language} />
               </div>
             </div>

@@ -94,7 +94,7 @@ export function CupCalculator() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-base-100/50 backdrop-blur-sm rounded-xl p-6 border border-base-300/30"
+        className="bg-base-100/50 rounded-xl p-6 border border-base-300/30 shadow-sm"
       >
         <div className="flex items-center gap-3 mb-4">
           <Calculator className="w-5 h-5 text-pink-500" />
@@ -113,7 +113,7 @@ export function CupCalculator() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-base-100 rounded-xl shadow-lg border border-base-300/30 p-4 md:p-6"
+        className="bg-base-100 rounded-xl shadow-sm border border-base-300/30 p-4 md:p-6"
       >
         <ol className="space-y-3 md:space-y-4">
           <li className="flex items-center gap-4">
