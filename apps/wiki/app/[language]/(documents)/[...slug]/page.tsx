@@ -1,8 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {
-  ControlledAnchor,
-  ControlledHeading,
+  ControlledElement,
   ControlledLink,
 } from '@/components/ControlledElement';
 import { LanguageAlternate } from '@/components/LanguageAlternate';
@@ -349,14 +348,15 @@ export default async function DocPage({
       />
     ),
     Link: ControlledLink,
-    a: ControlledAnchor,
+    a: (props) => <ControlledElement tagName="a" {...props} />,
+    li: (props) => <ControlledElement tagName="li" {...props} />,
     img: ImageComponent,
-    h1: (props) => <ControlledHeading level={1} {...props} />,
-    h2: (props) => <ControlledHeading level={2} {...props} />,
-    h3: (props) => <ControlledHeading level={3} {...props} />,
-    h4: (props) => <ControlledHeading level={4} {...props} />,
-    h5: (props) => <ControlledHeading level={5} {...props} />,
-    h6: (props) => <ControlledHeading level={6} {...props} />,
+    h1: (props) => <ControlledElement tagName="h1" {...props} />,
+    h2: (props) => <ControlledElement tagName="h2" {...props} />,
+    h3: (props) => <ControlledElement tagName="h3" {...props} />,
+    h4: (props) => <ControlledElement tagName="h4" {...props} />,
+    h5: (props) => <ControlledElement tagName="h5" {...props} />,
+    h6: (props) => <ControlledElement tagName="h6" {...props} />,
   };
 
   const ErrorContent = ({ error }: { error: Error }) => {

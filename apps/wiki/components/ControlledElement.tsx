@@ -2,28 +2,38 @@
 
 import { headerHeightAtom } from '@/components/ObservedHeader';
 import { useAtom } from 'jotai';
-import { type AnchorHTMLAttributes, type JSX, createElement } from 'react';
+import { type JSX, createElement } from 'react';
 import { Link, type LinkProps } from './progress';
 
-type HeadingProps = React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLHeadingElement>,
-  HTMLHeadingElement
-> & {
-  level: 1 | 2 | 3 | 4 | 5 | 6;
-};
+export function ControlledElement({
+  tagName,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLElement> & {
+  tagName: keyof JSX.IntrinsicElements;
+}) {
+  if (props.id) {
+    return (
+      <ControlledElementInner tagName={tagName} {...props}>
+        {children}
+      </ControlledElementInner>
+    );
+  } else {
+    return createElement(tagName, props, children);
+  }
+}
 
-export function ControlledHeading({ level, children, ...props }: HeadingProps) {
+function ControlledElementInner({
+  tagName,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLElement> & {
+  tagName: keyof JSX.IntrinsicElements;
+}) {
   const [headerHeight] = useAtom(headerHeightAtom);
-
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
   return createElement(
-    Tag,
-    {
-      ...props,
-      style: {
-        scrollMarginTop: `${headerHeight}px`,
-      },
-    },
+    tagName,
+    { ...props, style: { scrollMarginTop: `${headerHeight}px` } },
     children,
   );
 }
@@ -47,34 +57,5 @@ export function ControlledLink({ id, children, ...props }: LinkProps) {
     );
   } else {
     return <Link {...props}>{children}</Link>;
-  }
-}
-
-function ControlledAnchorInner({
-  children,
-  ...props
-}: AnchorHTMLAttributes<HTMLAnchorElement>) {
-  const [headerHeight] = useAtom(headerHeightAtom);
-
-  return (
-    <a {...props} style={{ scrollMarginTop: `${headerHeight}px` }}>
-      {children}
-    </a>
-  );
-}
-
-export function ControlledAnchor({
-  id,
-  children,
-  ...props
-}: AnchorHTMLAttributes<HTMLAnchorElement>) {
-  if (id) {
-    return (
-      <ControlledAnchorInner id={id} {...props}>
-        {children}
-      </ControlledAnchorInner>
-    );
-  } else {
-    return <a {...props}>{children}</a>;
   }
 }
