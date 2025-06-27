@@ -80,7 +80,7 @@ export default function MobileTableOfContents({
     };
 
     if (tocItems.length > 0) {
-      window.addEventListener('scroll', handleScroll);
+      window.addEventListener('scroll', handleScroll, { passive: true });
       handleScroll();
     }
 

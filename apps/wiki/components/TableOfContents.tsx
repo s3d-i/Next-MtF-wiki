@@ -73,7 +73,7 @@ export default function TableOfContents({ language }: TableOfContentsProps) {
     };
 
     if (tocItems.length > 0) {
-      window.addEventListener('scroll', handleScroll);
+      window.addEventListener('scroll', handleScroll, { passive: true });
       handleScroll(); // 初始检查
     }
 
