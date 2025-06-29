@@ -1,7 +1,9 @@
 {
+  "$schema": "https://turborepo.com/schema.json",
   "extends": ["//"],
   "tasks": {
     "build": {
+      "inputs": ["lib/**/*", "index.js", "index.d.ts", "tsconfig.json"],
       "outputs": ["*.d.ts", "*.d.ts.map", "tsconfig.tsbuildinfo"]
     }
   }

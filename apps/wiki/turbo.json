@@ -1,7 +1,9 @@
 {
+  "$schema": "https://turborepo.com/schema.json",
   "extends": ["//"],
   "tasks": {
     "build": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "./public/**", "../../source/**"],
       "outputs": [".next/**", "!.next/cache/**", "out/**"]
     }
