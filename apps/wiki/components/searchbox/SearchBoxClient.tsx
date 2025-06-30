@@ -304,7 +304,7 @@ export default function SearchBoxClient({
         </button>
 
         {/* 全局搜索对话框 */}
-        <dialog ref={modalRef} className="modal h-screen w-screen">
+        <dialog ref={modalRef} className="modal h-screen">
           <div className="modal-box w-11/12 max-w-2xl p-0">
             {/* 搜索框区域 */}
             <div className="p-3 border-b border-base-300">
