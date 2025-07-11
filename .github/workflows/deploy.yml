@@ -41,6 +41,7 @@ jobs:
           NEXT_PUBLIC_SERVER_BUILD_INDEX: "true"
           NEXT_PUBLIC_BANNER_TEXT: "banner-text-disclaimer-preview"
           NEXT_PUBLIC_OG_BASE_URL: "https://mtf.wiki/"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
