@@ -43,10 +43,10 @@
   },
   "banner-button-link-disclaimer": {
     "zh-cn": "/zh-cn/about/disclaimer",
-    "zh-hant": null,
-    "ja": null,
-    "es": null,
-    "en": null
+    "zh-hant": "/en/about/disclaimer",
+    "ja": "/en/about/disclaimer",
+    "es": "/en/about/disclaimer",
+    "en": "/en/about/disclaimer"
   },
   "banner-button-text-close": {
     "zh-cn": "关闭",
