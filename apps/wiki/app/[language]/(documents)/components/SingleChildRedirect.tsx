@@ -4,21 +4,27 @@ import { useSkeleton } from '@/components/progress';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLayoutEffect } from 'react';
 
+/**
+ * 用于存储用户访问历史的sessionStorage键名
+ * 最多保存2个页面的访问记录，用于判断用户是否访问过目标子页面
+ */
 const HISTORY_KEY = 'lastPages';
 
-interface NavigationRedirectProps {
+interface SingleChildRedirectProps {
   language: string;
   currentPath: string;
+  /** 目标子页面路径 */
   redirectToSingleChild?: string | null;
 }
 
-export default function NavigationRedirect({
+export default function SingleChildRedirect({
   language,
   currentPath,
   redirectToSingleChild,
-}: NavigationRedirectProps) {
+}: SingleChildRedirectProps) {
   const router = useRouter();
   const pathname = usePathname();
+  // 使用noFlushSync避免在useLayoutEffect中调用flushSync导致React警告
   const { showImmediately } = useSkeleton({ noFlushSync: true });
 
   useLayoutEffect(() => {
@@ -28,13 +34,14 @@ export default function NavigationRedirect({
       const parentPath = `/${language}/${currentPath}`;
       const childPath = `/${language}/${redirectToSingleChild}`;
 
+      // 仅在访问父页面且最近未访问过子页面时跳转
       if (!pathname.startsWith(childPath) && pathname === parentPath) {
         const hasChildInHistory = history.some((page: string) =>
           page?.startsWith(childPath),
         );
 
         if (!hasChildInHistory) {
-          // 立即显示骨架屏，使用noFlushSync避免useLayoutEffect中的React错误
+          // 显示骨架屏并跳转到子页面
           showImmediately(childPath);
           router.replace(childPath);
           return;

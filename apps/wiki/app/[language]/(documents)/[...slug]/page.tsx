@@ -27,8 +27,8 @@ import type { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
 import remarkGfm from 'remark-gfm';
 import remarkHeadingId from 'remark-heading-id';
 import remarkMath from 'remark-math';
-import NavigationRedirect from '../components/NavigationRedirect';
 import RedirectClient from '../components/RedirectClient';
+import SingleChildRedirect from '../components/SingleChildRedirect';
 import remarkCsvToTable from './remarkCsvToTable';
 import remarkHtmlContent from './remarkHtmlContent';
 import { remarkHugoShortcode } from './remarkHugoShortcode';
@@ -419,7 +419,7 @@ export default async function DocPage({
 
   return (
     <div className="flex flex-col">
-      <NavigationRedirect
+      <SingleChildRedirect
         language={language}
         currentPath={slugPath}
         redirectToSingleChild={navItem.metadata.redirectToSingleChild}
