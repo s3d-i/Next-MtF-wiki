@@ -1,7 +1,8 @@
 'use client';
 
+import { useSkeleton } from '@/components/progress';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 const HISTORY_KEY = 'lastPages';
 
@@ -18,8 +19,9 @@ export default function NavigationRedirect({
 }: NavigationRedirectProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { showImmediately } = useSkeleton({ noFlushSync: true });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const history = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || '[]');
 
     if (redirectToSingleChild) {
@@ -32,6 +34,8 @@ export default function NavigationRedirect({
         );
 
         if (!hasChildInHistory) {
+          // 立即显示骨架屏，使用noFlushSync避免useLayoutEffect中的React错误
+          showImmediately(childPath);
           router.replace(childPath);
           return;
         }
@@ -43,7 +47,14 @@ export default function NavigationRedirect({
       if (history.length > 2) history.pop();
       sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
-  }, [language, currentPath, redirectToSingleChild, router, pathname]);
+  }, [
+    language,
+    currentPath,
+    redirectToSingleChild,
+    router,
+    pathname,
+    showImmediately,
+  ]);
 
   return null;
 }
