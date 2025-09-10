@@ -332,20 +332,27 @@ type HideSkeleton = () => void;
 /**
  * A custom hook that returns functions to show and hide the skeleton.
  *
+ * @param options - Configuration options for the skeleton behavior.
+ * @param options.noFlushSync - If true, skips flushSync wrapper for show operations. Default: false.
  * @returns An object with show and hide functions for the skeleton wrapper.
  */
-export function useSkeleton(): {
+export function useSkeleton(options: { noFlushSync?: boolean } = {}): {
   show: ShowSkeleton;
   hide: HideSkeleton;
   visible: boolean;
   showImmediately: ShowSkeleton;
 } {
+  const { noFlushSync = false } = options;
   const skeleton = useSkeletonContext();
 
   const showSkeleton: ShowSkeleton = (pathname: string) => {
-    flushSync(() => {
+    if (noFlushSync) {
       skeleton.show(pathname);
-    });
+    } else {
+      flushSync(() => {
+        skeleton.show(pathname);
+      });
+    }
   };
 
   const hideSkeleton: HideSkeleton = () => {
@@ -353,9 +360,13 @@ export function useSkeleton(): {
   };
 
   const showSkeletonImmediately: ShowSkeleton = (pathname: string) => {
-    flushSync(() => {
+    if (noFlushSync) {
       skeleton.showImmediately(pathname);
-    });
+    } else {
+      flushSync(() => {
+        skeleton.showImmediately(pathname);
+      });
+    }
   };
 
   return {

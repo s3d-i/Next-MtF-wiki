@@ -22,6 +22,7 @@ export interface DocMetadata {
   order?: number | null;
   preferredSlug?: string | null;
   aliases?: string[];
+  redirectToSingleChild?: string | null;
 }
 
 export interface DocItemRedirectItem {

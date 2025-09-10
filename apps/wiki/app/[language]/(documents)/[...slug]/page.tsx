@@ -28,6 +28,7 @@ import remarkGfm from 'remark-gfm';
 import remarkHeadingId from 'remark-heading-id';
 import remarkMath from 'remark-math';
 import RedirectClient from '../components/RedirectClient';
+import SingleChildRedirect from '../components/SingleChildRedirect';
 import remarkCsvToTable from './remarkCsvToTable';
 import remarkHtmlContent from './remarkHtmlContent';
 import { remarkHugoShortcode } from './remarkHugoShortcode';
@@ -418,6 +419,12 @@ export default async function DocPage({
 
   return (
     <div className="flex flex-col">
+      <SingleChildRedirect
+        language={language}
+        currentPath={slugPath}
+        redirectToSingleChild={navItem.metadata.redirectToSingleChild}
+      />
+
       {/* 文档内容 */}
 
       <div className="p-6 rounded-xl bg-base-100/30 border border-base-300/30 shadow-sm flex-1">

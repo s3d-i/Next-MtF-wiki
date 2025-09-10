@@ -34,6 +34,18 @@ async function getDocFrontmatter(
   }
 }
 
+// 检查 markdown 文件除了 frontmatter 外是否为空白内容
+async function isMarkdownContentEmpty(filePath: string): Promise<boolean> {
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    const { strippedSource } = getFrontmatter(content);
+    // 移除所有空白字符后检查是否为空
+    return strippedSource.trim() === '';
+  } catch (error) {
+    return false;
+  }
+}
+
 async function getDocTitleFromFrontmatter(
   filePath: string,
   frontmatter: Frontmatter | null,
@@ -63,6 +75,7 @@ async function getDocMetadata(
     order: Number(frontmatter?.weight) || null,
     preferredSlug: preferredSlug?.toString() || null,
     aliases: aliasesArray,
+    redirectToSingleChild: null,
   };
 }
 
@@ -193,6 +206,18 @@ async function getDirectoryStructure(
     });
 
   const realP = dirHasIndex ? dirIndexPath : dirPath;
+
+  // 检查是否需要设置单子页面重定向
+  if (dirHasIndex && sortedChildren.length === 1) {
+    const frontmatter = await getDocFrontmatter(dirIndexPath);
+    const isCollapsible = Boolean(frontmatter?.collapsible);
+    const isEmpty = await isMarkdownContentEmpty(dirIndexPath);
+
+    if (isCollapsible && isEmpty) {
+      const singleChild = sortedChildren[0];
+      dirMetadata.redirectToSingleChild = singleChild.displayPath;
+    }
+  }
 
   const result: DocItem = {
     metadata: dirMetadata,
