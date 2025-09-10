@@ -28,31 +28,36 @@ export default function SingleChildRedirect({
   const { showImmediately } = useSkeleton({ noFlushSync: true });
 
   useLayoutEffect(() => {
-    const history = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || '[]');
+    try {
+      const history = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || '[]');
 
-    if (redirectToSingleChild) {
-      const parentPath = `/${language}/${currentPath}`;
-      const childPath = `/${language}/${redirectToSingleChild}`;
+      if (redirectToSingleChild) {
+        const parentPath = `/${language}/${currentPath}`;
+        const childPath = `/${language}/${redirectToSingleChild}`;
 
-      // 仅在访问父页面且最近未访问过子页面时跳转
-      if (!pathname.startsWith(childPath) && pathname === parentPath) {
-        const hasChildInHistory = history.some((page: string) =>
-          page?.startsWith(childPath),
-        );
+        // 仅在访问父页面且最近未访问过子页面时跳转
+        if (pathname === parentPath) {
+          const hasChildInHistory = history.some((page: string) =>
+            page?.startsWith(childPath),
+          );
 
-        if (!hasChildInHistory) {
-          // 显示骨架屏并跳转到子页面
-          showImmediately(childPath);
-          router.replace(childPath);
-          return;
+          if (!hasChildInHistory) {
+            // 显示骨架屏并跳转到子页面
+            showImmediately(childPath);
+            router.replace(childPath);
+            return;
+          }
         }
       }
-    }
 
-    if (history[0] !== pathname) {
-      history.unshift(pathname);
-      if (history.length > 2) history.pop();
-      sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      if (history[0] !== pathname) {
+        history.unshift(pathname);
+        if (history.length > 2) history.pop();
+        sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      }
+    } catch {
+      // 如果sessionStorage不可用，直接直接忽略跳转，用户体验降级
+      return;
     }
   }, [
     language,
