@@ -160,7 +160,9 @@ export default function MobileSidebar({
 
   // 计算按钮的底部位置，如果有 banner 就在 banner 上方
   const buttonBottomPosition =
-    bannerHeight > 0 ? `${bannerHeight + 24}px` : '24px';
+    bannerHeight > 0
+      ? `${bannerHeight + 24}px`
+      : 'calc(var(--bottom-banner-height, 0px) + 24px)';
 
   return (
     <>
@@ -168,7 +170,7 @@ export default function MobileSidebar({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed left-6 z-40 lg:hidden flex items-center space-x-2 px-4 py-3 rounded-full bg-primary text-primary-content shadow-lg hover:bg-primary/90 transition-all duration-200 hover:scale-105"
+        className="fixed left-6 z-50 lg:hidden flex items-center space-x-2 px-4 py-3 rounded-full bg-primary text-primary-content shadow-lg hover:bg-primary/90 transition-all duration-200 hover:scale-105"
         style={{ bottom: buttonBottomPosition }}
         aria-label={t('docs', language)}
       >

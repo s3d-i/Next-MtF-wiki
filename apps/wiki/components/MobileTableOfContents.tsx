@@ -109,7 +109,9 @@ export default function MobileTableOfContents({
 
   // 计算按钮的底部位置，如果有 banner 就在 banner 上方
   const buttonBottomPosition =
-    bannerHeight > 0 ? `${bannerHeight + 24}px` : '24px';
+    bannerHeight > 0
+      ? `${bannerHeight + 24}px`
+      : 'calc(var(--bottom-banner-height, 0px) + 24px)';
 
   return (
     <>
@@ -117,7 +119,7 @@ export default function MobileTableOfContents({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed right-6 z-40 xl:hidden p-3 rounded-full bg-base-200/80 backdrop-blur-sm text-base-content shadow-lg hover:bg-base-200 transition-all duration-200 hover:scale-105 border border-base-300/50"
+        className="fixed right-6 z-50 xl:hidden p-3 rounded-full bg-base-200/80 backdrop-blur-sm text-base-content shadow-lg hover:bg-base-200 transition-all duration-200 hover:scale-105 border border-base-300/50"
         style={{ bottom: buttonBottomPosition }}
         aria-label={t('tableOfContents', language)}
       >

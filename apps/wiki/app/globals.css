@@ -138,6 +138,7 @@
 :root {
   --background: var(--color-base-100);
   --foreground: var(--color-base-content);
+  --bottom-banner-height: 0px;
 }
 
 html {
