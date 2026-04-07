@@ -12,6 +12,7 @@ const compsMap: ShortCodeCompRecord = {
   notice: dynamic(() => import('./Notice')),
   telephone: dynamic(() => import('./Telephone')),
   wiki: dynamic(() => import('./Wiki')),
+  cas: dynamic(() => import('./CAS')),
   ref: dynamic(() => import('./Ref')),
   local: dynamic(() => import('./Local')),
   hiddenphoto: dynamic(() => import('./hiddenPhoto')),

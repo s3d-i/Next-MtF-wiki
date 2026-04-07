@@ -27,6 +27,7 @@ export function getNonSelfClosingElements() {
     'mtf-wiki',
     'telephone',
     'wiki',
+    'cas',
     'shields/qq',
     'shields/wechat',
     'shields/github-issue',
